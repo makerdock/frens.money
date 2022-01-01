@@ -12,6 +12,7 @@ import { useMoralis } from "react-moralis";
 import { toast } from "react-toastify";
 import PaymentSection from "../components/PaymentSection";
 import { Transaction } from "../contracts";
+import { useMoralisData } from "../hooks";
 import embedbadge from "../public/embedbadge.svg";
 import { minimizeAddress } from "../utils";
 import { validateAndResolveAddress } from "../utils/crypto";
@@ -38,18 +39,10 @@ const Profile: React.FC<ProfileProps> = ({
 		currProfileEns: ens,
 		avatar: defaultAvatar,
 	};
-	const {
-		account: walletAddress,
-		user,
-		isAuthenticated,
-		isWeb3Enabled,
-		enableWeb3,
-	} = useMoralis();
+	const { account, isAuthenticated, isWeb3Enabled, enableWeb3 } =
+		useMoralisData();
 
 	console.log({ isAuthenticated, isWeb3Enabled });
-
-	const queriedAddress = user?.get("ethAddress");
-	const account = walletAddress ?? queriedAddress;
 
 	const isOwner = account === profileAddress;
 	const [snapshot] = useCollection(
