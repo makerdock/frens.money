@@ -66,42 +66,6 @@ function MyApp({ Component, pageProps: { session, ...pageProps } }) {
 				</header>
 
 				<Component {...pageProps} />
-
-				<footer className="bg-footerblack space-y-4 w-full py-24 flex flex-col items-center justify-center">
-					<Logo isWhite />
-					<span className="font-urbanist text-white text-base">
-						Makers:
-						<a
-							href="https://twitter.com/BhimteBhaisaab"
-							target="_blank"
-							rel="noreferrer noopener"
-						>
-							{" "}
-							Utkarsh,{" "}
-						</a>
-						<a
-							href="https://twitter.com/CreakFoder"
-							target="_blank"
-							rel="noreferrer noopener"
-						>
-							Ajinkya,{" "}
-						</a>
-						<a
-							href="https://twitter.com/abhikumar_98"
-							target="_blank"
-							rel="noreferrer noopener"
-						>
-							Abhishek,{" "}
-						</a>
-						<a
-							href="https://twitter.com/akhil_bvs"
-							target="_blank"
-							rel="noreferrer noopener"
-						>
-							and Akhil BVS
-						</a>
-					</span>
-				</footer>
 				<ToastContainer />
 				<ReactTooltip effect="solid" />
 			</AuthWrapper>

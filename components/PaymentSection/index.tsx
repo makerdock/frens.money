@@ -7,6 +7,7 @@ import {
 	useNativeBalance,
 	useOneInchTokens,
 } from "react-moralis";
+import { useMoralisData } from "../../hooks";
 import { chainLogo, tokenMetadata } from "../../utils/tokens";
 import Select from "../Select";
 import PayButton from "./PayButton";
@@ -21,17 +22,7 @@ interface Token {
 }
 
 const PaymentSection = ({ profileAddress }) => {
-	const { account: walletAddress, user } = useMoralis();
-
-	const queriedAddress = user?.get("ethAddress");
-	const address = walletAddress ?? queriedAddress;
-
-	const { chainId } = useChain();
-
-	console.log({ chainId });
-	const { data: tokenMetadataData } = useOneInchTokens({
-		chain: chainId,
-	});
+	const { account: address, user, chainId } = useMoralisData();
 
 	const [price, setPrice] = useState(0);
 	const [message, setMessage] = useState("");
@@ -125,7 +116,7 @@ const PaymentSection = ({ profileAddress }) => {
 				{/* {!widget ? ( */}
 				<div className="h-full">
 					<div className="font-urbanist font-bold px-6 py-4 text-lg border-b border-gray-200 flex items-center justify-between">
-						Support the Creator 🤝
+						Send 🤝
 						<span
 							className={`p-2 rounded-lg  ${
 								isFetchingERC20 ||

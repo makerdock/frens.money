@@ -1,30 +1,21 @@
-import { Menu, Transition } from "@headlessui/react";
+import { Menu } from "@headlessui/react";
 import { ChevronDownIcon } from "@heroicons/react/solid";
-import classNames from "classnames";
-import { Fragment, useEffect, useState } from "react";
+import { useState } from "react";
 import toast from "react-hot-toast";
-import { useChain, useMoralis } from "react-moralis";
 import { AuthenticateOptions } from "react-moralis/lib/hooks/core/useMoralis/_useMoralisAuth";
 import { getEllipsisTxt } from "../helpers/formatters";
-import { getExplorer } from "../helpers/networks";
+import { useMoralisData } from "../hooks";
+import { useEnsAddress } from "../utils/useEnsAddress";
 import Blockie from "./Blockie";
 import Loader from "./Loader";
-import Link from "next/link";
-import { useEnsAddress } from "../utils/useEnsAddress";
-import Moralis from "moralis";
 
 function Account() {
 	const {
 		authenticate,
 		isAuthenticated,
-		logout,
 		account: walletAddress,
-		chainId,
-		enableWeb3,
-		isWeb3Enabled,
 		user,
-	} = useMoralis();
-	const { switchNetwork } = useChain();
+	} = useMoralisData();
 	const [loading, setLoading] = useState(false);
 
 	const queriedAddress = user?.get("ethAddress");
@@ -96,7 +87,7 @@ function Account() {
 					</Menu.Button>
 				</div>
 
-				<Transition
+				{/* <Transition
 					as={Fragment}
 					enter="transition ease-out duration-100"
 					enterFrom="transform opacity-0 scale-95"
@@ -204,7 +195,7 @@ function Account() {
 							</Menu.Item>
 						</div>
 					</Menu.Items>
-				</Transition>
+				</Transition> */}
 			</Menu>
 		</>
 	);

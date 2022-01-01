@@ -1,6 +1,6 @@
 import { MoralisContextValue, useChain, useMoralis } from "react-moralis";
 
-export const useUser = (): MoralisContextValue & {
+export const useMoralisData = (): MoralisContextValue & {
 	readonly isMainnet: boolean;
 	readonly chainId: string;
 } => {
