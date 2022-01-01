@@ -122,6 +122,7 @@ export interface ENSResponse {
 	address?: string | null;
 	name?: string | null;
 	avatar?: string | null;
+	error?: string | null;
 }
 export const validateAndResolveAddress = async (
 	userAddress: string,

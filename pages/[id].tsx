@@ -12,7 +12,7 @@ import { useMoralis } from "react-moralis";
 import { toast } from "react-toastify";
 import PaymentSection from "../components/PaymentSection";
 import { Transaction } from "../contracts";
-import { useMoralisData } from "../hooks";
+import { useMoralisData } from "../hooks/useMoralisData";
 import embedbadge from "../public/embedbadge.svg";
 import { minimizeAddress } from "../utils";
 import { validateAndResolveAddress } from "../utils/crypto";
@@ -99,7 +99,7 @@ const Profile: React.FC<ProfileProps> = ({
 	};
 
 	useEffect(() => {
-		if (!isWeb3Enabled && isAuthenticated) {
+		if (!isWeb3Enabled && isAuthenticated && !(window as any)?.ethereum) {
 			console.log("here coming ser");
 			enableWeb3({
 				provider: "walletconnect",
@@ -476,51 +476,10 @@ const Profile: React.FC<ProfileProps> = ({
 										</div>
 									</div>
 								</div>
-								{/* <div className="hidden sm:flex space-x-4 px-6">
-									<a
-										className="w-12 h-12 rounded-full bg-lightpurple flex items-center justify-center"
-										href={`https://twitter.com/intent/tweet?text=${twitterIntent}`}
-										target="_blank"
-										rel="noreferrer noopener"
-									>
-										<svg
-											width="22"
-											height="18"
-											viewBox="0 0 22 18"
-											fill="none"
-											xmlns="http://www.w3.org/2000/svg"
-										>
-											<path
-												d="M21 1.01001C20 1.50001 19.02 1.69901 18 2.00001C16.879 0.735013 15.217 0.665013 13.62 1.26301C12.023 1.86101 10.977 3.32301 11 5.00001V6.00001C7.755 6.08301 4.865 4.60501 3 2.00001C3 2.00001 -1.182 9.43301 7 13C5.128 14.247 3.261 15.088 1 15C4.308 16.803 7.913 17.423 11.034 16.517C14.614 15.477 17.556 12.794 18.685 8.77501C19.0218 7.55268 19.189 6.28987 19.182 5.02201C19.18 4.77301 20.692 2.25001 21 1.00901V1.01001Z"
-												stroke="#9366F9"
-												strokeWidth="1.5"
-												strokeLinecap="round"
-												strokeLinejoin="round"
-											/>
-										</svg>
-									</a>
-								</div> */}
-								<PaymentSection
-									profileAddress={profileAddress}
-								/>
-							</div>
-							{isOwner && (
-								<div className="bg-white border font-urbanist border-gray-200 rounded-lg p-8 shadow-md sm:hidden">
-									<h1 className="text-xl font-bold mb-1">
-										Are you a Creator?
-									</h1>
-									<p className="text-base mb-8">
-										Install CryptoCoffee badge on your
-										website and redirect your audience!
-									</p>
-									<button
-										className="border-cryptopurple border text-cryptopurple rounded-md w-full py-3 text-lg"
-										onClick={() => setIsModalVisible(true)}
-									>
-										Get embed code
-									</button>
+								<div className="p-4">
+									<PaymentSection />
 								</div>
-							)}
+							</div>
 						</section>
 					</div>
 				</div>

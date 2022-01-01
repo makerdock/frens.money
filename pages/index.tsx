@@ -11,6 +11,7 @@ import { useEnsAddress } from "../utils/useEnsAddress";
 import Link from "next/link";
 import { ethers } from "ethers";
 import { validateAndResolveAddress } from "../utils/crypto";
+import { useMoralisData } from "../hooks/useMoralisData";
 
 declare let window: any;
 
@@ -47,15 +48,7 @@ const makerData = [
 ];
 
 const CtaButton = () => {
-	const {
-		authenticate,
-		isAuthenticated,
-		account: walletAddress,
-		user,
-	} = useMoralis();
-
-	const queriedAddress = user?.get("ethAddress");
-	const account = walletAddress ?? queriedAddress;
+	const { authenticate, isAuthenticated, account, user } = useMoralisData();
 
 	const router = useRouter();
 	const [loading, setLoading] = useState(false);
@@ -73,7 +66,7 @@ const CtaButton = () => {
 					- Creators can create their own crypto coffee page and share with their audience too
 				`,
 			};
-
+			console.log(!(window as any).ethereum);
 			if (!(window as any).ethereum) {
 				options.provider = "walletconnect";
 			}

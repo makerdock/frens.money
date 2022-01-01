@@ -1,8 +1,14 @@
+import { ethers } from "ethers";
 import { MoralisContextValue, useChain, useMoralis } from "react-moralis";
 
 export const useMoralisData = (): MoralisContextValue & {
 	readonly isMainnet: boolean;
 	readonly chainId: string;
+	readonly sendTx: (
+		receiver: string,
+		amount: number,
+		message: string
+	) => Promise<void>;
 } => {
 	const { account, ...moralis } = useMoralis();
 	const { chainId } = useChain();
@@ -28,6 +34,26 @@ export const useMoralisData = (): MoralisContextValue & {
 	const currentChain: string =
 		chainId ?? (web3.currentProvider as any)?.chainId; // on walletconnect, value for chainId is undefined
 
+	const sendTx = async (
+		receiver: string,
+		amount: number,
+		message: string
+	) => {
+		const { ethereum } = window as any;
+
+		if (ethereum) {
+			const provider = new ethers.providers.Web3Provider(ethereum);
+			const signer = provider.getSigner();
+			ethers.utils.getAddress(receiver);
+			const hexaMessage = ethers.utils.formatBytes32String(message);
+			const tx = await signer.sendTransaction({
+				to: receiver,
+				value: ethers.utils.parseEther(amount.toString()),
+				data: hexaMessage,
+			});
+		}
+	};
+
 	return {
 		...moralis,
 		account: address,
@@ -35,5 +61,6 @@ export const useMoralisData = (): MoralisContextValue & {
 		web3,
 		isMainnet,
 		chainId: currentChain,
+		sendTx,
 	};
 };

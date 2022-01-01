@@ -7,8 +7,10 @@ import {
 	useNativeBalance,
 	useOneInchTokens,
 } from "react-moralis";
-import { useMoralisData } from "../../hooks";
+import { toast } from "react-toastify";
+import { useMoralisData } from "../../hooks/useMoralisData";
 import { chainLogo, tokenMetadata } from "../../utils/tokens";
+import AddressInput from "../AddressInput";
 import Select from "../Select";
 import PayButton from "./PayButton";
 
@@ -21,13 +23,18 @@ interface Token {
 	readonly logo?: string;
 }
 
-const PaymentSection = ({ profileAddress }) => {
-	const { account: address, user, chainId } = useMoralisData();
+const PaymentSection = ({}) => {
+	const { account: address, user, web3, chainId, sendTx } = useMoralisData();
+
+	const isMainnet = ["0x1", 1].includes(chainId);
+	const { switchNetwork } = useChain();
 
 	const [price, setPrice] = useState(0);
 	const [message, setMessage] = useState("");
+	const [receiverAddress, setReceiverAddress] = useState<string>("");
 
 	const [selectedToken, setSelectedToken] = useState<string>();
+	const [isLoading, setIsLoading] = React.useState(false);
 
 	const {
 		fetchERC20Balances,
@@ -35,7 +42,10 @@ const PaymentSection = ({ profileAddress }) => {
 		isFetching: isFetchingERC20,
 		isLoading: isLoadingERC20,
 		error,
-	} = useERC20Balances();
+	} = useERC20Balances({
+		address,
+		chain: "0x1",
+	});
 
 	const {
 		getBalances,
@@ -43,28 +53,24 @@ const PaymentSection = ({ profileAddress }) => {
 		isFetching: isFetchingNative,
 		isLoading: isLoadingNative,
 		error: errorNative,
-	} = useNativeBalance();
-
-	console.log({ nativeData, data });
+	} = useNativeBalance({
+		address,
+		chain: "0x1",
+	});
 
 	const fetchBalances = async () => {
-		await getBalances({
-			params: {
-				address,
-				chain: (chainId as any) ?? "0x1",
-			},
-		});
-		await fetchERC20Balances({
-			params: {
-				address,
-				chain: (chainId as any) ?? "0x1",
-			},
-		});
+		await getBalances();
+		await fetchERC20Balances();
 	};
 	const nativeTokenName = nativeData?.formatted?.split(" ")[1] ?? "";
 	const cleanedNativeTokens = {
 		symbol: nativeTokenName,
-		balance: nativeData.formatted,
+		balance:
+			nativeData.formatted ??
+			`${(nativeData.balance
+				? Number(nativeData.balance) / 10 ** 18
+				: 0
+			).toFixed(4)} MATIC`,
 		name: nativeTokenName,
 		decimals: 18,
 		tokenAddress: null,
@@ -88,6 +94,20 @@ const PaymentSection = ({ profileAddress }) => {
 				chainLogo[nativeTokenName],
 		})) ?? [];
 
+	const handleTransaction = async () => {
+		try {
+			setIsLoading(true);
+			await sendTx(receiverAddress, price, message);
+		} catch (error) {
+			if (error?.data?.message) {
+				toast.error(error.data.message);
+			}
+			console.error(error);
+		} finally {
+			setIsLoading(false);
+		}
+	};
+
 	const tokensArray: Token[] = [...cleanedERC20Tokens, cleanedNativeTokens];
 
 	const disableDonateButton =
@@ -107,139 +127,120 @@ const PaymentSection = ({ profileAddress }) => {
 		);
 	};
 
+	const handleChangeToMatic = () => {
+		switchNetwork("0x1");
+	};
+
+	const { symbol } = selectedTokenData;
+
+	useEffect(() => {
+		if (!!address) {
+			fetchBalances();
+		}
+	}, [address]);
+
 	return (
-		<section
-			aria-labelledby="timeline-title"
-			className="lg:col-start-3 lg:col-span-1"
-		>
-			<div className="bg-white rounded-lg shadow-md">
-				{/* {!widget ? ( */}
-				<div className="h-full">
-					<div className="font-urbanist font-bold px-6 py-4 text-lg border-b border-gray-200 flex items-center justify-between">
-						Send 🤝
-						<span
-							className={`p-2 rounded-lg  ${
-								isFetchingERC20 ||
-								isLoadingERC20 ||
-								isFetchingNative ||
-								isLoadingNative
-									? " animate-spin "
-									: " hover:bg-indigo-100 cursor-pointer "
-							}`}
-							onClick={fetchBalances}
-						>
-							<svg
-								xmlns="http://www.w3.org/2000/svg"
-								aria-hidden="true"
-								role="img"
-								preserveAspectRatio="xMidYMid meet"
-								viewBox="0 0 24 24"
-								className="h-6 w-6 fill-current"
-							>
-								<g fill="none">
-									<path
-										d="M11.995 4a8 8 0 1 0 7.735 10h-2.081a6 6 0 1 1-5.654-8a5.92 5.92 0 0 1 4.223 1.78L13 11h7V4l-2.351 2.35A7.965 7.965 0 0 0 11.995 4z"
-										fill="currentColor"
-									></path>
-								</g>
-							</svg>
-						</span>
-					</div>
-					<div className="px-6 py-4">
-						<div className="font-urbanist font-normal rounded-md space-x-4">
-							<div className="flex items-center justify-between">
-								<div className="flex flex-col flex-1 w-44">
-									<Select
-										options={tokensArray.map((token) => ({
-											key: token.name,
-											label: (
-												<div className="flex items-center space-x-2">
-													{token.logo && (
-														<img
-															src={token.logo}
-															className="h-6 w-6"
-														/>
-													)}
-													<span className="text-sm font-semibold">
-														{token.name}
-													</span>
-												</div>
-											),
-										}))}
-										onChange={(e) => setSelectedToken(e)}
-										value={
-											!!selectedToken
-												? selectedToken
-												: cleanedNativeTokens.name
-										}
-										placeholder="0.0"
-									/>
-								</div>
-								<div>
-									<input
-										type="number"
-										name="amount"
-										id="amount"
-										min="0"
-										value={price}
-										onChange={(e) =>
-											setPrice(Number(e.target.value))
-										}
-										style={{
-											appearance: "none",
-										}}
-										className="block text-2xl font-bold border-none rounded-md w-24 text-right focus:ring-0 shadow-none focus:bg-gray-100 hover:bg-gray-100 cursor-pointer transition duration-300 ease-in-out"
-										placeholder="0.0"
-									/>
-								</div>
-							</div>
-							<div className="mt-2 text-xs">
-								Balance: {selectedTokenData?.balance ?? 0}
-								<button
-									className="px-1 ml-2 border border-cryptopurple bg-lightpurple text-cryptopurple rounded-lg"
-									onClick={handleMax}
-								>
-									max
-								</button>
-							</div>
-						</div>
+		<div className="grid gap-6 w-full">
+			{!isMainnet && (
+				<>
+					<h3 className="text-xl ">
+						You are not currently linked to matic network
+					</h3>
+					<button
+						type="button"
+						disabled={isLoading}
+						onClick={handleChangeToMatic}
+						className={`justify-center h-14 text-black mt-3 rounded-full inline-flex items-center px-4 py-2 border border-transparent text-base font-medium shadow-sm bg-gradient-to-r from-brand-gradient-blue via-brand-gradient-pink to-brand-gradient-orange w-full`}
+					>
+						Link to matic network
+					</button>
+				</>
+			)}
 
-						<div className="font-urbanist mt-4">
-							<div className="mt-1">
-								<textarea
-									value={message}
-									onChange={(e) => setMessage(e.target.value)}
-									rows={4}
-									name="comment"
-									id="comment"
-									placeholder="Add your comment (Optional)"
-									className="shadow-sm block w-full sm:text-sm border-gray-300 rounded-md"
-								/>
-							</div>
-						</div>
+			{isMainnet && (
+				<>
+					<AddressInput
+						defaultValue={receiverAddress}
+						onChange={setReceiverAddress}
+					/>
 
-						<div className="mt-4">
-							<PayButton
-								disabled={disableDonateButton}
-								receiver={profileAddress}
-								type={
-									selectedTokenData?.tokenAddress
-										? "erc20"
-										: "native"
+					<textarea
+						value={message}
+						onChange={(e) => setMessage(e.target.value)}
+						rows={4}
+						name="comment"
+						id="comment"
+						placeholder="Enter a message for your fren"
+						className=" shadow-sm placeholder-opacity-50 placeholder-white block w-full sm:text-sm border border-solid  border-gray-600 border-opacity-20 bg-white bg-opacity-10 rounded-md p-4"
+					/>
+
+					<div className="rounded-md mt-2 ">
+						<div className="flex items-center justify-between border border-solid  border-gray-600 border-opacity-20 bg-white bg-opacity-10 rounded-md">
+							<input
+								type="number"
+								name="amount"
+								id="amount"
+								min="0"
+								value={price}
+								onChange={(e) =>
+									setPrice(Number(e.target.value))
 								}
-								symbol={selectedTokenData?.symbol}
-								decimals={selectedTokenData?.decimals}
-								amount={price}
-								message={message}
-								contractAddress={
-									selectedTokenData?.tokenAddress
-								}
+								style={{
+									appearance: "none",
+								}}
+								className="block text-2xl w-full font-bold border-none  border-gray-600 border-opacity-20 bg-transparent rounded-md text-right focus:ring-0 shadow-none cursor-pointer transition duration-300 ease-in-out"
+								placeholder="Enter amount in ETH"
 							/>
+							<button
+								className="mr-4 opacity-80 rounded-lg"
+								onClick={handleMax}
+							>
+								MAX
+							</button>
+						</div>
+						<div className="mt-2 text-xs text-right">
+							BALANCE: {selectedTokenData?.balance ?? 0}
 						</div>
 					</div>
-				</div>
-			</div>
-		</section>
+
+					<button
+						type="button"
+						disabled={isLoading}
+						onClick={handleTransaction}
+						className={`justify-center h-14 text-white bg-blue-600 mt-3 rounded-full inline-flex items-center px-4 py-2 border border-transparent text-base font-medium shadow-sm bg-gradient-to-r from-brand-gradient-blue via-brand-gradient-pink to-brand-gradient-orange w-full ${
+							isLoading
+								? "opacity-50 cursor-not-allowed "
+								: " hover:bg-brand-maximum-red focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-brand-maximum-red "
+						}`}
+					>
+						{!isLoading ? (
+							`Send ${!!symbol ? `( ${price} ${symbol} )` : ""} `
+						) : (
+							<svg
+								className="animate-spin -ml-1 mr-3 h-5 w-5 "
+								xmlns="http://www.w3.org/2000/svg"
+								fill="none"
+								viewBox="0 0 24 24"
+							>
+								<circle
+									className="opacity-25"
+									cx="12"
+									cy="12"
+									r="10"
+									stroke="currentColor"
+									strokeWidth="4"
+								></circle>
+								<path
+									className="opacity-75"
+									fill="currentColor"
+									d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+								></path>
+							</svg>
+						)}
+					</button>
+				</>
+			)}
+		</div>
 	);
 };
 

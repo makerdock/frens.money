@@ -30,13 +30,16 @@ export const useEnsAddress = (account: string): ENSResponse => {
 		address: null,
 		name: null,
 		avatar: null,
+		error: null,
 	});
 
 	const getEnsAddress = async (currAccount: string) => {
 		const response = await fetchEnsAddress(currAccount);
 
-		if (response) {
+		if (response?.address) {
 			setEnsMeta(response);
+		} else {
+			setEnsMeta({ error: "This is not a valid ETH address" });
 		}
 	};
 

@@ -1,10 +1,12 @@
-import { Menu } from "@headlessui/react";
+import { Menu, Transition } from "@headlessui/react";
 import { ChevronDownIcon } from "@heroicons/react/solid";
-import { useState } from "react";
+import Link from "next/link";
+import { Fragment, useState } from "react";
 import toast from "react-hot-toast";
 import { AuthenticateOptions } from "react-moralis/lib/hooks/core/useMoralis/_useMoralisAuth";
 import { getEllipsisTxt } from "../helpers/formatters";
-import { useMoralisData } from "../hooks";
+import { getExplorer } from "../helpers/networks";
+import { useMoralisData } from "../hooks/useMoralisData";
 import { useEnsAddress } from "../utils/useEnsAddress";
 import Blockie from "./Blockie";
 import Loader from "./Loader";
@@ -15,6 +17,8 @@ function Account() {
 		isAuthenticated,
 		account: walletAddress,
 		user,
+		chainId,
+		logout,
 	} = useMoralisData();
 	const [loading, setLoading] = useState(false);
 
@@ -87,7 +91,7 @@ function Account() {
 					</Menu.Button>
 				</div>
 
-				{/* <Transition
+				<Transition
 					as={Fragment}
 					enter="transition ease-out duration-100"
 					enterFrom="transform opacity-0 scale-95"
@@ -98,7 +102,7 @@ function Account() {
 				>
 					<Menu.Items className="origin-top-right absolute right-0 mt-2 w-56 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 focus:outline-none z-20">
 						<div className="py-1 z-20">
-							<Menu.Item>
+							{/* <Menu.Item>
 								{({ active }) => (
 									<a
 										className={classNames(
@@ -176,18 +180,18 @@ function Account() {
 											: "View on PolygonScan"}
 									</a>
 								)}
-							</Menu.Item>
+							</Menu.Item> */}
 							<Menu.Item>
 								{({ active }) => (
 									<button
 										onClick={logout}
 										type="submit"
-										className={classNames(
+										className={`${
 											active
 												? "bg-gray-100 text-gray-900"
-												: "text-gray-700",
-											"block w-full text-left px-4 py-2 text-sm"
-										)}
+												: "text-gray-700"
+										} block w-full text-left px-4 py-2 text-sm
+										`}
 									>
 										Sign out
 									</button>
@@ -195,7 +199,7 @@ function Account() {
 							</Menu.Item>
 						</div>
 					</Menu.Items>
-				</Transition> */}
+				</Transition>
 			</Menu>
 		</>
 	);
