@@ -23,6 +23,7 @@ interface ChainItem {
 	key: string;
 	value: string;
 	icon: JSX.Element;
+	solana?: boolean;
 }
 const menuItems: ChainItem[] = [
 	{
@@ -83,6 +84,9 @@ const menuItems: ChainItem[] = [
 ];
 
 const Chains = () => {
+	// const { connect, publicKey } = useWallet();
+	// console.log({ publicKey });
+
 	const { switchNetwork, chainId, chain } = useChain();
 	const { isAuthenticated } = useMoralis();
 	const [selected, setSelected] = useState<ChainItem | undefined>();
@@ -97,15 +101,24 @@ const Chains = () => {
 		switchNetwork(key);
 	};
 
+	const handleSolanaAuth = async () => {
+		// connect();
+	};
+
 	if (!isAuthenticated) return <div />;
 
 	return (
 		<div className="space-x-4 items-center hidden md:flex">
 			<span className="text-gray-500 text-sm">Switch Chain:</span>
+
 			{menuItems.map((item) => (
 				<button
 					key={item.key}
-					onClick={() => handleMenuClick(item.key)}
+					onClick={() =>
+						item.solana
+							? handleSolanaAuth()
+							: handleMenuClick(item.key)
+					}
 					className={classNames(
 						"rounded-lg focus:bg-indigo-100 hover:bg-indigo-100 text-white",
 						selected?.key === item.key

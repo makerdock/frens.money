@@ -1,4 +1,5 @@
 import { ethers } from "ethers";
+import { useEffect, useState } from "react";
 
 declare let window: any;
 
@@ -117,9 +118,10 @@ export const sendTransaction = async (
 	return tx;
 };
 
-
 export interface ENSResponse {
-	address?: string | null; name?: string | null; avatar?: string | null
+	address?: string | null;
+	name?: string | null;
+	avatar?: string | null;
 }
 export const validateAndResolveAddress = async (
 	userAddress: string,

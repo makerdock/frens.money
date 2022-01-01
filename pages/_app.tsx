@@ -14,6 +14,12 @@ import { AuthWrapper } from "../utils/context";
 import NextNProgress from "nextjs-progressbar";
 import MetaHead from "../components/MetaHead";
 import "antd/dist/antd.css";
+import dynamic from "next/dynamic";
+
+const SolanaWrapper = dynamic(() => import("../components/SolanaWrapper"), {
+	ssr: false,
+});
+require("@solana/wallet-adapter-react-ui/styles.css");
 
 const APP_ID = process.env.NEXT_PUBLIC_MORALIS_APPLICATION_ID;
 const SERVER_URL = process.env.NEXT_PUBLIC_MORALIS_SERVER_URL;
@@ -43,27 +49,29 @@ function MyApp({ Component, pageProps: { session, ...pageProps } }) {
 						rel="stylesheet"
 					></link>
 				</Head>
-				<header className="bg-white drop-shadow-md">
-					<div className="max-w-7xl mx-auto px-2 sm:px-4 lg:px-8">
-						<div className="flex items-center justify-between py-5">
-							<div className="flex px-2 lg:px-0">
-								<div className="flex-shrink-0 flex items-center">
-									<Link href="/">
-										<span>
-											<Logo />
-										</span>
-									</Link>
+				<SolanaWrapper>
+					<header className="bg-white drop-shadow-md">
+						<div className="max-w-7xl mx-auto px-2 sm:px-4 lg:px-8">
+							<div className="flex items-center justify-between py-5">
+								<div className="flex px-2 lg:px-0">
+									<div className="flex-shrink-0 flex items-center">
+										<Link href="/">
+											<span>
+												<Logo />
+											</span>
+										</Link>
+									</div>
+								</div>
+								<div className="flex space-x-6 items-center">
+									<Chains />
+									<Account />
 								</div>
 							</div>
-							<div className="flex space-x-6 items-center">
-								<Chains />
-								<Account />
-							</div>
 						</div>
-					</div>
-				</header>
+					</header>
 
-				<Component {...pageProps} />
+					<Component {...pageProps} />
+				</SolanaWrapper>
 				<footer className="bg-footerblack space-y-4 w-full py-24 flex flex-col items-center justify-center">
 					<Logo isWhite />
 					<span className="font-urbanist text-white text-base">
