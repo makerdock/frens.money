@@ -39,7 +39,7 @@ function Account() {
 					- They enter their favorite creator’s wallet address and donate crypto.
 					- Creators can create their own crypto coffee page and share with their audience too
 				`,
-				chainId: 4,
+				chainId: process.env.NODE_ENV === "development" ? 4 : 1,
 			};
 
 			if (!(window as any).ethereum) {
