@@ -1,3 +1,4 @@
+import { useMoralisData } from "./../hooks/useMoralisData";
 import { ethers } from "ethers";
 import { Group, Transaction, User } from "../contracts";
 import { validateAndResolveAddress } from "./crypto";
@@ -15,9 +16,20 @@ export const createGroup = async (
 	const groupRef = db.collection(firestoreCollections.GROUPS).doc();
 
 	group.id = groupRef.id;
+	group.name = `Group ${group.id.slice(4)}`;
 
 	await groupRef.set({ ...group });
 	return group;
+};
+
+export const getGroup = async (id: string): Promise<Group | null> => {
+	const groupRef = db.collection(firestoreCollections.GROUPS).doc(id);
+
+	const group = await groupRef.get();
+
+	if (!group.exists) return null;
+
+	return group.data() as Group;
 };
 
 // export const getUser = async (
@@ -55,9 +67,63 @@ export const saveTransaction = async (
 		.set(transaction);
 };
 
-export const minimizeAddress = (address?: string): string => {
+export const minimizeAddress = (
+	address?: string,
+	currUser?: string
+): string => {
 	if (!address) return "";
+
+	if (address.toLowerCase() === currUser?.toLowerCase()) return "you";
 	return (
 		address.substring(0, 6) + "..." + address.substring(address.length - 4)
 	);
+};
+
+export const importTransaction = async (
+	txId: string,
+	group: Group
+): Promise<void> => {
+	const tx = await db
+		.collection(firestoreCollections.TRANSACTIONS)
+		.where("id", "==", txId)
+		.where("groupId", "==", group.id)
+		.get();
+
+	if (!tx.empty) throw new Error("Transaction already imported");
+
+	const provider = new ethers.providers.Web3Provider(
+		(window as any).ethereum
+	);
+	const txn = await provider.getTransaction(txId);
+
+	console.log(txn);
+
+	if (!txn) {
+		throw new Error(
+			"Please make sure you are connected to correct network"
+		);
+	}
+
+	const { hash, from, to, value } = txn;
+
+	const checkIfSenderIsMember = group.members.includes(from.toLowerCase());
+	const checkIfReceiverIsMember = group.members.includes(to.toLowerCase());
+
+	if (!checkIfSenderIsMember) {
+		throw new Error("Sender is not a member of this group");
+	}
+	if (!checkIfReceiverIsMember) {
+		throw new Error("Receiver is not a member of this group");
+	}
+
+	const formattedValue = Number(ethers.utils.formatEther(value));
+
+	const transaction = new Transaction();
+	transaction.id = hash;
+	transaction.from = from;
+	transaction.to = to;
+	transaction.amount = formattedValue;
+	transaction.createdAt = new Date().getTime();
+
+	await saveTransaction(transaction);
 };

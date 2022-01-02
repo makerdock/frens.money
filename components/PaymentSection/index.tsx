@@ -1,18 +1,13 @@
 import Moralis from "moralis";
+import { useRouter } from "next/router";
 import React, { ReactText, useEffect, useState } from "react";
-import {
-	useChain,
-	useERC20Balances,
-	useMoralis,
-	useNativeBalance,
-	useOneInchTokens,
-} from "react-moralis";
+import { useChain, useERC20Balances, useNativeBalance } from "react-moralis";
 import { toast } from "react-toastify";
+import { Transaction } from "../../contracts";
 import { useMoralisData } from "../../hooks/useMoralisData";
+import { saveTransaction } from "../../utils";
 import { chainLogo, tokenMetadata } from "../../utils/tokens";
 import AddressInput from "../AddressInput";
-import Select from "../Select";
-import PayButton from "./PayButton";
 
 interface Token {
 	readonly name: string;
@@ -25,8 +20,10 @@ interface Token {
 
 const PaymentSection = ({}) => {
 	const { account: address, user, web3, chainId, sendTx } = useMoralisData();
+	const {
+		query: { id },
+	} = useRouter();
 
-	const isMainnet = ["0x1", 1].includes(chainId);
 	const { switchNetwork } = useChain();
 
 	const [price, setPrice] = useState(0);
@@ -37,17 +34,6 @@ const PaymentSection = ({}) => {
 	const [isLoading, setIsLoading] = React.useState(false);
 
 	const {
-		fetchERC20Balances,
-		data,
-		isFetching: isFetchingERC20,
-		isLoading: isLoadingERC20,
-		error,
-	} = useERC20Balances({
-		address,
-		chain: "0x1",
-	});
-
-	const {
 		getBalances,
 		data: nativeData,
 		isFetching: isFetchingNative,
@@ -55,12 +41,11 @@ const PaymentSection = ({}) => {
 		error: errorNative,
 	} = useNativeBalance({
 		address,
-		chain: "0x1",
+		chain: chainId as any,
 	});
 
 	const fetchBalances = async () => {
 		await getBalances();
-		await fetchERC20Balances();
 	};
 	const nativeTokenName = nativeData?.formatted?.split(" ")[1] ?? "";
 	const cleanedNativeTokens = {
@@ -77,27 +62,23 @@ const PaymentSection = ({}) => {
 		logo: tokenMetadata[nativeTokenName]?.logoURI,
 	};
 
-	const cleanedERC20Tokens: Token[] =
-		data?.map((token) => ({
-			name: token.name,
-			symbol: token.symbol,
-			balance: Moralis.Units.FromWei(
-				token.balance,
-				Number(token.decimals)
-			),
-			decimals: Number(token.decimals),
-			tokenAddress:
-				tokenMetadata[token.symbol]?.address ?? token.token_address,
-			logo:
-				token.logo ??
-				tokenMetadata[token.symbol]?.logoURI ??
-				chainLogo[nativeTokenName],
-		})) ?? [];
-
 	const handleTransaction = async () => {
 		try {
 			setIsLoading(true);
-			await sendTx(receiverAddress, price, message);
+			const tx = await sendTx(receiverAddress, price, message);
+			toast.success(`Transaction sent! Tx hash: ${tx.hash}`);
+
+			const newTx: Transaction = {
+				...new Transaction(),
+				id: tx.hash,
+				groupId: String(id),
+				from: address,
+				to: receiverAddress,
+				amount: price,
+				createdAt: new Date().getTime(),
+			};
+
+			await saveTransaction(newTx);
 		} catch (error) {
 			if (error?.data?.message) {
 				toast.error(error.data.message);
@@ -108,14 +89,9 @@ const PaymentSection = ({}) => {
 		}
 	};
 
-	const tokensArray: Token[] = [...cleanedERC20Tokens, cleanedNativeTokens];
+	const tokensArray: Token[] = [cleanedNativeTokens];
 
-	const disableDonateButton =
-		isLoadingERC20 ||
-		isLoadingNative ||
-		isFetchingERC20 ||
-		isFetchingNative ||
-		!price;
+	const disableDonateButton = isLoadingNative || isFetchingNative || !price;
 
 	const selectedTokenData =
 		tokensArray.find((token) => token.name === selectedToken) ??
@@ -141,7 +117,7 @@ const PaymentSection = ({}) => {
 
 	return (
 		<div className="grid gap-6 w-full">
-			{!isMainnet && (
+			{/* {!isMainnet && (
 				<>
 					<h3 className="text-xl ">
 						You are not currently linked to matic network
@@ -155,9 +131,9 @@ const PaymentSection = ({}) => {
 						Link to matic network
 					</button>
 				</>
-			)}
+			)} */}
 
-			{isMainnet && (
+			{
 				<>
 					<AddressInput
 						defaultValue={receiverAddress}
@@ -207,7 +183,7 @@ const PaymentSection = ({}) => {
 						type="button"
 						disabled={isLoading}
 						onClick={handleTransaction}
-						className={`justify-center h-14 text-white bg-blue-600 mt-3 rounded-full inline-flex items-center px-4 py-2 border border-transparent text-base font-medium shadow-sm bg-gradient-to-r from-brand-gradient-blue via-brand-gradient-pink to-brand-gradient-orange w-full ${
+						className={`justify-center h-14 text-white bg-blue-600 mt-3 rounded-md inline-flex items-center px-4 py-2 border border-transparent text-base font-medium shadow-sm bg-gradient-to-r from-brand-gradient-blue via-brand-gradient-pink to-brand-gradient-orange w-full ${
 							isLoading
 								? "opacity-50 cursor-not-allowed "
 								: " hover:bg-brand-maximum-red focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-brand-maximum-red "
@@ -239,7 +215,7 @@ const PaymentSection = ({}) => {
 						)}
 					</button>
 				</>
-			)}
+			}
 		</div>
 	);
 };

@@ -1,32 +1,31 @@
-import { DuplicateIcon, LinkIcon } from "@heroicons/react/outline";
-import { ArrowUpIcon, CheckIcon } from "@heroicons/react/solid";
-import { Modal } from "antd";
-import copy from "copy-to-clipboard";
-import { ethers } from "ethers";
-import { GetStaticProps } from "next";
-import Image from "next/image";
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import Blockies from "react-blockies";
 import { useCollection } from "react-firebase-hooks/firestore";
-import { useMoralis } from "react-moralis";
-import { toast } from "react-toastify";
+import ImportTransaction from "../components/ImportTransaction";
 import PaymentSection from "../components/PaymentSection";
-import { Transaction } from "../contracts";
+import { Group, Transaction } from "../contracts";
 import { useMoralisData } from "../hooks/useMoralisData";
-import embedbadge from "../public/embedbadge.svg";
-import { minimizeAddress } from "../utils";
-import { validateAndResolveAddress } from "../utils/crypto";
-import { db } from "../utils/firebaseClient";
-import { getTxnUrl } from "../utils/getTxnUrl";
+import { getGroup, minimizeAddress } from "../utils";
+import { db, firestoreCollections } from "../utils/firebaseClient";
 import { useEnsAddress } from "../utils/useEnsAddress";
 
 declare let window: any;
+
+export const getServerSideProps = async (req, res) => {
+	const group = await getGroup(req.query.id);
+	return {
+		props: {
+			group,
+		},
+	};
+};
 
 export interface ProfileProps {
 	transactions: Transaction[];
 	profileAddress: string;
 	ens?: string;
 	avatar?: string;
+	group?: Group;
 }
 
 const Profile: React.FC<ProfileProps> = ({
@@ -34,78 +33,28 @@ const Profile: React.FC<ProfileProps> = ({
 	profileAddress,
 	ens,
 	avatar: defaultAvatar,
+	group,
 }) => {
-	const { name: currProfileEns, avatar } = useEnsAddress(profileAddress) || {
-		currProfileEns: ens,
-		avatar: defaultAvatar,
-	};
-	const { account, isAuthenticated, isWeb3Enabled, enableWeb3 } =
-		useMoralisData();
-
-	console.log({ isAuthenticated, isWeb3Enabled });
-
-	const isOwner = account === profileAddress;
-	const [snapshot] = useCollection(
-		db
-			.collection("transactions")
-			.where("to", "==", profileAddress.toString().toLowerCase())
+	const { account } = useMoralisData();
+	const { address, avatar, error, name } = useEnsAddress(account);
+	const [selectedSection, setSelectedSection] = useState<"pay" | "import">(
+		"pay"
 	);
-	const [transactions, setTransactions] = useState<Transaction[]>([]);
-	const [isCopied, setIsCopied] = useState(false);
-	const [isScriptCopied, setIsScriptCopied] = useState(false);
-	const [isModalVisible, setIsModalVisible] = useState(false);
 
-	const handleCopyAddress = () => {
-		if (!profileAddress) return;
-		setIsCopied(true);
-		copy(profileAddress);
-		setTimeout(() => setIsCopied(false), 1500);
-	};
+	const [snapshot] = useCollection(
+		group?.id &&
+			db
+				.collection(firestoreCollections.TRANSACTIONS)
+				.where("groupId", "==", group?.id)
+	);
 
-	const handleTransactionChange = (transactions: Transaction[]) => {
-		const sortedTransactions = transactions.sort((a, b) => {
-			return b.timestamp - a.timestamp;
-		});
+	const transactions: Transaction[] =
+		(snapshot?.docs.map((doc) => doc.data() as Transaction) ?? []).sort(
+			(a, b) => a.createdAt - b.createdAt
+		) || [];
+	const isOwner = group?.creator === account;
 
-		setTransactions(sortedTransactions);
-	};
-
-	useEffect(() => {
-		handleTransactionChange(allTransactions);
-	}, [allTransactions]);
-
-	useEffect(() => {
-		if (snapshot) {
-			handleTransactionChange(
-				snapshot.docs.map((doc) => ({
-					...(doc.data() as Transaction),
-					id: doc.id,
-				}))
-			);
-		}
-	}, [snapshot]);
-
-	const twitterIntent = `
-		You%20can%20support%20by%20donating%20some%20CryptoCoffee%20(%E2%98%95%EF%B8%8F)%20here%20%E2%80%94%0Ahttps://buymeacryptocoffee.xyz/${profileAddress}%0ACreate%20your%20own%20page%20%40buycryptocoffee
-	`;
-
-	const script = `<script type="text/javascript" src="https://buymeacryptocoffee.xyz/buttonwidget.js" data-address="${profileAddress}" data-name="crypto-coffee-button" ></script>`;
-
-	const copyEmbedButtonScript = () => {
-		if (!profileAddress) return;
-		setIsScriptCopied(true);
-		copy(script);
-		setTimeout(() => setIsScriptCopied(false), 1500);
-	};
-
-	useEffect(() => {
-		if (!isWeb3Enabled && isAuthenticated && !(window as any)?.ethereum) {
-			console.log("here coming ser");
-			enableWeb3({
-				provider: "walletconnect",
-			});
-		}
-	}, [!!isWeb3Enabled, isAuthenticated, account]);
+	console.log(transactions);
 
 	return (
 		<>
@@ -117,78 +66,18 @@ const Profile: React.FC<ProfileProps> = ({
 						<div className="space-y-6 p-8 xs:p-4 rounded-lg bg-white shadow-md lg:col-start-1 lg:col-span-2 border border-gray-300">
 							<div className="flex justify-between items-center sm:hidden">
 								<div className="flex items-center space-x-5">
-									<div className="flex-shrink-0">
-										{avatar && (
-											<img
-												src={avatar}
-												alt={profileAddress}
-												className="h-16 w-16 rounded-full"
-											/>
-										)}
-										{!avatar && (
-											<Blockies
-												seed={profileAddress}
-												size={9}
-												scale={8}
-												className="rounded-full"
-											/>
-										)}
-									</div>
 									<div className="group">
 										<h1 className="font-urbanist text-3xl font-bold text-gray-900 mb-1">
-											{/* <div className="animate-pulse h-12 w-48 bg-gray-300 rounded-md" /> */}
-											{currProfileEns ??
-												minimizeAddress(profileAddress)}
+											{group?.name}{" "}
 										</h1>
-										{!!currProfileEns && (
-											<div
-												onClick={handleCopyAddress}
-												className="flex space-x-2 items-center"
-											>
-												<p className="text-xs font-medium text-gray-500 p-1 bg-gray-100 inline-block px-3 cursor-pointer hover:bg-indigo-100 transition duration-300 ease-in-out rounded-md">
-													{minimizeAddress(
-														profileAddress
-													)}
-												</p>
-												{/* <DuplicateIcon className="h-4 w-4 opacity-0 group-hover:opacity-100 transition ease-in-out duration-300 text-cryptopurple" /> */}
-												<div className="w-5 h-5 rounded-full bg-lightpurple text-cryptopurple flex items-center justify-center cursor-pointer opacity-0 group-hover:opacity-100 transition duration-300">
-													{isCopied ? (
-														<CheckIcon />
-													) : (
-														<DuplicateIcon
-															onClick={
-																handleCopyAddress
-															}
-														/>
-													)}
-												</div>
-											</div>
-										)}
+										<span className="text-sm">
+											{`(${group?.members
+												.map((member) =>
+													minimizeAddress(member)
+												)
+												.join(", ")})`}
+										</span>
 									</div>
-								</div>
-								<div className="flex space-x-4">
-									<a
-										className="w-12 h-12 rounded-full bg-lightpurple flex items-center justify-center"
-										href={`https://twitter.com/intent/tweet?text=${twitterIntent}`}
-										target="_blank"
-										rel="noreferrer noopener"
-									>
-										<svg
-											width="22"
-											height="18"
-											viewBox="0 0 22 18"
-											fill="none"
-											xmlns="http://www.w3.org/2000/svg"
-										>
-											<path
-												d="M21 1.01001C20 1.50001 19.02 1.69901 18 2.00001C16.879 0.735013 15.217 0.665013 13.62 1.26301C12.023 1.86101 10.977 3.32301 11 5.00001V6.00001C7.755 6.08301 4.865 4.60501 3 2.00001C3 2.00001 -1.182 9.43301 7 13C5.128 14.247 3.261 15.088 1 15C4.308 16.803 7.913 17.423 11.034 16.517C14.614 15.477 17.556 12.794 18.685 8.77501C19.0218 7.55268 19.189 6.28987 19.182 5.02201C19.18 4.77301 20.692 2.25001 21 1.00901V1.01001Z"
-												stroke="#9366F9"
-												strokeWidth="1.5"
-												strokeLinecap="round"
-												strokeLinejoin="round"
-											/>
-										</svg>
-									</a>
 								</div>
 							</div>
 							<div className="mt-8 border-b -mx-8 xs:hidden" />
@@ -204,184 +93,44 @@ const Profile: React.FC<ProfileProps> = ({
 											Recent Supporters 🤝
 										</h2>
 									</div>
-									{!!transactions?.length ? (
-										<div>
-											<ul
-												role="list"
-												className="space-y-6"
+									<div>
+										{transactions.map((txn) => (
+											<div
+												key={txn.id}
+												className="space-y-2"
 											>
-												{transactions.map(
-													(transaction, index) => {
-														const transactionURL =
-															getTxnUrl(
-																transaction?.id,
-																transaction?.chain
-															);
-
-														return (
-															<li
-																key={index}
-																className="p-4 bg-lightpurple rounded-xl border border-cryptopurple relative group"
-															>
-																<div className="flex space-x-3">
-																	<div className="flex-shrink-0">
-																		{!!transaction.senderAvatar && (
-																			<img
-																				className="h-12 w-12 rounded-full"
-																				src={
-																					transaction.senderAvatar
-																				}
-																				alt={
-																					transaction.from
-																				}
-																			/>
-																		)}
-																		{!transaction.senderAvatar && (
-																			<Blockies
-																				seed={
-																					transaction?.from
-																				}
-																				size={
-																					8
-																				}
-																				scale={
-																					6
-																				}
-																				className="rounded-full"
-																			/>
-																		)}
-																	</div>
-																	<div>
-																		<div className="text-lg">
-																			<span
-																				data-tip={
-																					transaction?.from
-																				}
-																			>
-																				{transaction?.from.toLowerCase() ===
-																				account?.toLowerCase()
-																					? "You "
-																					: `${
-																							transaction.fromEns ||
-																							minimizeAddress(
-																								transaction?.from
-																							)
-																					  } `}
-																			</span>
-																			bought
-																			a
-																			CryptoCoffee
-																			🎉
-																		</div>
-																		<div className="inline-block mr-1 font-urbanist font-semibold text-base">
-																			{!!transaction.formattedAmount ? (
-																				transaction.formattedAmount
-																			) : (
-																				<span>
-																					{/* {Moralis.Units.FromWei(
-																						transaction?.amount,
-																						Number(
-																							transaction.tokenDecimals
-																						)
-																					)} */}
-																					{
-																						transaction?.amount
-																					}
-																					<span className="font-normal mx-2">
-																						Ξ
-																					</span>
-																				</span>
-																			)}
-																		</div>
-																	</div>
-																</div>
-																{!!transaction
-																	?.message
-																	.length && (
-																	<>
-																		<div className="w-0 ml-5 mt-6 border-8 border-transparent border-b-8 border-b-white" />
-																		<div className="bg-white rounded-md w-max p-4 text-base text-gray-700">
-																			<p>
-																				{
-																					transaction.message
-																				}
-																			</p>
-																		</div>
-																	</>
-																)}
-																<a
-																	className="cursor-pointer absolute flex items-center justify-center rounded-full w-6 h-6 bg-cryptoblue right-4 bottom-4 opacity-100 md:opacity-0 md:group-hover:opacity-100 transition-opacity duration-300"
-																	href={
-																		transactionURL
-																	}
-																	target="_blank"
-																	rel="noopener noreferrer"
-																>
-																	<ArrowUpIcon className="w-4 h-4 rotate-45 text-white" />
-																</a>
-															</li>
-														);
-													}
-												)}
-											</ul>
-										</div>
-									) : (
-										<div className="w-3/5 xs:w-full mx-auto flex font-urbanist items-center flex-col justify-center h-80 xs:h-60">
-											<span className="text-2xl font-bold">
-												No supporters yet! 🙂
-											</span>
-											<span className="text-center">
-												That’s Okay! We all should start
-												somewhere, Share your
-												CryptoCoffee page with your
-												audience
-											</span>
-											<div className="text-cryptopurple flex mt-8 space-x-4 xs:text-sm">
-												<button
-													className="flex items-center border border-cryptopurple px-5 py-2 rounded-lg"
-													onClick={() => {
-														copy(
-															window.location.href
-														);
-														toast.success(
-															"Copied to clipboard!",
-															{
-																position:
-																	"top-center",
-															}
-														);
-													}}
-												>
-													Copy Page Link
-													<LinkIcon className="w-4 h-4 ml-2" />
-												</button>
-												<a
-													className="flex items-center border border-twitterblue text-twitterblue px-5 py-2 rounded-lg"
-													href={`https://twitter.com/intent/tweet?text=${twitterIntent}`}
-													target="_blank"
-													rel="noreferrer noopener"
-												>
-													Tweet This
+												<div className="flex items-center space-x-2">
+													<div>
+														{minimizeAddress(
+															txn.from,
+															account
+														)}
+													</div>
 													<svg
-														className="ml-2"
-														width="16"
-														height="14"
-														viewBox="0 0 22 18"
-														fill="none"
 														xmlns="http://www.w3.org/2000/svg"
+														className="h-6 w-6"
+														fill="none"
+														viewBox="0 0 24 24"
+														stroke="currentColor"
 													>
 														<path
-															d="M21 1.01001C20 1.50001 19.02 1.69901 18 2.00001C16.879 0.735013 15.217 0.665013 13.62 1.26301C12.023 1.86101 10.977 3.32301 11 5.00001V6.00001C7.755 6.08301 4.865 4.60501 3 2.00001C3 2.00001 -1.182 9.43301 7 13C5.128 14.247 3.261 15.088 1 15C4.308 16.803 7.913 17.423 11.034 16.517C14.614 15.477 17.556 12.794 18.685 8.77501C19.0218 7.55268 19.189 6.28987 19.182 5.02201C19.18 4.77301 20.692 2.25001 21 1.00901V1.01001Z"
-															stroke="#1DA1F2"
-															strokeWidth="1.5"
 															strokeLinecap="round"
 															strokeLinejoin="round"
+															strokeWidth={2}
+															d="M17 8l4 4m0 0l-4 4m4-4H3"
 														/>
 													</svg>
-												</a>
+													<div>
+														{minimizeAddress(
+															txn.to,
+															account
+														)}{" "}
+													</div>
+												</div>
+												<div>{txn.amount} ETH</div>
 											</div>
-										</div>
-									)}
+										))}
+									</div>
 								</div>
 							</section>
 						</div>
@@ -415,75 +164,51 @@ const Profile: React.FC<ProfileProps> = ({
 										<div className="group">
 											<h1 className="font-urbanist text-2xl font-bold text-gray-900 mb-1">
 												{/* <div className="animate-pulse h-12 w-48 bg-gray-300 rounded-md" /> */}
-												{currProfileEns ??
+												{name ??
 													minimizeAddress(
 														profileAddress
 													)}
 											</h1>
-											{!!currProfileEns && (
-												<div className="flex space-x-2 items-center">
-													<p
-														onClick={
-															handleCopyAddress
-														}
-														className="text-xs font-medium text-gray-500 p-1 bg-gray-100 inline-block px-3 cursor-pointer hover:bg-indigo-100 transition duration-300 ease-in-out rounded-md"
-													>
-														{minimizeAddress(
-															profileAddress
-														)}
-													</p>
-													{/* <DuplicateIcon className="h-4 w-4 opacity-0 group-hover:opacity-100 transition ease-in-out duration-300 text-cryptopurple" /> */}
-													<div
-														onClick={
-															handleCopyAddress
-														}
-														className="w-5 h-5 rounded-full bg-lightpurple text-cryptopurple flex items-center justify-center cursor-pointer"
-													>
-														{isCopied ? (
-															<CheckIcon />
-														) : (
-															<DuplicateIcon
-																onClick={
-																	handleCopyAddress
-																}
-															/>
-														)}
-													</div>
-
-													<a
-														href={`https://twitter.com/intent/tweet?text=${twitterIntent}`}
-														target="_blank"
-														rel="noreferrer noopener"
-														className="w-5 h-5 rounded-full bg-lightpurple text-cryptopurple flex items-center justify-center cursor-pointer"
-													>
-														<svg
-															className="w-5 h-5"
-															viewBox="0 0 22 18"
-															fill="none"
-															xmlns="http://www.w3.org/2000/svg"
-														>
-															<path
-																d="M21 1.01001C20 1.50001 19.02 1.69901 18 2.00001C16.879 0.735013 15.217 0.665013 13.62 1.26301C12.023 1.86101 10.977 3.32301 11 5.00001V6.00001C7.755 6.08301 4.865 4.60501 3 2.00001C3 2.00001 -1.182 9.43301 7 13C5.128 14.247 3.261 15.088 1 15C4.308 16.803 7.913 17.423 11.034 16.517C14.614 15.477 17.556 12.794 18.685 8.77501C19.0218 7.55268 19.189 6.28987 19.182 5.02201C19.18 4.77301 20.692 2.25001 21 1.00901V1.01001Z"
-																stroke="#9366F9"
-																strokeWidth="1.5"
-																strokeLinecap="round"
-																strokeLinejoin="round"
-															/>
-														</svg>
-													</a>
-												</div>
-											)}
 										</div>
 									</div>
 								</div>
-								<div className="p-4">
-									<PaymentSection />
+								<div className="p-4 space-y-4">
+									<div className="flex items-center">
+										<div
+											className={`px-4 py-2 cursor-pointer border-b-2 border-transparent text-sm ${
+												selectedSection === "pay" &&
+												"  border-blue-600 "
+											}`}
+											onClick={() =>
+												setSelectedSection("pay")
+											}
+										>
+											Pay
+										</div>
+										<div
+											className={`px-4 py-2 cursor-pointer border-b-2 border-transparent text-sm ${
+												selectedSection === "import" &&
+												"  border-blue-600 "
+											}`}
+											onClick={() =>
+												setSelectedSection("import")
+											}
+										>
+											Import
+										</div>
+									</div>
+									{selectedSection === "pay" && (
+										<PaymentSection />
+									)}
+									{selectedSection === "import" && (
+										<ImportTransaction group={group} />
+									)}
 								</div>
 							</div>
 						</section>
 					</div>
 				</div>
-				<Modal
+				{/* <Modal
 					visible={isModalVisible}
 					onCancel={() => setIsModalVisible(false)}
 					className="embed-modal"
@@ -522,50 +247,50 @@ const Profile: React.FC<ProfileProps> = ({
 							</button>
 						</div>
 					</div>
-				</Modal>
+				</Modal> */}
 			</div>
 		</>
 	);
 };
 
-export const getStaticProps: GetStaticProps = async (context) => {
-	const userAddress = context.params.id;
+// export const getStaticProps: GetStaticProps = async (context) => {
+// 	const userAddress = context.params.id;
 
-	const mainnetEndpoint =
-		"https://speedy-nodes-nyc.moralis.io/d35afcfb3d409232f26629cd/eth/mainnet";
-	const provider = new ethers.providers.JsonRpcProvider(mainnetEndpoint);
+// 	const mainnetEndpoint =
+// 		"https://speedy-nodes-nyc.moralis.io/d35afcfb3d409232f26629cd/eth/mainnet";
+// 	const provider = new ethers.providers.JsonRpcProvider(mainnetEndpoint);
 
-	const { address, name, avatar } = await validateAndResolveAddress(
-		userAddress.toString(),
-		provider
-	);
+// 	const { address, name, avatar } = await validateAndResolveAddress(
+// 		userAddress.toString(),
+// 		provider
+// 	);
 
-	const transactionsResponse = await db
-		.collection("transactions")
-		.where("to", "==", address.toString().toLowerCase())
-		.get();
+// 	const transactionsResponse = await db
+// 		.collection("transactions")
+// 		.where("to", "==", address.toString().toLowerCase())
+// 		.get();
 
-	const transactions: Transaction[] = transactionsResponse.docs.map((doc) => {
-		const data = doc.data();
-		return {
-			...(data as Transaction),
-			id: doc.id,
-		};
-	});
+// 	const transactions: Transaction[] = transactionsResponse.docs.map((doc) => {
+// 		const data = doc.data();
+// 		return {
+// 			...(data as Transaction),
+// 			id: doc.id,
+// 		};
+// 	});
 
-	return {
-		revalidate: 60,
-		props: {
-			transactions,
-			profileAddress: address,
-			ens: name,
-			avatar: avatar ?? "",
-		},
-	};
-};
+// 	return {
+// 		revalidate: 60,
+// 		props: {
+// 			transactions,
+// 			profileAddress: address,
+// 			ens: name,
+// 			avatar: avatar ?? "",
+// 		},
+// 	};
+// };
 
-export async function getStaticPaths() {
-	return { paths: [], fallback: "blocking" };
-}
+// export async function getStaticPaths() {
+// 	return { paths: [], fallback: "blocking" };
+// }
 
 export default Profile;

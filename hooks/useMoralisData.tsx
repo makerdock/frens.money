@@ -8,7 +8,7 @@ export const useMoralisData = (): MoralisContextValue & {
 		receiver: string,
 		amount: number,
 		message: string
-	) => Promise<void>;
+	) => Promise<ethers.providers.TransactionResponse>;
 } => {
 	const { account, ...moralis } = useMoralis();
 	const { chainId } = useChain();
@@ -51,6 +51,8 @@ export const useMoralisData = (): MoralisContextValue & {
 				value: ethers.utils.parseEther(amount.toString()),
 				data: hexaMessage,
 			});
+
+			return tx;
 		}
 	};
 
