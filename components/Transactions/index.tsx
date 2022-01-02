@@ -20,7 +20,7 @@ const Transactions = ({
 						return (
 							<div
 								key={txn.id}
-								className="mb-4 hover:bg-gray-100 p-4 rounded-md"
+								className="mb-4 hover:bg-gray-100 p-4 rounded-md -mx-4"
 							>
 								<div className="flex items-center justify-between space-x-2">
 									<div className="flex items-center space-x-2">

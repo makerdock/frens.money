@@ -105,6 +105,8 @@ const Chains = () => {
 		// connect();
 	};
 
+	return null;
+
 	if (!isAuthenticated) return <div />;
 
 	return (
