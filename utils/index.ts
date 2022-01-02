@@ -9,7 +9,7 @@ export const createGroup = async (
 	creator: string
 ): Promise<Group> => {
 	const group = new Group();
-	group.members = members;
+	group.members = members.map((m) => m.toLowerCase());
 	group.creator = creator;
 	group.createdAt = new Date().toISOString();
 
@@ -62,6 +62,7 @@ export const getGroup = async (id: string): Promise<Group | null> => {
 export const saveTransaction = async (
 	transaction: Transaction
 ): Promise<void> => {
+	console.log({ transaction });
 	await db
 		.doc(`${firestoreCollections.TRANSACTIONS}/${transaction.id}`)
 		.set(transaction);
@@ -106,10 +107,14 @@ export const importTransaction = async (
 
 	const { hash, from, to, value } = txn;
 
-	const checkIfSenderIsMember = group.members.includes(from.toLowerCase());
-	const checkIfReceiverIsMember = group.members.includes(to.toLowerCase());
+	const checkIfSenderIsMember =
+		group.members.includes(from.toLowerCase()) ||
+		group.members.includes(from);
+	const checkIfReceiverIsMember =
+		group.members.includes(to.toLowerCase()) || group.members.includes(to);
 
 	if (!checkIfSenderIsMember) {
+		console.log(group.members.includes(from.toLowerCase()), from, to);
 		throw new Error("Sender is not a member of this group");
 	}
 	if (!checkIfReceiverIsMember) {
@@ -124,6 +129,7 @@ export const importTransaction = async (
 	transaction.to = to;
 	transaction.amount = formattedValue;
 	transaction.createdAt = new Date().getTime();
+	transaction.groupId = group.id;
 
-	await saveTransaction(transaction);
+	await saveTransaction({ ...transaction });
 };

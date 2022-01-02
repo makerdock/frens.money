@@ -48,7 +48,7 @@ const AddressInput: React.FC<AddressInputProps> = ({
 	}, [address, error]);
 
 	return (
-		<div className="relative w-83.5">
+		<div className="relative w-full">
 			<div className="mt-1 relative w-full">
 				{editable && (
 					<input

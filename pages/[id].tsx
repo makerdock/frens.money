@@ -3,6 +3,7 @@ import Blockies from "react-blockies";
 import { useCollection } from "react-firebase-hooks/firestore";
 import ImportTransaction from "../components/ImportTransaction";
 import PaymentSection from "../components/PaymentSection";
+import Transactions from "../components/Transactions";
 import { Group, Transaction } from "../contracts";
 import { useMoralisData } from "../hooks/useMoralisData";
 import { getGroup, minimizeAddress } from "../utils";
@@ -54,7 +55,27 @@ const Profile: React.FC<ProfileProps> = ({
 		) || [];
 	const isOwner = group?.creator === account;
 
-	console.log(transactions);
+	const memberBalance = transactions?.reduce<
+		Record<string, Record<string, number>>
+	>((balance, transaction) => {
+		const { from: fromAddress, to: toAddress, amount } = transaction;
+		const from = fromAddress.toLowerCase();
+		const to = toAddress.toLowerCase();
+
+		balance[from] = {
+			...balance[from],
+			[to]: (balance[from]?.[to] ?? 0) + amount,
+		};
+
+		balance[to] = {
+			...balance[to],
+			[from]: (balance[to]?.[from] ?? 0) - amount,
+		};
+
+		return balance;
+	}, {});
+
+	console.log(memberBalance, account);
 
 	return (
 		<>
@@ -77,62 +98,63 @@ const Profile: React.FC<ProfileProps> = ({
 												)
 												.join(", ")})`}
 										</span>
+
+										<div className="my-4">
+											{Object.entries(
+												memberBalance[
+													account?.toLowerCase()
+												] ?? {}
+											).map(([address, balance]) => (
+												<div
+													key={address}
+													className="flex items-center space-x-2"
+												>
+													<span className="text-sm font-bold">
+														{minimizeAddress(
+															address
+														)}
+													</span>
+													<span>
+														{balance > 0
+															? "owes you"
+															: "due to you"}
+													</span>
+													<span
+														className={`text-sm font-bold ${
+															balance > 0
+																? " text-green-600 "
+																: " text-red-600"
+														}`}
+													>
+														{balance === 0
+															? ""
+															: balance > 0
+															? "+ "
+															: "-"}
+														{balance} ETH
+													</span>
+													{balance > 0 ? (
+														<div className="bg-blue-600 border-2 border-blue-600 hover:border-blue-700 text-white px-3 py-0.5 rounded-md cursor-pointer hover:bg-blue-700 transition-all ease-in-out">
+															Request
+														</div>
+													) : (
+														<div className="bg-white border-2 border-blue-600 hover:border-blue-700 text-blue-600 hover:text-white px-3 py-0.5 rounded-md cursor-pointer hover:bg-blue-700 transition-all ease-in-out">
+															Settle
+														</div>
+													)}
+												</div>
+											))}
+										</div>
 									</div>
 								</div>
 							</div>
 							<div className="mt-8 border-b -mx-8 xs:hidden" />
 
 							{/* Comments*/}
-							<section aria-labelledby="notes-title">
-								<div className="bg-white mt-8 sm:rounded-lg sm:overflow-hidden">
-									<div className="mb-8">
-										<h2
-											id="notes-title"
-											className="text-xl font-urbanist font-bold text-gray-900"
-										>
-											Recent Supporters 🤝
-										</h2>
-									</div>
-									<div>
-										{transactions.map((txn) => (
-											<div
-												key={txn.id}
-												className="space-y-2"
-											>
-												<div className="flex items-center space-x-2">
-													<div>
-														{minimizeAddress(
-															txn.from,
-															account
-														)}
-													</div>
-													<svg
-														xmlns="http://www.w3.org/2000/svg"
-														className="h-6 w-6"
-														fill="none"
-														viewBox="0 0 24 24"
-														stroke="currentColor"
-													>
-														<path
-															strokeLinecap="round"
-															strokeLinejoin="round"
-															strokeWidth={2}
-															d="M17 8l4 4m0 0l-4 4m4-4H3"
-														/>
-													</svg>
-													<div>
-														{minimizeAddress(
-															txn.to,
-															account
-														)}{" "}
-													</div>
-												</div>
-												<div>{txn.amount} ETH</div>
-											</div>
-										))}
-									</div>
-								</div>
-							</section>
+							<Transactions
+								transactions={transactions}
+								account={account}
+							/>
 						</div>
 
 						<section
