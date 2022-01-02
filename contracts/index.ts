@@ -1,16 +1,16 @@
-export class Social {
-	twitter: string = "";
-	instagram: string = "";
-	website: string = "";
+export class Group {
+	id: string = "";
+	name: string = "";
+	creator: string = "";
+	members: string[] = [];
+	createdAt: string = "";
 }
-
 export class User {
 	profileImage: string = "";
 	coverImage: string = "";
 	id: string = "";
 	name: string = "";
 	description: string = "";
-	social: Social = new Social();
 	address: string = "";
 	ens: string | null = null;
 }

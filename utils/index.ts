@@ -1,75 +1,51 @@
 import { ethers } from "ethers";
-import { Transaction, Social, User } from "../contracts";
+import { Group, Transaction, User } from "../contracts";
 import { validateAndResolveAddress } from "./crypto";
 import { db, firestoreCollections } from "./firebaseClient";
 
-export const getOrCreateUser = async (
-	address: string,
-	customProvider?:
-		| ethers.providers.Web3Provider
-		| ethers.providers.JsonRpcProvider
-): Promise<User> => {
-	// create new user in firesbase if not exists
+export const createGroup = async (
+	members: string[],
+	creator: string
+): Promise<Group> => {
+	const group = new Group();
+	group.members = members;
+	group.creator = creator;
+	group.createdAt = new Date().toISOString();
 
-	const provider = customProvider
-		? customProvider
-		: new ethers.providers.Web3Provider((window as any).ethereum);
+	const groupRef = db.collection(firestoreCollections.GROUPS).doc();
 
-	const { address: userAddress, name } = await validateAndResolveAddress(
-		address,
-		provider
-	);
+	group.id = groupRef.id;
 
-	const user = await getUser(userAddress, provider);
-
-	if (user) {
-		return user;
-	}
-
-	const docRef = db.collection(firestoreCollections.USERS).doc();
-
-	const newUser: User = {
-		...new User(),
-		id: docRef.id,
-		name: !!name ? name : "Unnamed",
-		social: {
-			...new Social(),
-		},
-		ens: name,
-		address: userAddress,
-	};
-
-	await db.doc(`${firestoreCollections.USERS}/${docRef.id}`).set(newUser);
-
-	return newUser;
+	await groupRef.set({ ...group });
+	return group;
 };
 
-export const getUser = async (
-	address: string,
-	customProvider?:
-		| ethers.providers.Web3Provider
-		| ethers.providers.JsonRpcProvider
-): Promise<User> => {
-	const provider = customProvider
-		? customProvider
-		: new ethers.providers.Web3Provider((window as any).ethereum);
+// export const getUser = async (
+// 	address: string,
+// 	customProvider?:
+// 		| ethers.providers.Web3Provider
+// 		| ethers.providers.JsonRpcProvider
+// ): Promise<User> => {
+// 	const provider = customProvider
+// 		? customProvider
+// 		: new ethers.providers.Web3Provider((window as any).ethereum);
 
-	const { address: userAddress } = await validateAndResolveAddress(
-		address,
-		provider
-	);
+// 	const { address: userAddress } = await validateAndResolveAddress(
+// 		address,
+// 		provider
+// 	);
 
-	const response = await db
-		.collection(firestoreCollections.USERS)
-		.where("address", "==", userAddress)
-		.get();
+// 	const response = await db
+// 		.collection(firestoreCollections.USERS)
+// 		.where("address", "==", userAddress)
+// 		.get();
 
-	if (!response.empty) {
-		return response.docs[0].data() as User;
-	}
+// 	if (!response.empty) {
+// 		return response.docs[0].data() as User;
+// 	}
 
-	return null;
-};
+// 	return null;
+// };
 
 export const saveTransaction = async (
 	transaction: Transaction
