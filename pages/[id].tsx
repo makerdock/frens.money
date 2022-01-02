@@ -104,46 +104,58 @@ const Profile: React.FC<ProfileProps> = ({
 												memberBalance[
 													account?.toLowerCase()
 												] ?? {}
-											).map(([address, balance]) => (
-												<div
-													key={address}
-													className="flex items-center space-x-2"
-												>
-													<span className="text-sm font-bold">
-														{minimizeAddress(
-															address
-														)}
-													</span>
-													<span>
-														{balance > 0
-															? "owes you"
-															: "due to you"}
-													</span>
-													<span
-														className={`text-sm font-bold ${
-															balance > 0
-																? " text-green-600 "
-																: " text-red-600"
-														}`}
+											).map(([address, balance]) => {
+												const shouldSkip =
+													balance === 0 ||
+													address ===
+														account?.toLowerCase();
+												const shouldPay = balance > 0;
+
+												if (shouldSkip) return null;
+
+												return (
+													<div
+														key={address}
+														className="flex items-center space-x-2"
 													>
-														{balance === 0
-															? ""
-															: balance > 0
-															? "+ "
-															: "-"}
-														{balance} ETH
-													</span>
-													{balance > 0 ? (
-														<div className="bg-blue-600 border-2 border-blue-600 hover:border-blue-700 text-white px-3 py-0.5 rounded-md cursor-pointer hover:bg-blue-700 transition-all ease-in-out">
-															Request
-														</div>
-													) : (
-														<div className="bg-white border-2 border-blue-600 hover:border-blue-700 text-blue-600 hover:text-white px-3 py-0.5 rounded-md cursor-pointer hover:bg-blue-700 transition-all ease-in-out">
-															Settle
-														</div>
-													)}
-												</div>
-											))}
+														<span className="text-sm font-bold">
+															{minimizeAddress(
+																address
+															)}
+														</span>
+														<span>
+															{shouldPay
+																? "owes you"
+																: "due to you"}
+														</span>
+														<span
+															className={`text-sm font-bold ${
+																shouldSkip
+																	? ""
+																	: shouldPay
+																	? " text-green-600 "
+																	: " text-red-600"
+															}`}
+														>
+															{balance === 0
+																? ""
+																: shouldPay
+																? "+ "
+																: "-"}
+															{balance} ETH
+														</span>
+														{shouldPay ? (
+															<div className="bg-blue-600 border-2 border-blue-600 hover:border-blue-700 text-white px-3 py-0.5 rounded-md cursor-pointer hover:bg-blue-700 transition-all ease-in-out">
+																Request
+															</div>
+														) : (
+															<div className="bg-white border-2 border-blue-600 hover:border-blue-700 text-blue-600 hover:text-white px-3 py-0.5 rounded-md cursor-pointer hover:bg-blue-700 transition-all ease-in-out">
+																Settle
+															</div>
+														)}
+													</div>
+												);
+											})}
 										</div>
 									</div>
 								</div>
