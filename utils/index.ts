@@ -84,20 +84,21 @@ export const importTransaction = async (
 	txId: string,
 	group: Group
 ): Promise<void> => {
-	const tx = await db
-		.collection(firestoreCollections.TRANSACTIONS)
-		.where("id", "==", txId)
-		.where("groupId", "==", group.id)
-		.get();
+	// const tx = await db
+	// 	.collection(firestoreCollections.TRANSACTIONS)
+	// 	.where("id", "==", txId)
+	// 	.where("groupId", "==", group.id)
+	// 	.get();
 
-	if (!tx.empty) throw new Error("Transaction already imported");
+	// if (!tx.empty) throw new Error("Transaction already imported");
 
 	const provider = new ethers.providers.Web3Provider(
 		(window as any).ethereum
 	);
 	const txn = await provider.getTransaction(txId);
+	const block = await provider.getBlock(txn.blockNumber);
 
-	console.log(txn);
+	console.log({ txn, block });
 
 	if (!txn) {
 		throw new Error(
@@ -130,6 +131,7 @@ export const importTransaction = async (
 	transaction.amount = formattedValue;
 	transaction.createdAt = new Date().getTime();
 	transaction.groupId = group.id;
+	transaction.createdAt = block.timestamp * 1000;
 
 	await saveTransaction({ ...transaction });
 };
