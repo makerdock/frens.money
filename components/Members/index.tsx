@@ -56,7 +56,7 @@ const Members = () => {
 			const group = await axios.post("/api/group/create", {
 				members,
 			});
-			router.push(`/${group.data.id}`);
+			router.push(`/groups/${group.data.id}`);
 			console.log(group);
 		} catch (error) {
 			console.error(error);
@@ -187,7 +187,7 @@ const Members = () => {
 					{cleanedGroups.map((group) => (
 						<div
 							key={group.id}
-							onClick={() => router.push(`/${group.id}`)}
+							onClick={() => router.push(`/groups/${group.id}`)}
 							className="rounded-md border-2 group border-blue-600 text-blue-600 hover:text-white hover:bg-blue-600 hover:border-white cursor-pointer mt-4"
 						>
 							<div className="p-4 border-b-2 group-hover:border-white border-blue-600 text-6xl font-bold flex items-baseline space-x-2">

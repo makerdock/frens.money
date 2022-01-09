@@ -1,14 +1,14 @@
 import React, { useState } from "react";
 import Blockies from "react-blockies";
 import { useCollection } from "react-firebase-hooks/firestore";
-import ImportTransaction from "../components/ImportTransaction";
-import PaymentSection from "../components/PaymentSection";
-import Transactions from "../components/Transactions";
-import { Group, Transaction } from "../contracts";
-import { useMoralisData } from "../hooks/useMoralisData";
-import { getGroup, minimizeAddress } from "../utils";
-import { db, firestoreCollections } from "../utils/firebaseClient";
-import { useEnsAddress } from "../utils/useEnsAddress";
+import ImportTransaction from "../../components/ImportTransaction";
+import PaymentSection from "../../components/PaymentSection";
+import Transactions from "../../components/Transactions";
+import { Group, Transaction } from "../../contracts";
+import { useMoralisData } from "../../hooks/useMoralisData";
+import { getGroup, minimizeAddress } from "../../utils";
+import { db, firestoreCollections } from "../../utils/firebaseClient";
+import { useEnsAddress } from "../../utils/useEnsAddress";
 
 declare let window: any;
 
