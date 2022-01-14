@@ -6,6 +6,7 @@ import PaymentSection from "../../components/PaymentSection";
 import Transactions from "../../components/Transactions";
 import { Group, Transaction } from "../../contracts";
 import { useMoralisData } from "../../hooks/useMoralisData";
+import useTransactions from "../../hooks/useTransactions";
 import { getGroup, minimizeAddress } from "../../utils";
 import { db, firestoreCollections } from "../../utils/firebaseClient";
 import { useEnsAddress } from "../../utils/useEnsAddress";
@@ -75,7 +76,10 @@ const Profile: React.FC<ProfileProps> = ({
 		return balance;
 	}, {});
 
-	console.log(memberBalance, account);
+	const otherMember = group?.members.filter(
+		(member) => member !== account
+	)[0];
+	const { result } = useTransactions(otherMember ?? "");
 
 	return (
 		<>
@@ -141,8 +145,9 @@ const Profile: React.FC<ProfileProps> = ({
 																? ""
 																: shouldPay
 																? "+ "
-																: "-"}
-															{balance} ETH
+																: ""}
+															{balance.toFixed(5)}{" "}
+															ETH
 														</span>
 														{shouldPay ? (
 															<div className="bg-blue-600 border-2 border-blue-600 hover:border-blue-700 text-white px-3 py-0.5 rounded-md cursor-pointer hover:bg-blue-700 transition-all ease-in-out">

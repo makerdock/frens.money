@@ -15,6 +15,17 @@ export class Transaction {
 	createdAt: number | null = null;
 	message: string = "";
 }
+
+export interface TransactionLog {
+	txId: string;
+	from: string;
+	to: string;
+	amount: number;
+	message: string;
+	createdAt: number;
+	fromBlock: number;
+	gas: number;
+}
 export class User {
 	profileImage: string = "";
 	coverImage: string = "";
