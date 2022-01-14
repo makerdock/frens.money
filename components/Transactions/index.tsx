@@ -46,7 +46,7 @@ const Transactions = ({
 										</div>
 									</div>
 									<a
-										href={`https://etherscan/tx/${txn.id}`}
+										href={`https://etherscan.io/tx/${txn.id}`}
 										target="_blank"
 									>
 										<svg
