@@ -13,7 +13,7 @@ const SyncTransaction = () => {
 	 *
 	 */
 
-	return <div></div>;
+	return <div>as🕊 </div>;
 };
 
 export default SyncTransaction;
