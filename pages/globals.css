@@ -29,3 +29,14 @@ div.embed-modal .ant-modal-header {
 	border-top-left-radius: 10px;
 	border-top-right-radius: 10px;
 }
+
+.container {
+	@apply max-w-7xl mx-auto px-2
+}
+
+/* container in small screens */
+@media (max-width: 768px) {
+	.container {
+		@apply max-w-sm mx-auto px-2
+	}
+}
