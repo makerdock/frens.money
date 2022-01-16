@@ -10,6 +10,7 @@ import Chains from "../Chains";
 import Image from "next/image";
 import wallet from "../../assets/Wallet.svg";
 import illustration from "../../assets/illustration.png";
+import Button from "../Button";
 
 const Members = () => {
 	// state to store array of addresses
@@ -88,8 +89,10 @@ const Members = () => {
                 <div className="flex justify-center items-center flex-col mb-10">
                     <p className="text-6xl text-center font-bold leading-tight mb-8">Crypto is Expensive 🤑, Manage all transactions with Cryptowise </p>
                     <div className="flex space-x-6 items-center">
-							<Chains />
+                        <Button>
+                            <Chains />
 							<Account />
+                        </Button>
 						</div>
                 </div>
             </div>
