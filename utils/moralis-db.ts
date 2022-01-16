@@ -1,15 +1,16 @@
 import { ethers } from "ethers";
 import Moralis from "moralis/types";
+import { useEffect, useState } from "react";
 import {
 	Group as SplitGroup,
 	Transaction as SplitTransaction,
 } from "../contracts";
 
-const Transaction = Moralis.Object.extend("transaction");
-const Group = Moralis.Object.extend("group");
+export const Transaction = Moralis.Object.extend("transaction");
+export const Group = Moralis.Object.extend("group");
 
-const TransactionQuery = new Moralis.Query(Transaction);
-const GroupQuery = new Moralis.Query(Group);
+export const TransactionQuery = new Moralis.Query(Transaction);
+export const GroupQuery = new Moralis.Query(Group);
 
 export const createGroup = async (
 	members: string[],
@@ -105,4 +106,40 @@ export const importTransaction = async (
 	transaction.createdAt = block.timestamp * 1000;
 
 	await saveTransaction({ ...transaction });
+};
+
+export const useMoralisObject = (
+	query: Moralis.Query<Moralis.Object<Moralis.Attributes>>
+) => {
+	const [snapshot, setSnapshot] = useState<any[]>([]);
+
+	const fetch = async () => {
+		try {
+			const snapshot = await query.find();
+			setSnapshot(snapshot);
+		} catch (error) {
+			console.error(error);
+		}
+	};
+
+	const setSubscription = async () => {
+		let subscription = await query.subscribe();
+		subscription.on("create", (res) => {
+			setSnapshot([...snapshot, res]);
+		});
+		return subscription.unsubscribe;
+	};
+
+	useEffect(() => {
+		fetch();
+	}, [query]);
+
+	useEffect(() => {
+		const unsubscribe = setSubscription();
+		return () => {
+			unsubscribe.then((callback) => callback());
+		};
+	}, []);
+
+	return [snapshot];
 };

@@ -11,6 +11,7 @@ import Image from "next/image";
 import wallet from "../../assets/Wallet.svg";
 import illustration from "../../assets/illustration.png";
 import Button from "../Button";
+import { GroupQuery, useMoralisObject } from "../../utils/moralis-db";
 
 const Members = () => {
 	// state to store array of addresses
@@ -26,6 +27,10 @@ const Members = () => {
 			db
 				.collection(firestoreCollections.GROUPS)
 				.where("members", "array-contains", account)
+	);
+
+	const [moralisSnapshot] = useMoralisObject(
+		GroupQuery.equalTo("members", account)
 	);
 
 	console.log({ account, members }, members.length);
@@ -71,11 +76,11 @@ const Members = () => {
 		}
 	};
 
-    const isWalletConnected = async () => {
-        if (account) {
-            router.push(`/dashboard`);
-        }
-    }
+	const isWalletConnected = async () => {
+		if (account) {
+			router.push(`/dashboard`);
+		}
+	};
 
 	const cleanedGroups =
 		snapshot?.docs.map((doc) => doc.data() as Group) ?? [];
@@ -85,26 +90,28 @@ const Members = () => {
 	}, [account]);
 
 	return (
-
-        <div className="w-full h-full flex justify-between items-center flex-col">
-            <div>
-                <div className="flex justify-center items-center mb-8">
-                    <Image src={wallet}/>
-                    <h1 className="text-3xl ml-4 mb-0 font-bold">Cryptowise</h1>
-                </div>
-                <div className="flex justify-center items-center flex-col mb-10">
-                    <p className="text-6xl text-center font-bold leading-tight mb-8">Crypto is Expensive 🤑, Manage all transactions with Cryptowise </p>
-                    <div className="flex space-x-6 items-center">
-                        <Button onClick={isWalletConnected}>
+		<div className="w-full h-full flex justify-between items-center flex-col">
+			<div>
+				<div className="flex justify-center items-center mb-8">
+					<Image src={wallet} />
+					<h1 className="text-3xl ml-4 mb-0 font-bold">Cryptowise</h1>
+				</div>
+				<div className="flex justify-center items-center flex-col mb-10">
+					<p className="text-6xl text-center font-bold leading-tight mb-8">
+						Crypto is Expensive 🤑, Manage all transactions with
+						Cryptowise{" "}
+					</p>
+					<div className="flex space-x-6 items-center">
+						<Button onClick={isWalletConnected}>
 							<Account />
-                        </Button>
+						</Button>
 					</div>
-                </div>
-            </div>
-            <div>
-                <Image src={illustration} />
-            </div>
-        </div>
+				</div>
+			</div>
+			<div>
+				<Image src={illustration} />
+			</div>
+		</div>
 	);
 };
 
