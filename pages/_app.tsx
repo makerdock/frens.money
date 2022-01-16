@@ -33,16 +33,12 @@ function MyApp({ Component, pageProps: { session, ...pageProps } }) {
 					crossOrigin="anonymous"
 				/>
 				<link
-					href="https://fonts.googleapis.com/css2?family=Sora&display=swap"
+					href="https://fonts.googleapis.com/css2?family=Abril+Fatface&family=Space+Grotesk:wght@300;400;500;700&display=swap"
 					rel="stylesheet"
 				/>
-				<link
-					href="https://fonts.googleapis.com/css2?family=Urbanist:wght@400;600;700;800&display=swap"
-					rel="stylesheet"
-				></link>
 			</Head>
 
-			{/* <header className="bg-white drop-shadow-md">
+			<header>
 				<div className="max-w-7xl mx-auto px-2 sm:px-4 lg:px-8">
 					<div className="flex items-center justify-between py-5">
 						<div className="flex px-2 lg:px-0">
@@ -50,6 +46,7 @@ function MyApp({ Component, pageProps: { session, ...pageProps } }) {
 								<Link href="/">
 									<span>
 										<Logo />
+										<span>Crytowise</span>
 									</span>
 								</Link>
 							</div>
@@ -60,7 +57,7 @@ function MyApp({ Component, pageProps: { session, ...pageProps } }) {
 						</div>
 					</div>
 				</div>
-			</header> */}
+			</header>
 
 			<Component {...pageProps} />
 			<ToastContainer />
