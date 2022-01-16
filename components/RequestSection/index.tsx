@@ -1,13 +1,11 @@
-import Moralis from "moralis";
 import { useRouter } from "next/router";
 import React, { ReactText, useEffect, useState } from "react";
-import { useChain, useERC20Balances, useNativeBalance } from "react-moralis";
+import { useChain, useNativeBalance } from "react-moralis";
 import { toast } from "react-toastify";
 import { Transaction } from "../../contracts";
 import { useMoralisData } from "../../hooks/useMoralisData";
 import { saveTransaction } from "../../utils";
-import { chainLogo, tokenMetadata } from "../../utils/tokens";
-import AddressInput from "../AddressInput";
+import { tokenMetadata } from "../../utils/tokens";
 import Button from "../Button";
 
 interface Token {
@@ -19,7 +17,7 @@ interface Token {
 	readonly logo?: string;
 }
 
-const PaymentSection = ({}) => {
+const RequestSection = ({}) => {
 	const { account: address, user, web3, chainId, sendTx } = useMoralisData();
 	const {
 		query: { id },
@@ -63,23 +61,23 @@ const PaymentSection = ({}) => {
 		logo: tokenMetadata[nativeTokenName]?.logoURI,
 	};
 
-	const handleTransaction = async () => {
+	const handleRequest = async () => {
 		try {
 			setIsLoading(true);
-			const tx = await sendTx(receiverAddress, price, message);
-			toast.success(`Transaction sent! Tx hash: ${tx.hash}`);
+			// const tx = await sendTx(receiverAddress, price, message);
+			// toast.success(`Transaction sent! Tx hash: ${tx.hash}`);
 
-			const newTx: Transaction = {
-				...new Transaction(),
-				id: tx.hash,
-				groupId: String(id),
-				from: address,
-				to: receiverAddress,
-				amount: price,
-				createdAt: new Date().getTime(),
-			};
+			// const newTx: Transaction = {
+			// 	...new Transaction(),
+			// 	id: tx.hash,
+			// 	groupId: String(id),
+			// 	from: address,
+			// 	to: receiverAddress,
+			// 	amount: price,
+			// 	createdAt: new Date().getTime(),
+			// };
 
-			await saveTransaction(newTx);
+			// await saveTransaction(newTx);
 		} catch (error) {
 			if (error?.data?.message) {
 				toast.error(error.data.message);
@@ -92,21 +90,11 @@ const PaymentSection = ({}) => {
 
 	const tokensArray: Token[] = [cleanedNativeTokens];
 
-	const disableDonateButton = isLoadingNative || isFetchingNative || !price;
+	const disableRequestButton = isLoadingNative || isFetchingNative || !price;
 
 	const selectedTokenData =
 		tokensArray.find((token) => token.name === selectedToken) ??
 		cleanedNativeTokens;
-
-	const handleMax = () => {
-		setPrice(
-			Number((selectedTokenData.balance as string)?.split(" ")[0] ?? 0)
-		);
-	};
-
-	const handleChangeToMatic = () => {
-		switchNetwork("0x1");
-	};
 
 	const { symbol } = selectedTokenData;
 
@@ -118,18 +106,13 @@ const PaymentSection = ({}) => {
 
 	return (
 		<div className="grid gap-6 w-full">
-			{/* <AddressInput
-				defaultValue={receiverAddress}
-				onChange={setReceiverAddress}
-			/> */}
-
 			<textarea
 				value={message}
 				onChange={(e) => setMessage(e.target.value)}
 				rows={4}
 				name="comment"
 				id="comment"
-				placeholder="Add notes to the payment"
+				placeholder="Add notes to request"
 				className=" shadow-sm placeholder-opacity-50 placeholder-border-gray-600 block w-full sm:text-sm border border-solid  border-gray-600 border-opacity-20 bg-white bg-opacity-10 rounded-md p-2"
 			/>
 
@@ -148,12 +131,6 @@ const PaymentSection = ({}) => {
 						className="block text-2xl w-full font-bold border-none  border-gray-600 border-opacity-20 bg-transparent rounded-md text-right focus:ring-0 shadow-none cursor-pointer transition duration-300 ease-in-out"
 						placeholder="Enter amount in ETH"
 					/>
-					<button
-						className="mr-4 opacity-80 rounded-lg"
-						onClick={handleMax}
-					>
-						MAX
-					</button>
 				</div>
 				<div className="mt-2 text-xs text-right">
 					BALANCE: {selectedTokenData?.balance ?? 0}
@@ -162,14 +139,15 @@ const PaymentSection = ({}) => {
 
 			<Button
 				type="button"
-				disabled={isLoading}
-				onClick={handleTransaction}
+				disabled={isLoading || disableRequestButton}
+				onClick={handleRequest}
+				loading={isLoading}
 				size="lg"
 			>
-				Send {!!symbol ? `( ${price} ${symbol} )` : ""}
+				Request {!!symbol ? `( ${price} ${symbol} )` : ""}
 			</Button>
 		</div>
 	);
 };
 
-export default PaymentSection;
+export default RequestSection;

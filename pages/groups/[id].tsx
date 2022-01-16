@@ -3,6 +3,8 @@ import Blockies from "react-blockies";
 import { useCollection } from "react-firebase-hooks/firestore";
 import ImportTransaction from "../../components/ImportTransaction";
 import PaymentSection from "../../components/PaymentSection";
+import RequestNotification from "../../components/RequestNotification";
+import RequestSection from "../../components/RequestSection";
 import Transactions from "../../components/Transactions";
 import { Group, Transaction } from "../../contracts";
 import { useMoralisData } from "../../hooks/useMoralisData";
@@ -39,7 +41,7 @@ const Profile: React.FC<ProfileProps> = ({
 }) => {
 	const { account } = useMoralisData();
 	const { address, avatar, error, name } = useEnsAddress(account);
-	const [selectedSection, setSelectedSection] = useState<"pay" | "import">(
+	const [selectedSection, setSelectedSection] = useState<"pay" | "request">(
 		"pay"
 	);
 
@@ -92,7 +94,7 @@ const Profile: React.FC<ProfileProps> = ({
 							<div className="flex justify-between items-center sm:hidden">
 								<div className="flex items-center space-x-5">
 									<div className="group">
-										<h1 className="font-urbanist text-3xl font-bold text-gray-900 mb-1">
+										<h1 className="text-3xl font-bold text-gray-900 mb-1">
 											{group?.name}{" "}
 										</h1>
 										<span className="text-sm">
@@ -180,7 +182,7 @@ const Profile: React.FC<ProfileProps> = ({
 								isOwner ? "grid grid-cols-1 gap-4" : ""
 							} lg:col-start-3 lg:col-span-1 sm:row-span-full`}
 						>
-							<div className="bg-white border border-gray-200 rounded-lg">
+							<div className="">
 								<div className="hidden p-6 justify-between items-center sm:flex">
 									<div className="flex items-center space-x-5">
 										<div className="flex-shrink-0">
@@ -201,7 +203,7 @@ const Profile: React.FC<ProfileProps> = ({
 											)}
 										</div>
 										<div className="group">
-											<h1 className="font-urbanist text-2xl font-bold text-gray-900 mb-1">
+											<h1 className="text-2xl font-bold text-gray-900 mb-1">
 												{/* <div className="animate-pulse h-12 w-48 bg-gray-300 rounded-md" /> */}
 												{name ??
 													minimizeAddress(
@@ -211,12 +213,12 @@ const Profile: React.FC<ProfileProps> = ({
 										</div>
 									</div>
 								</div>
-								<div className="p-4 space-y-4">
-									<div className="flex items-center">
+								<div className="p-4 space-y-4 bg-white rounded-lg">
+									<div className="flex items-center justify-between">
 										<div
-											className={`px-4 py-2 cursor-pointer border-b-2 border-transparent text-sm ${
+											className={`px-4 py-2 pb-4 relative text-center w-full cursor-pointer border-b-2 border-transparent text-sm ${
 												selectedSection === "pay" &&
-												"  border-blue-600 "
+												" active-bottom-border font-bold "
 											}`}
 											onClick={() =>
 												setSelectedSection("pay")
@@ -225,23 +227,26 @@ const Profile: React.FC<ProfileProps> = ({
 											Pay
 										</div>
 										<div
-											className={`px-4 py-2 cursor-pointer border-b-2 border-transparent text-sm ${
-												selectedSection === "import" &&
-												"  border-blue-600 "
+											className={`px-4 py-2 pb-4 w-full relative text-center cursor-pointer border-b-2 border-transparent text-sm ${
+												selectedSection === "request" &&
+												"  active-bottom-border font-bold "
 											}`}
 											onClick={() =>
-												setSelectedSection("import")
+												setSelectedSection("request")
 											}
 										>
-											Import
+											Request
 										</div>
 									</div>
 									{selectedSection === "pay" && (
 										<PaymentSection />
 									)}
-									{selectedSection === "import" && (
-										<ImportTransaction group={group} />
+									{selectedSection === "request" && (
+										<RequestSection />
 									)}
+								</div>
+								<div className="mt-6">
+									<RequestNotification />
 								</div>
 							</div>
 						</section>
@@ -270,7 +275,7 @@ const Profile: React.FC<ProfileProps> = ({
 				>
 					<div className="flex flex-col items-center justify-center">
 						<Image src={embedbadge} />
-						<div className="mt-8 relative mb-8 mx-8 border border-cryptopurple bg-lightpurple rounded-md py-8 px-12 font-urbanist text-lg">
+						<div className="mt-8 relative mb-8 mx-8 border border-cryptopurple bg-lightpurple rounded-md py-8 px-12 text-lg">
 							{script}
 							<button
 								className="flex absolute right-4 bottom-3 items-center text-lg text-cryptopurple"

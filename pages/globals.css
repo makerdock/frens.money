@@ -1,13 +1,42 @@
-@import url('tailwindcss/tailwind.css');
+@import url("tailwindcss/tailwind.css");
 
+html,
 body {
-    --heading-color: #FF8906;
+	font-family: 'Space Grotesk', sans-serif !important;
+	@apply text-black;
 }
 
 div.embed-modal .ant-modal-content {
-   border-radius: 10px;
+	border-radius: 10px;
 }
 
 div.embed-modal .ant-modal-header {
-    border-radius: 10px 10px 0 0;
- }
+	border-radius: 10px 10px 0 0;
+}
+
+.button-gradient {
+	background: linear-gradient(90.08deg, #7d8aff 1.96%, #d5a0ff 98.06%);
+}
+
+.active-bottom-border::before {
+	content: "";
+	position: absolute;
+	bottom: 0;
+	left: 0;
+	right: 0;
+	height: 5px;
+	background: linear-gradient(90.08deg, #7d8aff 1.96%, #d5a0ff 98.06%);
+	border-top-left-radius: 10px;
+	border-top-right-radius: 10px;
+}
+
+.container {
+	@apply max-w-7xl mx-auto px-2
+}
+
+/* container in small screens */
+@media (max-width: 768px) {
+	.container {
+		@apply max-w-sm mx-auto px-2
+	}
+}
