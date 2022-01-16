@@ -142,33 +142,38 @@ const Profile: React.FC<ProfileProps> = ({
 												return (
 													<div
 														key={address}
-														className="flex items-center space-x-2"
+														className="my-4 flex items-center space-x-6"
 													>
-														<span className="text-sm font-bold">
-															{userName}
-														</span>
-														<span>
-															{shouldPay
-																? "owes you"
-																: "due to you"}
-														</span>
-														<span
-															className={`text-sm font-bold ${
-																shouldSkip
+														<div className="flex-1 text-md">
+															<span className="font-bold text-lg">
+																{userName}{" "}
+															</span>
+															<span>
+																{shouldPay
+																	? "owes you"
+																	: "due to you"}{" "}
+																{" 	"}
+															</span>
+															<span
+																className={`font-bold text-lg ${
+																	shouldSkip
+																		? ""
+																		: shouldPay
+																		? " text-green "
+																		: " text-orange"
+																}`}
+															>
+																{balance === 0
 																	? ""
 																	: shouldPay
-																	? " text-green-600 "
-																	: " text-red-600"
-															}`}
-														>
-															{balance === 0
-																? ""
-																: shouldPay
-																? "+ "
-																: ""}
-															{balance.toFixed(5)}{" "}
-															ETH
-														</span>
+																	? "+ "
+																	: ""}
+																{balance.toFixed(
+																	5
+																)}{" "}
+																ETH
+															</span>
+														</div>
 														{shouldPay ? (
 															<div className="bg-blue-600 border-2 border-blue-600 hover:border-blue-700 text-white px-3 py-0.5 rounded-md cursor-pointer hover:bg-blue-700 transition-all ease-in-out">
 																Request

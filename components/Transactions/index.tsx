@@ -35,14 +35,29 @@ const Transactions = ({
 
 								<div
 									className={classnames(
-										"text-lg font-medium",
-										isDebited
-											? "text-red-600"
-											: "text-green-600"
+										"text-xl font-medium",
+										isDebited ? "text-orange" : "text-green"
 									)}
 								>
 									{isDebited ? "- " : "+ "}{" "}
 									{txn.amount.toPrecision(2)} ETH
+								</div>
+								{!!txn.message?.length && (
+									<div className="mt-1">{txn.message}</div>
+								)}
+
+								<div className="mt-1 text-gray-500">
+									Lorem ipsum dolor sit amet, consectetur
+									adipiscing elit, sed do eiusmod tempor
+									incididunt ut labore et dolore magna aliqua.
+									Ut enim ad minim veniam, quis nostrud
+									exercitation ullamco laboris nisi ut aliquip
+									ex ea commodo consequat. Duis aute irure
+									dolor in reprehenderit in voluptate velit
+									esse cillum dolore eu fugiat nulla pariatur.
+									Excepteur sint occaecat cupidatat non
+									proident, sunt in culpa qui officia deserunt
+									mollit anim id est laborum.
 								</div>
 							</div>
 						);
