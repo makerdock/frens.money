@@ -1,13 +1,29 @@
-@import url('tailwindcss/tailwind.css');
+@import url("tailwindcss/tailwind.css");
 
 body {
-    --heading-color: #FF8906;
+	--heading-color: #ff8906;
 }
 
 div.embed-modal .ant-modal-content {
-   border-radius: 10px;
+	border-radius: 10px;
 }
 
 div.embed-modal .ant-modal-header {
-    border-radius: 10px 10px 0 0;
- }
+	border-radius: 10px 10px 0 0;
+}
+
+.button-gradient {
+	background: linear-gradient(90.08deg, #7d8aff 1.96%, #d5a0ff 98.06%);
+}
+
+.active-bottom-border::before {
+	content: "";
+	position: absolute;
+	bottom: 0;
+	left: 0;
+	right: 0;
+	height: 5px;
+	background: linear-gradient(90.08deg, #7d8aff 1.96%, #d5a0ff 98.06%);
+	border-top-left-radius: 10px;
+	border-top-right-radius: 10px;
+}

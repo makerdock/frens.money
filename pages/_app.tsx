@@ -15,6 +15,7 @@ import NextNProgress from "nextjs-progressbar";
 import MetaHead from "../components/MetaHead";
 import "antd/dist/antd.css";
 import dynamic from "next/dynamic";
+import Button from "../components/Button";
 
 const APP_ID = process.env.NEXT_PUBLIC_MORALIS_APPLICATION_ID;
 const SERVER_URL = process.env.NEXT_PUBLIC_MORALIS_SERVER_URL;

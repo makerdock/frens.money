@@ -3,6 +3,7 @@ import Blockies from "react-blockies";
 import { useCollection } from "react-firebase-hooks/firestore";
 import ImportTransaction from "../../components/ImportTransaction";
 import PaymentSection from "../../components/PaymentSection";
+import RequestSection from "../../components/RequestSection";
 import Transactions from "../../components/Transactions";
 import { Group, Transaction } from "../../contracts";
 import { useMoralisData } from "../../hooks/useMoralisData";
@@ -39,7 +40,7 @@ const Profile: React.FC<ProfileProps> = ({
 }) => {
 	const { account } = useMoralisData();
 	const { address, avatar, error, name } = useEnsAddress(account);
-	const [selectedSection, setSelectedSection] = useState<"pay" | "import">(
+	const [selectedSection, setSelectedSection] = useState<"pay" | "request">(
 		"pay"
 	);
 
@@ -180,7 +181,7 @@ const Profile: React.FC<ProfileProps> = ({
 								isOwner ? "grid grid-cols-1 gap-4" : ""
 							} lg:col-start-3 lg:col-span-1 sm:row-span-full`}
 						>
-							<div className="bg-white border border-gray-200 rounded-lg">
+							<div className="">
 								<div className="hidden p-6 justify-between items-center sm:flex">
 									<div className="flex items-center space-x-5">
 										<div className="flex-shrink-0">
@@ -211,12 +212,12 @@ const Profile: React.FC<ProfileProps> = ({
 										</div>
 									</div>
 								</div>
-								<div className="p-4 space-y-4">
-									<div className="flex items-center">
+								<div className="p-4 space-y-4 bg-white rounded-lg">
+									<div className="flex items-center justify-between">
 										<div
-											className={`px-4 py-2 cursor-pointer border-b-2 border-transparent text-sm ${
+											className={`px-4 py-2 pb-4 relative text-center w-full cursor-pointer border-b-2 border-transparent text-sm ${
 												selectedSection === "pay" &&
-												"  border-blue-600 "
+												" active-bottom-border font-bold "
 											}`}
 											onClick={() =>
 												setSelectedSection("pay")
@@ -225,22 +226,22 @@ const Profile: React.FC<ProfileProps> = ({
 											Pay
 										</div>
 										<div
-											className={`px-4 py-2 cursor-pointer border-b-2 border-transparent text-sm ${
-												selectedSection === "import" &&
-												"  border-blue-600 "
+											className={`px-4 py-2 pb-4 w-full relative text-center cursor-pointer border-b-2 border-transparent text-sm ${
+												selectedSection === "request" &&
+												"  active-bottom-border font-bold "
 											}`}
 											onClick={() =>
-												setSelectedSection("import")
+												setSelectedSection("request")
 											}
 										>
-											Import
+											Request
 										</div>
 									</div>
 									{selectedSection === "pay" && (
 										<PaymentSection />
 									)}
-									{selectedSection === "import" && (
-										<ImportTransaction group={group} />
+									{selectedSection === "request" && (
+										<RequestSection />
 									)}
 								</div>
 							</div>
