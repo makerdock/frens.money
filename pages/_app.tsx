@@ -46,9 +46,10 @@ function MyApp({ Component, pageProps: { session, ...pageProps } }) {
 							<div className="flex px-2 lg:px-0">
 								<div className="flex-shrink-0 flex items-center">
 									<Link href="/">
-										<span>
+										<div className="inline-flex items-center">
 											<Logo />
-										</span>
+                                            <h1 className="text-2xl ml-4 font-bold">Cryptowise</h1>
+										</div>
 									</Link>
 								</div>
 							</div>
