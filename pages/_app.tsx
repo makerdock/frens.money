@@ -61,6 +61,9 @@ function MyApp({ Component, pageProps: { session, ...pageProps } }) {
 				</header>
 			)}
 
+			<div className="yellow-blur"></div>
+			<div className="pink-blur"></div>
+
 			<Component {...pageProps} />
 			<ToastContainer />
 			<ReactTooltip effect="solid" />
