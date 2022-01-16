@@ -94,7 +94,7 @@ const Profile: React.FC<ProfileProps> = ({
 							<div className="flex justify-between items-center sm:hidden">
 								<div className="flex items-center space-x-5">
 									<div className="group">
-										<h1 className="font-urbanist text-3xl font-bold text-gray-900 mb-1">
+										<h1 className="text-3xl font-bold text-gray-900 mb-1">
 											{group?.name}{" "}
 										</h1>
 										<span className="text-sm">
@@ -203,7 +203,7 @@ const Profile: React.FC<ProfileProps> = ({
 											)}
 										</div>
 										<div className="group">
-											<h1 className="font-urbanist text-2xl font-bold text-gray-900 mb-1">
+											<h1 className="text-2xl font-bold text-gray-900 mb-1">
 												{/* <div className="animate-pulse h-12 w-48 bg-gray-300 rounded-md" /> */}
 												{name ??
 													minimizeAddress(
@@ -275,7 +275,7 @@ const Profile: React.FC<ProfileProps> = ({
 				>
 					<div className="flex flex-col items-center justify-center">
 						<Image src={embedbadge} />
-						<div className="mt-8 relative mb-8 mx-8 border border-cryptopurple bg-lightpurple rounded-md py-8 px-12 font-urbanist text-lg">
+						<div className="mt-8 relative mb-8 mx-8 border border-cryptopurple bg-lightpurple rounded-md py-8 px-12 text-lg">
 							{script}
 							<button
 								className="flex absolute right-4 bottom-3 items-center text-lg text-cryptopurple"
