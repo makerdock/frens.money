@@ -1,8 +1,9 @@
 @import url("tailwindcss/tailwind.css");
 
+html,
 body {
-	--heading-color: #ff8906;
-	@apply text-black font-space;
+	font-family: 'Space Grotesk', sans-serif !important;
+	@apply text-black;
 }
 
 div.embed-modal .ant-modal-content {
