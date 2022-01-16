@@ -6,8 +6,10 @@ declare let window: any;
 const Dashboard: React.FC = () => {
 	return (
 		<div className="max-h-screen">
-			<div className="  flex max-h-screen space-x-4 items-center py-12 pb-0">
-				<h1>This is where dashboard would come</h1>
+			<div className="max-w-3xl flex justify-center items-center max-h-screen space-x-4 bg-white my-0 mx-auto py-12 pb-0">
+                <div className="w-full rounded-t-3xl flex justify-center items-center space-x-4 bg-dark-black py-12">
+                    <span className="text-2xl text-white font-medium">Overall, You are Owed</span>
+                </div>
 			</div>
 		</div>
 	);
