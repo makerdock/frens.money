@@ -88,29 +88,49 @@ const Profile: React.FC<ProfileProps> = ({
 	)[0];
 	const { result } = useTransactions(otherMember ?? "");
 
+	const userName = name || minimizeAddress(address);
+
 	return (
 		<>
-			<div className="bg-gray-50 min-h-screen">
-				{/* Page header */}
-				<div className="w-full bg-cryptopurple h-64" />
-				<div className="max-w-6xl max-lg:mx-2 mx-auto rounded-xl py-12 ">
-					<div className="-mt-64 mx-auto grid grid-cols-1 gap-6 sm:px-6 xs:px-0 lg:max-w-7xl lg:grid-flow-col-dense lg:grid-cols-3">
-						<div className="space-y-6 p-8 xs:p-4 rounded-lg bg-white shadow-md lg:col-start-1 lg:col-span-2 border border-gray-300">
+			<div className="min-h-screen">
+				<div className="container rounded-xl py-12 ">
+					<div className="mx-auto grid grid-cols-1 gap-6 sm:px-6 xs:px-0 lg:max-w-7xl lg:grid-flow-col-dense lg:grid-cols-3">
+						<div className="space-y-6 card xs:p-4 rounded-lg bg-white lg:col-start-1 lg:col-span-2 border">
 							<div className="flex justify-between items-center sm:hidden">
 								<div className="flex items-center space-x-5">
 									<div className="group">
-										<h1 className="text-3xl font-bold text-gray-900 mb-1">
-											{group?.name}{" "}
-										</h1>
-										<span className="text-sm">
-											{`(${group?.members
-												.map((member) =>
-													minimizeAddress(member)
-												)
-												.join(", ")})`}
-										</span>
+										<div className="flex space-x-4 items-center">
+											{avatar?.length ? (
+												<img
+													src={avatar}
+													className="h-16 w-16 rounded-xl"
+												/>
+											) : (
+												<Blockies
+													seed={userName}
+													size={9}
+													scale={8}
+													className="h-16 w-16 rounded-xl"
+												/>
+											)}
 
-										<div className="my-4">
+											<div>
+												<h1 className="text-3xl font-bold text-gray-900 mb-1">
+													{userName}{" "}
+												</h1>
+												<span className="text-sm">
+													{`(${group?.members
+														.map((member) =>
+															minimizeAddress(
+																member
+															)
+														)
+														.join(", ")})`}
+												</span>
+											</div>
+										</div>
+
+										<div>
 											{Object.entries(
 												memberBalance[
 													account?.toLowerCase()
@@ -127,35 +147,38 @@ const Profile: React.FC<ProfileProps> = ({
 												return (
 													<div
 														key={address}
-														className="flex items-center space-x-2"
+														className="my-4 flex items-center space-x-6"
 													>
-														<span className="text-sm font-bold">
-															{minimizeAddress(
-																address
-															)}
-														</span>
-														<span>
-															{shouldPay
-																? "owes you"
-																: "due to you"}
-														</span>
-														<span
-															className={`text-sm font-bold ${
-																shouldSkip
+														<div className="flex-1 text-md">
+															<span className="font-bold text-lg">
+																{userName}{" "}
+															</span>
+															<span>
+																{shouldPay
+																	? "owes you"
+																	: "due to you"}{" "}
+																{" 	"}
+															</span>
+															<span
+																className={`font-bold text-lg ${
+																	shouldSkip
+																		? ""
+																		: shouldPay
+																		? " text-green "
+																		: " text-orange"
+																}`}
+															>
+																{balance === 0
 																	? ""
 																	: shouldPay
-																	? " text-green-600 "
-																	: " text-red-600"
-															}`}
-														>
-															{balance === 0
-																? ""
-																: shouldPay
-																? "+ "
-																: ""}
-															{balance.toFixed(5)}{" "}
-															ETH
-														</span>
+																	? "+ "
+																	: ""}
+																{balance.toFixed(
+																	5
+																)}{" "}
+																ETH
+															</span>
+														</div>
 														{shouldPay ? (
 															<div className="bg-blue-600 border-2 border-blue-600 hover:border-blue-700 text-white px-3 py-0.5 rounded-md cursor-pointer hover:bg-blue-700 transition-all ease-in-out">
 																Request
@@ -218,7 +241,7 @@ const Profile: React.FC<ProfileProps> = ({
 										</div>
 									</div>
 								</div>
-								<div className="p-4 space-y-4 bg-white rounded-lg">
+								<div className="card space-y-4 bg-white rounded-lg">
 									<div className="flex items-center justify-between">
 										<div
 											className={`px-4 py-2 pb-4 relative text-center w-full cursor-pointer border-b-2 border-transparent text-sm ${

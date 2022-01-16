@@ -30,9 +30,10 @@ module.exports = {
 				purple: '#7b61ff',
 				'dark-yellow': '#ffd233',
 				orange: '#ff7b5f',
+				green: '#24CA49',
 				'dark-grey': '#231f20',
 				'light-blue': '#dfeaef',
-				'grey': ['#f9f9fb', '#e6e7e8', '#c4c4c4'],
+				'gray': { 100: '#f9f9fb', 200: '#e6e7e8', 300: '#c4c4c4' },
 				white: '#ffffff',
 
 			},
