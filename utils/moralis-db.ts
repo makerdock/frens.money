@@ -1,5 +1,5 @@
 import { ethers } from "ethers";
-import Moralis from "moralis/types";
+import Moralis from "moralis";
 import { useEffect, useState } from "react";
 import {
 	Group as SplitGroup,
