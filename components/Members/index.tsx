@@ -5,6 +5,8 @@ import { useRouter } from "next/router";
 import { useCollection } from "react-firebase-hooks/firestore";
 import { db, firestoreCollections } from "../../utils/firebaseClient";
 import { Group } from "../../contracts";
+import Account from "../Account";
+import Chains from "../Chains";
 import Image from "next/image";
 import wallet from "../../assets/Wallet.svg";
 import illustration from "../../assets/illustration.png";
@@ -83,8 +85,12 @@ const Members = () => {
                     <Image src={wallet}/>
                     <h1 className="text-3xl ml-4 mb-0 font-bold">Cryptowise</h1>
                 </div>
-                <div>
-                    <p className="text-6xl text-center font-bold leading-tight">Crypto is Expensive 🤑, Manage all transactions with Cryptowise </p>
+                <div className="flex justify-center items-center flex-col mb-10">
+                    <p className="text-6xl text-center font-bold leading-tight mb-8">Crypto is Expensive 🤑, Manage all transactions with Cryptowise </p>
+                    <div className="flex space-x-6 items-center">
+							<Chains />
+							<Account />
+						</div>
                 </div>
             </div>
             <div>
