@@ -174,7 +174,7 @@ const Profile: React.FC<ProfileProps> = ({
 																	? "+ "
 																	: ""}
 																{balance.toFixed(
-																	5
+																	2
 																)}{" "}
 																ETH
 															</span>

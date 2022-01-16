@@ -36,7 +36,9 @@ const Transactions = ({
 								<div
 									className={classnames(
 										"text-xl font-medium",
-										isDebited ? "text-orange" : "text-green"
+										isDebited
+											? "text-orange"
+											: " text-green"
 									)}
 								>
 									{isDebited ? "- " : "+ "}{" "}
