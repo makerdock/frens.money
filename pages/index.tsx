@@ -5,8 +5,8 @@ declare let window: any;
 
 const Dashboard: React.FC = () => {
 	return (
-		<div className="max-h-screen flex justify-center items-center">
-			<div className="max-w-7xl flex max-h-screen space-x-4 justify-center items-center font-urbanist py-12 pb-0">
+		<div className="flex justify-center items-center">
+			<div className="max-w-7xl flex space-x-4 justify-center items-center font-urbanist py-12 pb-0">
 				<Members />
 			</div>
 		</div>

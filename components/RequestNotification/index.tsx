@@ -1,5 +1,4 @@
 import React from "react";
-import moment from "moment";
 import human from "human-time";
 import Button from "../Button";
 

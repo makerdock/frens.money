@@ -11,6 +11,7 @@ import { useMoralisData } from "../../hooks/useMoralisData";
 import useTransactions from "../../hooks/useTransactions";
 import { getGroup, minimizeAddress } from "../../utils";
 import { db, firestoreCollections } from "../../utils/firebaseClient";
+import { TransactionQuery, useMoralisObject } from "../../utils/moralis-db";
 import { useEnsAddress } from "../../utils/useEnsAddress";
 
 declare let window: any;
@@ -50,6 +51,10 @@ const Profile: React.FC<ProfileProps> = ({
 			db
 				.collection(firestoreCollections.TRANSACTIONS)
 				.where("groupId", "==", group?.id)
+	);
+
+	const [moralisSnapshot] = useMoralisObject(
+		TransactionQuery.equalTo("groupId", group?.id)
 	);
 
 	const transactions: Transaction[] =
