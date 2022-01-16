@@ -134,12 +134,12 @@ export const useMoralisObject = (
 		fetch();
 	}, [query]);
 
-	useEffect(() => {
-		const unsubscribe = setSubscription();
-		return () => {
-			unsubscribe.then((callback) => callback());
-		};
-	}, []);
+	// useEffect(() => {
+	// 	const unsubscribe = setSubscription();
+	// 	return () => {
+	// 		unsubscribe.then((callback) => callback());
+	// 	};
+	// }, []);
 
 	return [snapshot];
 };
