@@ -30,12 +30,12 @@ module.exports = {
                 purple: '#7b61ff',
                 'dark-yellow': '#ffd233',
                 orange: '#ff7b5f',
-                'dark-grey': '#231f20',
                 'light-blue': '#dfeaef',
                 'grey': ['#f9f9fb', '#e6e7e8', '#c4c4c4'],
                 white: '#ffffff',
-                'dark-black': '#16161e'
-
+                'dark-gray': '#16161e',
+                'light-gray': '#1e1e24',
+                'sea-green': '#15FFAB',
             },
         },
         fontFamily: {
