@@ -3,6 +3,7 @@ import Blockies from "react-blockies";
 import { useCollection } from "react-firebase-hooks/firestore";
 import ImportTransaction from "../../components/ImportTransaction";
 import PaymentSection from "../../components/PaymentSection";
+import RequestNotification from "../../components/RequestNotification";
 import RequestSection from "../../components/RequestSection";
 import Transactions from "../../components/Transactions";
 import { Group, Transaction } from "../../contracts";
@@ -243,6 +244,9 @@ const Profile: React.FC<ProfileProps> = ({
 									{selectedSection === "request" && (
 										<RequestSection />
 									)}
+								</div>
+								<div className="mt-6">
+									<RequestNotification />
 								</div>
 							</div>
 						</section>

@@ -14,7 +14,7 @@ const Button: React.FC<IButton> = ({
 	...props
 }) => {
 	const selectedSize = {
-		sm: " px-6 py-2 text-sm ",
+		sm: " px-5 py-2 text-sm ",
 		lg: " px-6 py-3 text-lg ",
 	};
 
