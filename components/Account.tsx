@@ -84,7 +84,9 @@ function Account() {
 							<img src={avatar} className="h-6 w-6 rounded-lg" />
 						)}
 						{!avatar && <Blockie currentWallet scale={3} />}
-						<p>{ensAddress || getEllipsisTxt(account, 6)}</p>
+						<p className="my-0">
+							{ensAddress || getEllipsisTxt(account, 6)}
+						</p>
 						<ChevronDownIcon
 							className="-mr-1 ml-2 h-5 w-5"
 							aria-hidden="true"
@@ -103,85 +105,6 @@ function Account() {
 				>
 					<Menu.Items className="origin-top-right absolute right-0 mt-2 w-56 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 focus:outline-none z-20">
 						<div className="py-1 z-20">
-							{/* <Menu.Item>
-								{({ active }) => (
-									<a
-										className={classNames(
-											active
-												? "bg-gray-100 text-gray-900"
-												: "text-gray-700",
-											"block px-4 py-2 text-sm"
-										)}
-									>
-										<Link href={`/${account}`}>
-											Checkout your page
-										</Link>
-									</a>
-								)}
-							</Menu.Item>
-							<div className="block md:hidden">
-								{chainId == "0x1" && (
-									<Menu.Item>
-										{({ active }) => (
-											<a
-												onClick={() =>
-													switchNetwork("0x89")
-												}
-												className={classNames(
-													active
-														? "bg-gray-100 text-gray-900"
-														: "text-gray-700",
-													"block px-4 py-2 text-sm"
-												)}
-											>
-												Switch to Polygon
-											</a>
-										)}
-									</Menu.Item>
-								)}
-
-								{chainId !== "0x1" && (
-									<Menu.Item>
-										{({ active }) => (
-											<a
-												onClick={() =>
-													switchNetwork("0x1")
-												}
-												className={classNames(
-													active
-														? "bg-gray-100 text-gray-900"
-														: "text-gray-700",
-													"block px-4 py-2 text-sm"
-												)}
-											>
-												Switch to Ethereum
-											</a>
-										)}
-									</Menu.Item>
-								)}
-							</div>
-
-							<Menu.Item>
-								{({ active }) => (
-									<a
-										href={`${getExplorer(
-											chainId
-										)}address/${account}`}
-										target="_blank"
-										rel="noreferrer"
-										className={classNames(
-											active
-												? "bg-gray-100 text-gray-900"
-												: "text-gray-700",
-											"block px-4 py-2 text-sm"
-										)}
-									>
-										{chainId === "0x1"
-											? "View on Etherscan"
-											: "View on PolygonScan"}
-									</a>
-								)}
-							</Menu.Item> */}
 							<Menu.Item>
 								{({ active }) => (
 									<button

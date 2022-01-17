@@ -1,96 +1,67 @@
-import React, { useEffect, useState } from "react";
-import { useMoralisData } from "../../hooks/useMoralisData";
-import axios from "axios";
-import { useRouter } from "next/router";
-import { useCollection } from "react-firebase-hooks/firestore";
-import { db, firestoreCollections } from "../../utils/firebaseClient";
-import { Group } from "../../contracts";
-import Account from "../Account";
-import Chains from "../Chains";
 import Image from "next/image";
-import wallet from "../../assets/Wallet.svg";
+import { useRouter } from "next/router";
+import React, { useEffect, useState } from "react";
+import toast from "react-hot-toast";
+import { AuthenticateOptions } from "react-moralis/lib/hooks/core/useMoralis/_useMoralisAuth";
 import illustration from "../../assets/illustration.png";
+import wallet from "../../assets/Wallet.svg";
+import { useMoralisData } from "../../hooks/useMoralisData";
 import Button from "../Button";
-import { GroupQuery, useMoralisObject } from "../../utils/moralis-db";
 
 const Members = () => {
 	// state to store array of addresses
 
-	const { account } = useMoralisData();
 	const router = useRouter();
-	const [members, setMembers] = useState([]);
-	const [address, setAddress] = useState("");
 	const [loading, setLoading] = useState(false);
 
-	const [snapshot] = useCollection(
-		account &&
-			db
-				.collection(firestoreCollections.GROUPS)
-				.where("members", "array-contains", account)
-	);
+	const {
+		authenticate,
+		isAuthenticated,
+		account: walletAddress,
+		user,
+	} = useMoralisData();
 
-	const [moralisSnapshot] = useMoralisObject(
-		GroupQuery.equalTo("members", account)
-	);
+	const queriedAddress = user?.get("ethAddress");
+	const account = walletAddress ?? queriedAddress;
 
-	console.log({ account, members }, members.length);
-
-	const canAddNewMembers =
-		!!members.length && members[members.length - 1]?.trim().length > 0;
-
-	const handleInputChange = (e, index) => {
-		const newMembers = [...members];
-
-		newMembers[index] = e.target.value;
-		console.log(newMembers);
-		setMembers(newMembers);
-	};
-
-	const handleAddMember = () => {
-		if (!canAddNewMembers) return;
-		const newMembers = [...members];
-		newMembers.push(address);
-		setMembers(newMembers);
-		setAddress("");
-	};
-
-	const handleDeleteMember = (index) => {
-		const newMembers = [...members];
-		newMembers.splice(index, 1);
-		setMembers(newMembers);
-	};
-
-	const handleCreateGroup = async () => {
+	const handleAuth = async () => {
 		try {
 			setLoading(true);
+			const options: AuthenticateOptions = {
+				signingMessage: `
+					Get your audience support with crypto!\n
+					With BuyMeACryptoCoffee your audience can support you with cryptocurrency.\n
+					How does it work?\n
+					- Supporter connects their Wallet on Crypto Coffee
+					- They enter their favorite creator’s wallet address and donate crypto.
+					- Creators can create their own crypto coffee page and share with their audience too
+				`,
+				chainId: process.env.NODE_ENV === "development" ? 4 : 1,
+			};
 
-			const group = await axios.post("/api/group/create", {
-				members,
-			});
-			router.push(`/groups/${group.data.id}`);
-			console.log(group);
+			if (!(window as any).ethereum) {
+				options.provider = "walletconnect";
+			}
+
+			await authenticate(options);
+
+			router.push("/dashboard");
 		} catch (error) {
 			console.error(error);
+			toast.error(error.message);
 		} finally {
 			setLoading(false);
 		}
 	};
 
-	const isWalletConnected = async () => {
-		if (account) {
-			router.push(`/dashboard`);
-		}
-	};
-
-	const cleanedGroups =
-		snapshot?.docs.map((doc) => doc.data() as Group) ?? [];
-
 	useEffect(() => {
-		setMembers([account]);
-	}, [account]);
+		if (isAuthenticated) {
+			router.push("/dashboard");
+		}
+	}, [isAuthenticated]);
 
 	return (
-		<div className="w-full h-full flex justify-between items-center flex-col">
+		<div className="w-full min-h-full flex justify-between items-center flex-col">
 			<div>
 				<div className="flex justify-center items-center mb-8">
 					<Image src={wallet} />
@@ -102,9 +73,13 @@ const Members = () => {
 						Cryptowise{" "}
 					</p>
 					<div className="flex space-x-6 items-center">
-						<Button onClick={isWalletConnected}>
-							<Account />
-						</Button>
+						{!loading && (
+							<Button size="lg" onClick={handleAuth}>
+								Connect your wallet
+							</Button>
+						)}
+
+						{!!loading && <span>loading...</span>}
 					</div>
 				</div>
 			</div>
