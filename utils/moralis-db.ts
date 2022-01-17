@@ -6,6 +6,19 @@ import {
 	Transaction as SplitTransaction,
 } from "../contracts";
 
+// let client = new LiveQueryClient({
+// 	applicationId: "",
+// 	serverURL: "",
+// 	javascriptKey: "",
+// 	masterKey: "",
+// });
+
+const appId = process.env.NEXT_PUBLIC_MORALIS_APPLICATION_ID;
+const serverUrl = process.env.NEXT_PUBLIC_MORALIS_SERVER_URL;
+
+Moralis.initialize(appId);
+Moralis.serverURL = serverUrl;
+
 export const Transaction = Moralis.Object.extend("transaction");
 export const Group = Moralis.Object.extend("group");
 
@@ -123,6 +136,8 @@ export const useMoralisObject = (
 	};
 
 	const setSubscription = async () => {
+		// client.open();
+		// query.o
 		let subscription = await query.subscribe();
 		subscription.on("create", (res) => {
 			setSnapshot([...snapshot, res]);
@@ -134,12 +149,12 @@ export const useMoralisObject = (
 		fetch();
 	}, [query]);
 
-	// useEffect(() => {
-	// 	const unsubscribe = setSubscription();
-	// 	return () => {
-	// 		unsubscribe.then((callback) => callback());
-	// 	};
-	// }, []);
+	useEffect(() => {
+		const unsubscribe = setSubscription();
+		// return () => {
+		// 	unsubscribe.then((callback) => callback());
+		// };
+	}, []);
 
 	return [snapshot];
 };
