@@ -6,7 +6,7 @@ import Loader from "../Loader";
 
 interface AddressInputProps {
 	defaultValue?: string;
-	onChange?: (value: string) => void;
+	onChange?: (address: string, ens?: string) => void;
 }
 const AddressInput: React.FC<AddressInputProps> = ({
 	defaultValue,
@@ -43,12 +43,12 @@ const AddressInput: React.FC<AddressInputProps> = ({
 	}, [editable]);
 
 	useEffect(() => {
-		if (!error) onChange(address);
+		if (!error) onChange(address, ensAddress);
 		if (error) onChange("");
 	}, [address, error]);
 
 	return (
-		<div className="relative w-full">
+		<div className="relative w-83.5">
 			<div className="mt-1 relative w-full">
 				{editable && (
 					<input
@@ -62,7 +62,7 @@ const AddressInput: React.FC<AddressInputProps> = ({
 							error &&
 								"border border-red-500 ring-red-500 focus:ring-red-500 focus:border-red-500 ring-1",
 							!error &&
-								"border border-solid border-gray-600 border-opacity-20 focus:ring-indigo-500 focus:border-indigo-500"
+								"border border-solid border-white border-opacity-20 focus:ring-indigo-500 focus:border-indigo-500"
 						)}
 						placeholder="Your fren's wallet address"
 					/>
@@ -71,12 +71,12 @@ const AddressInput: React.FC<AddressInputProps> = ({
 				{!editable && (
 					<div
 						onClick={() => setEditable(true)}
-						className="flex h-10 items-center bg-white bg-opacity-10 border border-solid border-gray-600 border-opacity-20 rounded-md relative cursor-pointer hover:bg-gray-50"
+						className="flex h-10 items-center bg-white bg-opacity-10 border border-solid border-white border-opacity-20 rounded-md relative cursor-pointer hover:bg-opacity-30"
 					>
 						{avatar && (
 							<img className="h-10 w-10" src={avatar} alt="" />
 						)}
-						<div className="text-black px-2 truncate w-full">
+						<div className=" px-2 truncate w-full">
 							{ensAddress || address}
 						</div>
 						<span className="absolute right-4 top-1/2 -translate-y-1/2 transform text-sm text-gray-400">

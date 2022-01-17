@@ -1,7 +1,5 @@
-import { useMoralisData } from "./../hooks/useMoralisData";
 import { ethers } from "ethers";
-import { Group, Transaction, User } from "../contracts";
-import { validateAndResolveAddress } from "./crypto";
+import { Group, Transaction } from "../contracts";
 import { db, firestoreCollections } from "./firebaseClient";
 
 export const createGroup = async (
@@ -30,6 +28,17 @@ export const getGroup = async (id: string): Promise<Group | null> => {
 	if (!group.exists) return null;
 
 	return group.data() as Group;
+};
+
+export const getGroupByPerson = async (walletAddress: string, senderAddress: string): Promise<Group | null> => {
+	const groupRef = db.collection(firestoreCollections.GROUPS)
+		.where('members', 'in', [[walletAddress, senderAddress]]);
+
+	const group = await groupRef.get();
+
+	if (group.empty) return null;
+
+	return group.docs[0].data() as Group;
 };
 
 // export const getUser = async (

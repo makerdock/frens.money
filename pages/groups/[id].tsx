@@ -1,7 +1,7 @@
-import React, { useState } from "react";
+import { useRouter } from "next/router";
+import React, { useEffect, useState } from "react";
 import Blockies from "react-blockies";
 import { useCollection } from "react-firebase-hooks/firestore";
-import ImportTransaction from "../../components/ImportTransaction";
 import PaymentSection from "../../components/PaymentSection";
 import RequestNotification from "../../components/RequestNotification";
 import RequestSection from "../../components/RequestSection";
@@ -9,21 +9,21 @@ import Transactions from "../../components/Transactions";
 import { Group, Transaction } from "../../contracts";
 import { useMoralisData } from "../../hooks/useMoralisData";
 import useTransactions from "../../hooks/useTransactions";
-import { getGroup, minimizeAddress } from "../../utils";
+import { getGroupByPerson, minimizeAddress } from "../../utils";
 import { db, firestoreCollections } from "../../utils/firebaseClient";
 import { TransactionQuery, useMoralisObject } from "../../utils/moralis-db";
-import { useEnsAddress } from "../../utils/useEnsAddress";
+import { fetchEnsAddress, useEnsAddress } from "../../utils/useEnsAddress";
 
 declare let window: any;
 
-export const getServerSideProps = async (req, res) => {
-	const group = await getGroup(req.query.id);
-	return {
-		props: {
-			group,
-		},
-	};
-};
+// export const getServerSideProps = async (req, res) => {
+// 	const group = await getGroup(req.query.id);
+// 	return {
+// 		props: {
+// 			group,
+// 		},
+// 	};
+// };
 
 export interface ProfileProps {
 	transactions: Transaction[];
@@ -38,10 +38,13 @@ const Profile: React.FC<ProfileProps> = ({
 	profileAddress,
 	ens,
 	avatar: defaultAvatar,
-	group,
+	// group,
 }) => {
+	const router = useRouter();
+	const otherPersonAccount = router.query.id?.toString();
+	const [group, setGroup] = useState<Group>();
 	const { account } = useMoralisData();
-	const { address, avatar, error, name } = useEnsAddress(account);
+	const { address, avatar, error, name } = useEnsAddress(otherPersonAccount);
 	const [selectedSection, setSelectedSection] = useState<"pay" | "request">(
 		"pay"
 	);
@@ -90,6 +93,36 @@ const Profile: React.FC<ProfileProps> = ({
 
 	const userName = name || minimizeAddress(address);
 
+	const fetchGroupData = async () => {
+		let friendAddress = router.query.id;
+
+		if (!friendAddress) {
+			return;
+		}
+
+		friendAddress = friendAddress.toString();
+
+		const selfWalletAddress = address;
+
+		if (friendAddress.includes(".")) {
+			const response = await fetchEnsAddress(friendAddress);
+			friendAddress = response.address;
+		}
+
+		if (friendAddress && selfWalletAddress) {
+			const data = await getGroupByPerson(
+				friendAddress,
+				selfWalletAddress
+			);
+
+			setGroup(data);
+		}
+	};
+
+	useEffect(() => {
+		fetchGroupData();
+	}, []);
+
 	return (
 		<>
 			<div className="min-h-screen">
@@ -119,13 +152,9 @@ const Profile: React.FC<ProfileProps> = ({
 													{userName}{" "}
 												</h1>
 												<span className="text-sm">
-													{`(${group?.members
-														.map((member) =>
-															minimizeAddress(
-																member
-															)
-														)
-														.join(", ")})`}
+													{`(${minimizeAddress(
+														address
+													)})`}
 												</span>
 											</div>
 										</div>
