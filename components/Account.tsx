@@ -1,17 +1,17 @@
 import { Menu, Transition } from "@headlessui/react";
 import { ChevronDownIcon } from "@heroicons/react/solid";
-import Link from "next/link";
-import { Fragment, useState } from "react";
+import { useRouter } from "next/router";
+import { Fragment, useEffect, useState } from "react";
 import toast from "react-hot-toast";
 import { AuthenticateOptions } from "react-moralis/lib/hooks/core/useMoralis/_useMoralisAuth";
 import { getEllipsisTxt } from "../helpers/formatters";
-import { getExplorer } from "../helpers/networks";
 import { useMoralisData } from "../hooks/useMoralisData";
 import { useEnsAddress } from "../utils/useEnsAddress";
 import Blockie from "./Blockie";
 import Loader from "./Loader";
 
 function Account() {
+	const router = useRouter();
 	const {
 		authenticate,
 		isAuthenticated,
@@ -54,6 +54,12 @@ function Account() {
 			setLoading(false);
 		}
 	};
+
+	useEffect(() => {
+		if (!isAuthenticated && !loading) {
+			router.push("/");
+		}
+	}, [isAuthenticated, loading, router]);
 
 	if (loading) {
 		return (

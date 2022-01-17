@@ -15,16 +15,6 @@ import { TransactionQuery, useMoralisObject } from "../../utils/moralis-db";
 import { fetchEnsAddress, useEnsAddress } from "../../utils/useEnsAddress";
 
 declare let window: any;
-
-// export const getServerSideProps = async (req, res) => {
-// 	const group = await getGroup(req.query.id);
-// 	return {
-// 		props: {
-// 			group,
-// 		},
-// 	};
-// };
-
 export interface ProfileProps {
 	transactions: Transaction[];
 	profileAddress: string;
