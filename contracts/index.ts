@@ -14,6 +14,7 @@ export class Transaction {
 	amount: number = 0;
 	createdAt: number | null = null;
 	message: string = "";
+	gas: number = 0;
 }
 
 export interface TransactionLog {

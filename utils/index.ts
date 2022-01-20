@@ -1,5 +1,5 @@
 import { ethers } from "ethers";
-import { Group, Transaction } from "../contracts";
+import { Group, Transaction, TransactionLog } from "../contracts";
 import { db, firestoreCollections } from "./firebaseClient";
 
 export const createGroup = async (
@@ -172,6 +172,31 @@ export const importTransaction = async (
 	await saveTransaction({ ...transaction });
 };
 
-// export const getDueAmount = (): number => {
+export const importTransactionLog = async (
+	transaction: TransactionLog,
+	group: Group
+): Promise<void> => {
+	const transactionLog = new Transaction();
 
-// }
+	transactionLog.id = transaction.txId;
+	transactionLog.from = transaction.from;
+	transactionLog.to = transaction.to;
+	transactionLog.amount = transaction.amount;
+	transactionLog.createdAt = transaction.createdAt;
+	transactionLog.groupId = group.id;
+	transactionLog.gas = transaction.gas;
+	transactionLog.message =
+		transaction.message === "0x" ? "" : transaction.message;
+
+	const tx = await db
+		.collection(firestoreCollections.TRANSACTIONS)
+		.where("id", "==", transactionLog.id)
+		.where("groupId", "==", group.id)
+		.get();
+
+	if (!tx.empty) throw new Error("Transaction already imported");
+
+	return db
+		.doc(`${firestoreCollections.TRANSACTIONS}/${transactionLog.id}`)
+		.set({ ...transactionLog });
+};

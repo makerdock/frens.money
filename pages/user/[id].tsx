@@ -26,12 +26,13 @@ export interface ProfileProps {
 const UserPage: React.FC<ProfileProps> = ({
 	transactions: allTransactions,
 	profileAddress,
-	ens,
 	avatar: defaultAvatar,
 	// group,
 }) => {
 	const router = useRouter();
 	const otherPersonAccount = router.query.id?.toString()?.toLowerCase();
+	const { address: otherAddress, name: ens } =
+		useEnsAddress(otherPersonAccount);
 	const [group, setGroup] = useState<Group>();
 	const { account } = useMoralisData();
 	const { address, avatar, error, name } = useEnsAddress(otherPersonAccount);
@@ -85,7 +86,7 @@ const UserPage: React.FC<ProfileProps> = ({
 	const userName = name ?? minimizeAddress(address ?? otherPersonAccount);
 
 	const fetchGroupData = async () => {
-		let friendAddress: string = otherPersonAccount;
+		let friendAddress: string = otherPersonAccount ?? "";
 
 		if (friendAddress.includes(".")) {
 			const response = await fetchEnsAddress(friendAddress);
@@ -217,6 +218,7 @@ const UserPage: React.FC<ProfileProps> = ({
 								transactions={transactions}
 								account={account}
 								group={group}
+								friendAddress={otherAddress}
 							/>
 						</div>
 

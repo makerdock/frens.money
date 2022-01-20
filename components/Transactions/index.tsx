@@ -6,6 +6,8 @@ import { toast } from "react-toastify";
 import { Group, Transaction } from "../../contracts";
 import { importTransaction } from "../../utils";
 import Button from "../Button";
+import ImportTransactions from "./ImportTransactions";
+import TransactionLog from "./TransactionLog";
 
 // humanise datestring using intl
 // const humaniseDate = (date: Date) => {
@@ -16,14 +18,16 @@ const Transactions = ({
 	transactions,
 	account,
 	group,
+	friendAddress,
 }: {
 	transactions: Transaction[];
 	account: string;
 	group: Group;
+	friendAddress: string;
 }) => {
-	// state loading
+	const [importing, setImporting] = useState(false);
+
 	const [loading, setLoading] = useState(false);
-	// transaction id state
 	const [transactionId, setTransactionId] = useState("");
 
 	const handleImportTransaction = async () => {
@@ -42,7 +46,21 @@ const Transactions = ({
 
 	return (
 		<section aria-labelledby="notes-title">
-			<h3 className="text-2xl font-bold">Transactions</h3>
+			<h3 className="text-2xl font-bold flex items-center justify-between mb-6">
+				Transactions
+				{importing ? (
+					<Button onClick={() => setImporting(false)}>
+						Finish importing
+					</Button>
+				) : (
+					<Button onClick={() => setImporting(true)}>
+						<div className="h-4 w-4 mr-2">
+							<PlusIcon />
+						</div>
+						Import from Etherscan
+					</Button>
+				)}
+			</h3>
 			<div className="mt-1 flex items-center space-x-2">
 				<input
 					value={transactionId}
@@ -63,50 +81,19 @@ const Transactions = ({
 				</div>
 			</div>
 			<div className="bg-white mt-8 sm:rounded-lg sm:overflow-hidden">
-				<div>
-					{transactions
-						.sort((a, b) => b.createdAt - a.createdAt)
-						.map((txn) => {
-							const isDebited =
-								txn.from.toLowerCase() === account;
-
-							return (
-								<div
-									key={txn.id}
-									className="mb-4 hover:bg-gray-100 p-4 rounded-md -mx-4"
-								>
-									<div className=" text-gray-400 text-xs">
-										{moment(new Date(txn.createdAt)).format(
-											"DD MMM, YYYY"
-										)}
-									</div>
-
-									<div
-										className={classnames(
-											"text-xl font-medium",
-											isDebited
-												? "text-orange"
-												: " text-green"
-										)}
-									>
-										{isDebited ? "- " : "+ "}{" "}
-										{txn.amount.toPrecision(2)} ETH
-									</div>
-									{!!txn.message?.length && (
-										<div className="mt-1">
-											{txn.message}
-										</div>
-									)}
-
-									<div className="mt-1 text-gray-500">
-										{!!txn.message
-											? txn.message
-											: "Add Note"}
-									</div>
-								</div>
-							);
-						})}
-				</div>
+				{importing ? (
+					<ImportTransactions
+						transactions={transactions}
+						account={account}
+						friendAddress={friendAddress}
+						group={group}
+					/>
+				) : (
+					<TransactionLog
+						transactions={transactions}
+						account={account}
+					/>
+				)}
 			</div>
 		</section>
 	);
