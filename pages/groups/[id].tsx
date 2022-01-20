@@ -220,6 +220,8 @@ const Profile: React.FC<ProfileProps> = ({
 							<Transactions
 								transactions={transactions}
 								account={account}
+								group={group}
+								friendAddress={""}
 							/>
 						</div>
 
