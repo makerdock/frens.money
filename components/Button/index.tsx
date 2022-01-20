@@ -23,11 +23,19 @@ const Button: React.FC<IButton> = ({
 			type="button"
 			disabled={disabled || loading}
 			{...props}
-			className={`button-gradient inline-flex justify-center items-center ${selectedSize[size]} border-none text-sm font-medium rounded-md shadow-sm text-white `}
+			className={`button-gradient relative flex justify-center items-center ${selectedSize[size]} border-none text-sm font-medium rounded-md shadow-sm text-white`}
 		>
-			{loading ? (
+			<div
+				className={`${
+					loading
+						? "visible absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2"
+						: "hidden"
+				}`}
+			>
 				<svg
-					className="animate-spin h-5 w-5 text-white"
+					className={`animate-spin ${
+						size === "sm" ? "h-5 w-5" : "h-7 w-7"
+					} text-white`}
 					xmlns="http://www.w3.org/2000/svg"
 					fill="none"
 					viewBox="0 0 24 24"
@@ -46,9 +54,14 @@ const Button: React.FC<IButton> = ({
 						d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
 					></path>
 				</svg>
-			) : (
-				<>{children}</>
-			)}
+			</div>
+			<div
+				className={`flex items-center justify-center ${
+					loading ? "invisible" : "  "
+				}`}
+			>
+				{children}
+			</div>
 		</button>
 	);
 };

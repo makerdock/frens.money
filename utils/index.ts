@@ -6,6 +6,14 @@ export const createGroup = async (
 	members: string[],
 	creator: string
 ): Promise<Group> => {
+	const [user1, user2] = members;
+
+	const existingGroup = await getGroupByPerson(user1, user2);
+
+	if (existingGroup) {
+		return existingGroup;
+	}
+
 	const group = new Group();
 	group.members = members.map((m) => m.toLowerCase());
 	group.creator = creator;
@@ -30,15 +38,34 @@ export const getGroup = async (id: string): Promise<Group | null> => {
 	return group.data() as Group;
 };
 
-export const getGroupByPerson = async (walletAddress: string, senderAddress: string): Promise<Group | null> => {
-	const groupRef = db.collection(firestoreCollections.GROUPS)
-		.where('members', 'in', [[walletAddress, senderAddress]]);
+export const getGroupByPerson = async (
+	walletAddress: string,
+	senderAddress: string
+): Promise<Group | null> => {
+	console.log({ walletAddress, senderAddress });
+
+	const groupRef = db
+		.collection("groups")
+		.where("members", "array-contains", walletAddress);
 
 	const group = await groupRef.get();
 
+	console.log({ group });
+
 	if (group.empty) return null;
 
-	return group.docs[0].data() as Group;
+	const groupData = group.docs[0].data() as Group;
+
+	console.log({ groupData });
+
+	if (
+		groupData.members.includes(senderAddress.toLowerCase()) &&
+		groupData.members.includes(walletAddress.toLowerCase())
+	) {
+		return groupData;
+	}
+
+	return null;
 };
 
 // export const getUser = async (
@@ -93,13 +120,13 @@ export const importTransaction = async (
 	txId: string,
 	group: Group
 ): Promise<void> => {
-	// const tx = await db
-	// 	.collection(firestoreCollections.TRANSACTIONS)
-	// 	.where("id", "==", txId)
-	// 	.where("groupId", "==", group.id)
-	// 	.get();
+	const tx = await db
+		.collection(firestoreCollections.TRANSACTIONS)
+		.where("id", "==", txId)
+		.where("groupId", "==", group.id)
+		.get();
 
-	// if (!tx.empty) throw new Error("Transaction already imported");
+	if (!tx.empty) throw new Error("Transaction already imported");
 
 	const provider = new ethers.providers.Web3Provider(
 		(window as any).ethereum
@@ -144,3 +171,7 @@ export const importTransaction = async (
 
 	await saveTransaction({ ...transaction });
 };
+
+// export const getDueAmount = (): number => {
+
+// }

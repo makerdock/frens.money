@@ -58,7 +58,7 @@ export const useMoralisData = (): MoralisContextValue & {
 
 	return {
 		...moralis,
-		account: address,
+		account: address?.toLowerCase(),
 		user,
 		web3,
 		isMainnet,
