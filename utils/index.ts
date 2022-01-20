@@ -49,8 +49,7 @@ export const getGroupByPerson = async (
 		.where("members", "array-contains", walletAddress);
 
 	const group = await groupRef.get();
-
-	console.log({ group });
+	console.log(group.empty);
 
 	if (group.empty) return null;
 

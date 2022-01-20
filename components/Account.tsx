@@ -55,11 +55,11 @@ function Account() {
 		}
 	};
 
-	useEffect(() => {
-		if (!isAuthenticated && !loading) {
-			router.push("/");
-		}
-	}, [isAuthenticated, loading, router]);
+	// useEffect(() => {
+	// 	if (!isAuthenticated && !loading) {
+	// 		router.push("/");
+	// 	}
+	// }, [isAuthenticated, loading, router]);
 
 	if (loading) {
 		return (

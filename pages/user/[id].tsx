@@ -30,9 +30,14 @@ const UserPage: React.FC<ProfileProps> = ({
 	// group,
 }) => {
 	const router = useRouter();
-	const otherPersonAccount = router.query.id?.toString()?.toLowerCase();
-	const { address: otherAddress, name: ens } =
-		useEnsAddress(otherPersonAccount);
+	const queryAddress = router.query.id?.toString();
+
+	const { address: otherAddress, name: ens } = useEnsAddress(queryAddress);
+
+	const otherPersonAccount = queryAddress?.includes(".")
+		? otherAddress
+		: queryAddress?.toLowerCase();
+
 	const [group, setGroup] = useState<Group>();
 	const { account } = useMoralisData();
 	const { address, avatar, error, name } = useEnsAddress(otherPersonAccount);
@@ -86,7 +91,7 @@ const UserPage: React.FC<ProfileProps> = ({
 	const userName = name ?? minimizeAddress(address ?? otherPersonAccount);
 
 	const fetchGroupData = async () => {
-		let friendAddress: string = otherPersonAccount ?? "";
+		let friendAddress: string = otherPersonAccount?.toLowerCase() ?? "";
 
 		if (friendAddress.includes(".")) {
 			const response = await fetchEnsAddress(friendAddress);
@@ -102,9 +107,7 @@ const UserPage: React.FC<ProfileProps> = ({
 
 	useEffect(() => {
 		fetchGroupData();
-	}, [otherPersonAccount]);
-
-	console.log({ transactions });
+	}, [otherPersonAccount, account]);
 
 	return (
 		<>
@@ -342,45 +345,5 @@ const UserPage: React.FC<ProfileProps> = ({
 		</>
 	);
 };
-
-// export const getStaticProps: GetStaticProps = async (context) => {
-// 	const userAddress = context.params.id;
-
-// 	const mainnetEndpoint =
-// 		"https://speedy-nodes-nyc.moralis.io/d35afcfb3d409232f26629cd/eth/mainnet";
-// 	const provider = new ethers.providers.JsonRpcProvider(mainnetEndpoint);
-
-// 	const { address, name, avatar } = await validateAndResolveAddress(
-// 		userAddress.toString(),
-// 		provider
-// 	);
-
-// 	const transactionsResponse = await db
-// 		.collection("transactions")
-// 		.where("to", "==", address.toString().toLowerCase())
-// 		.get();
-
-// 	const transactions: Transaction[] = transactionsResponse.docs.map((doc) => {
-// 		const data = doc.data();
-// 		return {
-// 			...(data as Transaction),
-// 			id: doc.id,
-// 		};
-// 	});
-
-// 	return {
-// 		revalidate: 60,
-// 		props: {
-// 			transactions,
-// 			profileAddress: address,
-// 			ens: name,
-// 			avatar: avatar ?? "",
-// 		},
-// 	};
-// };
-
-// export async function getStaticPaths() {
-// 	return { paths: [], fallback: "blocking" };
-// }
 
 export default UserPage;
