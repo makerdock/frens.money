@@ -50,13 +50,15 @@ export const getGroupByPerson = async (
 
 	if (group.empty) return null;
 
-	const groupData = group.docs[0].data() as Group;
+	const groupData = group.docs.map((doc) => doc.data() as Group);
+	const currentGroup = groupData.find(
+		(group) =>
+			group.members.includes(senderAddress.toLowerCase()) &&
+			group.members.includes(walletAddress.toLowerCase())
+	);
 
-	if (
-		groupData.members.includes(senderAddress.toLowerCase()) &&
-		groupData.members.includes(walletAddress.toLowerCase())
-	) {
-		return groupData;
+	if (currentGroup) {
+		return currentGroup;
 	}
 
 	return null;

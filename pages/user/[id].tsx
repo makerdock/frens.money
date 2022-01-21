@@ -42,7 +42,11 @@ const UserPage: React.FC<ProfileProps> = ({
 	const router = useRouter();
 	const queryAddress = router.query.id?.toString();
 
+	console.log({ queryAddress });
+
 	const { address: otherAddress, name: ens } = useEnsAddress(queryAddress);
+
+	console.log({ otherAddress });
 
 	const otherPersonAccount = queryAddress?.includes(".")
 		? otherAddress
@@ -126,8 +130,12 @@ const UserPage: React.FC<ProfileProps> = ({
 			friendAddress = response.address.toLowerCase();
 		}
 
+		console.log({ friendAddress });
+
 		if (friendAddress && account) {
 			const data = await getGroupByPerson(friendAddress, account);
+
+			console.log({ data });
 
 			setGroup(data);
 		}
@@ -155,7 +163,7 @@ const UserPage: React.FC<ProfileProps> = ({
 
 	useEffect(() => {
 		fetchGroupData();
-	}, [otherPersonAccount, account]);
+	}, [otherAddress, account]);
 
 	const balanceAmount =
 		memberBalance?.[account?.toLowerCase()]?.[otherAddress.toLowerCase()] ??
