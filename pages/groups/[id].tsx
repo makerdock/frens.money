@@ -144,7 +144,8 @@ const UserPage: React.FC<ProfileProps> = ({
 				group,
 				NotificationTypes.RequestToSettle,
 				balance,
-				otherAddress?.toLowerCase()
+				otherAddress?.toLowerCase(),
+				"Hey! Paisa lautau"
 			);
 			toast.success("Request sent");
 		} catch (error) {

@@ -71,7 +71,8 @@ const RequestSection = ({ group }: { group: Group }) => {
 				group,
 				NotificationTypes.Request,
 				price,
-				otherAddress?.toLowerCase()
+				otherAddress?.toLowerCase(),
+				message
 			);
 			toast.success("Request sent successfully");
 

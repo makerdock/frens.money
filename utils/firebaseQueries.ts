@@ -151,7 +151,8 @@ export const createNotification = async (
 	group: Group,
 	type: NotificationTypes,
 	amount: number,
-	recipient: string
+	recipient: string,
+	message: string
 ) => {
 	const notification: Notification = {
 		...new Notification(),
@@ -159,6 +160,7 @@ export const createNotification = async (
 		type,
 		groupId: group.id,
 		recipient,
+		message,
 	};
 
 	const notificationRef = db

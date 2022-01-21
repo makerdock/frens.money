@@ -66,4 +66,5 @@ export class Notification {
 	id: string = "";
 	recipient: string = "";
 	timestamp: number = new Date().getTime();
+	message: string = "";
 }
