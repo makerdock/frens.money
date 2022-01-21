@@ -41,12 +41,19 @@ const NFTModal = ({
 				message: `We bought a NFT together and split it among ${split} of us.`,
 			});
 			setAddNftTransactionModal(false);
+			resetData();
 			toast.success("Transaction imported successfully");
 		} catch (error) {
 			console.error(error);
 			toast.error(error.message);
 		} finally {
 		}
+	};
+
+	const resetData = () => {
+		setTransactionId("");
+		setSplit(1);
+		setTransaction(null);
 	};
 
 	const amount = transaction?.amount ?? 0;
@@ -63,7 +70,10 @@ const NFTModal = ({
 		<Modal
 			width="w-2/5"
 			open={addNftTransactionModal}
-			onClose={() => setAddNftTransactionModal(false)}
+			onClose={() => {
+				setAddNftTransactionModal(false);
+				resetData();
+			}}
 			title="Add NFT Transaction"
 			onOk={handleFinalNFTTransaction}
 			okText="Add"
