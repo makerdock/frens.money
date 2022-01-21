@@ -92,9 +92,9 @@ const ImportTransactions = ({
 								>
 									<div>
 										{isDebited ? "- " : "+ "}
-										{(Number(txn.amount) + txn.gas).toFixed(
-											5
-										)}
+										{(
+											Number(txn.amount) + txn.gas
+										).toPrecision(3)}
 										<span className="ml-2">ETH</span>
 									</div>
 									{!isImported ? (
@@ -121,13 +121,13 @@ const ImportTransactions = ({
 									)}
 								</div>
 								{/* <div className="text-sm text-gray-400 space-x-4">
-									<span>+{txn.amount.toFixed(5)} ETH</span>
+									<span>+{txn.amount.toPrecision(3)} ETH</span>
 								</div>
 								<div className="text-sm text-gray-400 space-x-4">
 									<span></span>
 								</div> */}
 								<span className="text-xs ml-4">
-									Gas: {`${txn.gas.toFixed(5)} ETH`}
+									Gas: {`${txn.gas.toPrecision(3)} ETH`}
 								</span>
 								{!!txn.message?.length && (
 									<div className="mt-1">{txn.message}</div>

@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import TransactionLog from "./TransactionLog";
 
 const TransactionLogList = ({ transactions, account }) => {
-	const [skipped, setSkipped] = useState(false);
+	const [skipped, setSkipped] = useState(true);
 
 	return (
 		<div>

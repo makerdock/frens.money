@@ -43,7 +43,7 @@ const useTransactions = (
 			message: transaction.input === "0x" ? "" : transaction.input,
 			createdAt: new Date(transaction.block_timestamp).getTime(),
 			fromBlock: parseInt(transaction.block_number, 10),
-			gas: parseFloat(gasAmount.toFixed(5)),
+			gas: parseFloat(gasAmount.toPrecision(3)),
 		};
 	});
 

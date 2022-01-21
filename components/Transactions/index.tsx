@@ -61,7 +61,7 @@ const Transactions = ({
 					</Button>
 				) : (
 					<div className="flex items-center space-x-2">
-						{/* <Button
+						<Button
 							variant="secondary"
 							onClick={() => setAddNftTransactionModal(true)}
 						>
@@ -69,7 +69,7 @@ const Transactions = ({
 								<PlusIcon />
 							</div>
 							Add NFT Transaction
-						</Button> */}
+						</Button>
 						<Button
 							variant="secondary"
 							onClick={() => setImporting(true)}
@@ -122,11 +122,11 @@ const Transactions = ({
 					</>
 				)}
 			</div>
-			{/* <NFTModal
+			<NFTModal
 				addNftTransactionModal={addNftTransactionModal}
 				setAddNftTransactionModal={setAddNftTransactionModal}
 				group={group}
-			/> */}
+			/>
 		</section>
 	);
 };

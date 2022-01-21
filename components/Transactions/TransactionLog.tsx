@@ -126,7 +126,8 @@ const TransactionLog = ({
 					isDebited ? "text-orange" : " text-green"
 				)}
 			>
-				{isDebited ? "- " : "+ "} {txn.amount.toPrecision(2)} ETH
+				{isDebited ? "- " : "+ "}{" "}
+				{(txn.amount + txn.gas).toPrecision(3)} ETH
 				{txn.skipped && (
 					<div className="text-sm px-2 py-1 bg-gray-200 text-gray-500 rounded-md ml-4">
 						Skipped

@@ -99,22 +99,26 @@ const UserPage: React.FC<ProfileProps> = ({
 			return balance;
 		}
 
-		const { from: fromAddress, to: toAddress, amount } = transaction;
+		const { from: fromAddress, to: toAddress, amount, gas } = transaction;
 		const from = fromAddress.toLowerCase();
 		const to = toAddress.toLowerCase();
 
+		console.log({ transaction });
+
 		balance[from] = {
 			...balance[from],
-			[to]: (balance[from]?.[to] ?? 0) + amount,
+			[to]: (balance[from]?.[to] ?? 0) + (amount + gas),
 		};
 
 		balance[to] = {
 			...balance[to],
-			[from]: (balance[to]?.[from] ?? 0) - amount,
+			[from]: (balance[to]?.[from] ?? 0) - (amount + gas),
 		};
 
 		return balance;
 	}, {});
+
+	console.log({ memberBalance });
 
 	const otherMember = group?.members.filter(
 		(member) => member !== account
@@ -140,13 +144,16 @@ const UserPage: React.FC<ProfileProps> = ({
 
 	const handleRequest = async () => {
 		try {
-			const balance = memberBalance[account.toLowerCase()];
+			const balance =
+				memberBalance[account.toLowerCase()][
+					otherAddress?.toLowerCase()
+				];
 
 			await createNotification(
 				group,
 				NotificationTypes.RequestToSettle,
-				0,
-				account
+				balance,
+				otherAddress?.toLowerCase()
 			);
 			toast.success("Request sent");
 		} catch (error) {
@@ -251,9 +258,9 @@ const UserPage: React.FC<ProfileProps> = ({
 																	: shouldPay
 																	? "+ "
 																	: ""}
-																{balance.toFixed(
-																	2
-																)}
+																{balance.toPrecision(
+																	3
+																)}{" "}
 																ETH
 															</span>
 														</div>

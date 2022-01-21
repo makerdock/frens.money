@@ -52,7 +52,7 @@ const RequestSection = ({}) => {
 			`${(nativeData.balance
 				? Number(nativeData.balance) / 10 ** 18
 				: 0
-			).toFixed(4)} MATIC`,
+			).toPrecision(3)} MATIC`,
 		name: nativeTokenName,
 		decimals: 18,
 		tokenAddress: null,

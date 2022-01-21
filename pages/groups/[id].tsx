@@ -193,7 +193,7 @@ const Profile: React.FC<ProfileProps> = ({
 																	: shouldPay
 																	? "+ "
 																	: ""}
-																{balance.toFixed(
+																{balance.toPrecision(
 																	2
 																)}{" "}
 																ETH
