@@ -38,8 +38,10 @@ const Note = ({ txn }: { txn: Transaction }) => {
 					value={note}
 					placeholder="Add note"
 					disabled={!editingToggle}
-					className={`w-full rounded-md border-gray-200 ${
-						editingToggle ? "bg-white" : "bg-transparent"
+					className={`w-full rounded-md border-none border-transparent outline-none -mx-2 p-2 ${
+						editingToggle
+							? "bg-white resize-y"
+							: "bg-transparent cursor-pointer resize-none"
 					}`}
 					onChange={(e) => setNote(e.target.value)}
 				/>

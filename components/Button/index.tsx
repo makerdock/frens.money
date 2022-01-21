@@ -30,7 +30,7 @@ const Button: React.FC<IButton> = ({
 		secondary: `
 		${
 			disabledButton ? "" : "hover:bg-gray-300"
-		} bg-gray-200 border-gray-500 text-gray-500 `,
+		} bg-gray-200 border-gray-500 text-gray-800 `,
 	};
 
 	return (

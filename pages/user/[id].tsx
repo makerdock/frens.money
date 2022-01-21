@@ -42,11 +42,7 @@ const UserPage: React.FC<ProfileProps> = ({
 	const router = useRouter();
 	const queryAddress = router.query.id?.toString();
 
-	console.log({ queryAddress });
-
 	const { address: otherAddress, name: ens } = useEnsAddress(queryAddress);
-
-	console.log({ otherAddress });
 
 	const otherPersonAccount = queryAddress?.includes(".")
 		? otherAddress
@@ -69,11 +65,11 @@ const UserPage: React.FC<ProfileProps> = ({
 	);
 	const [notificationSnapshot] = useCollection(
 		group?.id &&
-			address &&
+			account &&
 			db
 				.collection(firestoreCollections.NOTIFICATIONS)
 				.where("groupId", "==", group?.id)
-				.where("recipient", "==", account)
+				.where("recipient", "==", account.toLowerCase())
 				.where("closed", "==", false)
 	);
 
@@ -85,6 +81,7 @@ const UserPage: React.FC<ProfileProps> = ({
 		notificationSnapshot?.docs?.map((doc) => doc.data() as Notification) ??
 		[];
 
+	console.log({ notifications, account });
 	const transactions: Transaction[] =
 		(snapshot?.docs.map((doc) => doc.data() as Transaction) ?? []).sort(
 			(a, b) => a.createdAt - b.createdAt
@@ -130,12 +127,8 @@ const UserPage: React.FC<ProfileProps> = ({
 			friendAddress = response.address?.toLowerCase();
 		}
 
-		console.log({ friendAddress });
-
 		if (friendAddress && account) {
 			const data = await getGroupByPerson(friendAddress, account);
-
-			console.log({ data });
 
 			setGroup(data);
 		}
@@ -170,6 +163,8 @@ const UserPage: React.FC<ProfileProps> = ({
 		memberBalance?.[account?.toLowerCase()]?.[
 			otherAddress?.toLowerCase()
 		] ?? 0;
+
+	console.log({ group });
 
 	return (
 		<>
