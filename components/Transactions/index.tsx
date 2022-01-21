@@ -7,6 +7,8 @@ import { toast } from "react-toastify";
 import { Group, Transaction } from "../../contracts";
 import { importTransaction } from "../../utils";
 import Button from "../Button";
+import Modal from "../Modal";
+import NFTModal from "../NFTModal";
 import ImportTransactions from "./ImportTransactions";
 import TransactionLogList from "./TransactionLogList";
 
@@ -27,7 +29,7 @@ const Transactions = ({
 	friendAddress: string;
 }) => {
 	const [importing, setImporting] = useState(false);
-
+	const [addNftTransactionModal, setAddNftTransactionModal] = useState(false);
 	const [loading, setLoading] = useState(false);
 	const [transactionId, setTransactionId] = useState("");
 
@@ -58,15 +60,26 @@ const Transactions = ({
 						Finish importing
 					</Button>
 				) : (
-					<Button
-						variant="secondary"
-						onClick={() => setImporting(true)}
-					>
-						<div className="h-4 w-4 mr-2">
-							<PlusIcon />
-						</div>
-						Import from Etherscan
-					</Button>
+					<div className="flex items-center space-x-2">
+						{/* <Button
+							variant="secondary"
+							onClick={() => setAddNftTransactionModal(true)}
+						>
+							<div className="h-4 w-4 mr-2">
+								<PlusIcon />
+							</div>
+							Add NFT Transaction
+						</Button> */}
+						<Button
+							variant="secondary"
+							onClick={() => setImporting(true)}
+						>
+							<div className="h-4 w-4 mr-2">
+								<PlusIcon />
+							</div>
+							Import from Etherscan
+						</Button>
+					</div>
 				)}
 			</h3>
 			<div className="mt-1 flex items-center space-x-2">
@@ -109,6 +122,11 @@ const Transactions = ({
 					</>
 				)}
 			</div>
+			{/* <NFTModal
+				addNftTransactionModal={addNftTransactionModal}
+				setAddNftTransactionModal={setAddNftTransactionModal}
+				group={group}
+			/> */}
 		</section>
 	);
 };

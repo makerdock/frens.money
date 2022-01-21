@@ -119,6 +119,7 @@ export const importTransaction = async (
 	txId: string,
 	group: Group
 ): Promise<void> => {
+	console.log({ txId, group });
 	const tx = await db
 		.collection(firestoreCollections.TRANSACTIONS)
 		.where("id", "==", txId)
@@ -130,10 +131,14 @@ export const importTransaction = async (
 	const provider = new ethers.providers.Web3Provider(
 		(window as any).ethereum
 	);
-	const txn = await provider.getTransaction(txId);
+	console.log("hererere");
+	const txn = await provider.getTransaction(
+		"0xe2ff4958b6c1274c59159d226987426bc8a51806ffe09dfa42bf03799ecc0a3b"
+	);
+	console.log({ txn }, "hererere");
+	console.log("hererere awerqwer");
 	const block = await provider.getBlock(txn.blockNumber);
-
-	console.log({ txn, block });
+	console.log({ block });
 
 	if (!txn) {
 		throw new Error(
@@ -167,8 +172,8 @@ export const importTransaction = async (
 	transaction.createdAt = new Date().getTime();
 	transaction.groupId = group.id;
 	transaction.createdAt = block.timestamp * 1000;
-
-	await saveTransaction({ ...transaction });
+	console.log({ transaction });
+	// await saveTransaction({ ...transaction });
 };
 
 export const importTransactionLog = async (
