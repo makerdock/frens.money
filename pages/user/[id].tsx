@@ -183,7 +183,7 @@ const UserPage: React.FC<ProfileProps> = ({
 																</>
 															) : (
 																<>
-																	<span className="font-bold text-lg">
+																	<span className="font-bold mr-2 text-lg">
 																		{
 																			userName
 																		}
@@ -192,7 +192,7 @@ const UserPage: React.FC<ProfileProps> = ({
 																</>
 															)}
 															<span
-																className={`font-bold text-lg ${
+																className={`font-bold ml-2 text-lg ${
 																	shouldSkip
 																		? ""
 																		: shouldPay

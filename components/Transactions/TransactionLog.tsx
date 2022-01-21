@@ -7,6 +7,7 @@ import React, { Fragment, useState } from "react";
 import { toast } from "react-toastify";
 import { Transaction } from "../../contracts";
 import { deleteTransaction, hideTransaction } from "../../utils";
+import Note from "./Note";
 
 const TransactionLog = ({
 	txn,
@@ -132,7 +133,7 @@ const TransactionLog = ({
 			</div>
 
 			<div className="mt-1 text-gray-500">
-				{!!txn.message ? txn.message : "Add Note"}
+				<Note txn={txn} />
 			</div>
 		</div>
 	);

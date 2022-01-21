@@ -212,3 +212,9 @@ export const hideTransaction = async (
 export const deleteTransaction = async (txn: string): Promise<void> => {
 	await db.doc(`${firestoreCollections.TRANSACTIONS}/${txn}`).delete();
 };
+
+export const saveNote = async (txnId: string, message: string) => {
+	await db.doc(`${firestoreCollections.TRANSACTIONS}/${txnId}`).update({
+		message,
+	});
+};
