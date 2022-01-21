@@ -7,8 +7,10 @@ import { closeNotification } from "../../utils/firebaseQueries";
 
 const RequestNotification = ({
 	notification,
+	settleAmount,
 }: {
 	notification: Notification;
+	settleAmount: (amount: number) => void;
 }) => {
 	const handleClosed = async () => {
 		try {
@@ -17,6 +19,11 @@ const RequestNotification = ({
 			console.error(error);
 			toast.error(error.message);
 		}
+	};
+
+	const handleSettle = async () => {
+		settleAmount(notification.amount);
+		await handleClosed();
 	};
 
 	return (
@@ -47,7 +54,9 @@ const RequestNotification = ({
 					<div className="mr-4">
 						0xBhaisaab requested 0.05 ETH from you
 					</div>
-					<Button size="sm">Settle</Button>
+					<Button onClick={handleSettle} size="sm">
+						Settle
+					</Button>
 				</div>
 			</div>
 		</div>

@@ -2,7 +2,9 @@ import { useRouter } from "next/router";
 import React, { ReactText, useEffect, useState } from "react";
 import { useChain, useNativeBalance } from "react-moralis";
 import { toast } from "react-toastify";
+import { Group, Notification, NotificationTypes } from "../../contracts";
 import { useMoralisData } from "../../hooks/useMoralisData";
+import { createNotification } from "../../utils/firebaseQueries";
 import { tokenMetadata } from "../../utils/tokens";
 import Button from "../Button";
 
@@ -15,7 +17,7 @@ interface Token {
 	readonly logo?: string;
 }
 
-const RequestSection = ({}) => {
+const RequestSection = ({ group }: { group: Group }) => {
 	const { account: address, user, web3, chainId, sendTx } = useMoralisData();
 	const {
 		query: { id },
@@ -52,7 +54,7 @@ const RequestSection = ({}) => {
 			`${(nativeData.balance
 				? Number(nativeData.balance) / 10 ** 18
 				: 0
-			).toPrecision(3)} MATIC`,
+			).toPrecision(3)} ETH`,
 		name: nativeTokenName,
 		decimals: 18,
 		tokenAddress: null,
@@ -62,20 +64,15 @@ const RequestSection = ({}) => {
 	const handleRequest = async () => {
 		try {
 			setIsLoading(true);
-			// const tx = await sendTx(receiverAddress, price, message);
-			// toast.success(`Transaction sent! Tx hash: ${tx.hash}`);
-
-			// const newTx: Transaction = {
-			// 	...new Transaction(),
-			// 	id: tx.hash,
-			// 	groupId: String(id),
-			// 	from: address,
-			// 	to: receiverAddress,
-			// 	amount: price,
-			// 	createdAt: new Date().getTime(),
-			// };
-
-			// await saveTransaction(newTx);
+			await createNotification(
+				group,
+				NotificationTypes.Request,
+				price,
+				address
+			);
+			toast.success("Request sent successfully");
+			setMessage("");
+			setPrice(0);
 		} catch (error) {
 			if (error?.data?.message) {
 				toast.error(error.data.message);
@@ -89,6 +86,7 @@ const RequestSection = ({}) => {
 	const tokensArray: Token[] = [cleanedNativeTokens];
 
 	const disableRequestButton = isLoadingNative || isFetchingNative || !price;
+	console.log({ disableRequestButton, isLoading });
 
 	const selectedTokenData =
 		tokensArray.find((token) => token.name === selectedToken) ??

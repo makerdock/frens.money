@@ -55,6 +55,7 @@ const UserPage: React.FC<ProfileProps> = ({
 	const [selectedSection, setSelectedSection] = useState<"pay" | "request">(
 		"pay"
 	);
+	const [settleAmount, setSettleAmount] = useState<number>(0);
 
 	const [snapshot] = useCollection(
 		group?.id &&
@@ -166,6 +167,10 @@ const UserPage: React.FC<ProfileProps> = ({
 		fetchGroupData();
 	}, [otherPersonAccount, account]);
 
+	const balanceAmount =
+		memberBalance?.[account?.toLowerCase()]?.[otherAddress.toLowerCase()] ??
+		0;
+
 	return (
 		<>
 			<div className="min-h-screen">
@@ -269,12 +274,22 @@ const UserPage: React.FC<ProfileProps> = ({
 																onClick={
 																	handleRequest
 																}
-																className="bg-blue-600 border-2 border-blue-600 hover:border-blue-700 text-white px-3 py-0.5 rounded-md cursor-pointer hover:bg-blue-700 transition-all ease-in-out"
+																className="border-2 text-white bg-black px-3 py-0.5 rounded-md cursor-pointer transition-all ease-in-out"
 															>
 																Request
 															</div>
 														) : (
-															<div className="bg-white border-2 border-blue-600 hover:border-blue-700 text-blue-600 hover:text-white px-3 py-0.5 rounded-md cursor-pointer hover:bg-blue-700 transition-all ease-in-out">
+															<div
+																onClick={() => {
+																	setSelectedSection(
+																		"pay"
+																	);
+																	setSettleAmount(
+																		balanceAmount
+																	);
+																}}
+																className="bg-black text-white border-2 border-black px-3 py-0.5 rounded-md cursor-pointer transition-all ease-in-out"
+															>
 																Settle
 															</div>
 														)}
@@ -286,8 +301,6 @@ const UserPage: React.FC<ProfileProps> = ({
 								</div>
 							</div>
 							<div className="mt-8 border-b -mx-8 xs:hidden" />
-
-							{/* Comments*/}
 
 							<Transactions
 								transactions={transactions}
@@ -330,15 +343,22 @@ const UserPage: React.FC<ProfileProps> = ({
 										</div>
 									</div>
 									{selectedSection === "pay" && (
-										<PaymentSection />
+										<PaymentSection
+											propAmount={settleAmount}
+											settleAmount={setSettleAmount}
+										/>
 									)}
 									{selectedSection === "request" && (
-										<RequestSection />
+										<RequestSection group={group} />
 									)}
 								</div>
 								<div className="mt-6 space-y-2">
 									{notifications.map((notification) => (
 										<RequestNotification
+											settleAmount={(amount) => {
+												setSelectedSection("pay");
+												setSettleAmount(amount);
+											}}
 											notification={notification}
 											key={notification.id}
 										/>

@@ -17,7 +17,7 @@ interface Token {
 	readonly logo?: string;
 }
 
-const PaymentSection = ({}) => {
+const PaymentSection = ({ propAmount, settleAmount }) => {
 	const { account: address, user, web3, chainId, sendTx } = useMoralisData();
 	const {
 		query: { id },
@@ -113,6 +113,14 @@ const PaymentSection = ({}) => {
 			fetchBalances();
 		}
 	}, [address]);
+
+	useEffect(() => {
+		if (!!propAmount) {
+			setPrice(Math.abs(propAmount));
+			setMessage(`Sending you ${Math.abs(propAmount)} ETH`);
+			settleAmount(0);
+		}
+	}, [propAmount]);
 
 	return (
 		<div className="grid gap-6 w-full">
