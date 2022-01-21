@@ -53,3 +53,17 @@ export class User {
 // 	tokenDecimals: number = 0;
 // 	senderAvatar?: string = null;
 // }
+
+export enum NotificationTypes {
+	Request = "request",
+	RequestToSettle = "requestToSettle",
+}
+export class Notification {
+	type: NotificationTypes = NotificationTypes.Request;
+	amount: number;
+	closed: boolean = false;
+	groupId: string = "";
+	id: string = "";
+	recipient: string = "";
+	timestamp: number = new Date().getTime();
+}

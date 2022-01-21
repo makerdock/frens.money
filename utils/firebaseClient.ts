@@ -24,6 +24,7 @@ const storage = firebase.storage();
 export const firestoreCollections = {
 	GROUPS: "groups",
 	TRANSACTIONS: "transactions",
+	NOTIFICATIONS: "notifications",
 };
 
 export { db, storage };

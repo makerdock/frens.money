@@ -54,7 +54,7 @@ const PaymentSection = ({}) => {
 			`${(nativeData.balance
 				? Number(nativeData.balance) / 10 ** 18
 				: 0
-			).toFixed(4)} MATIC`,
+			).toFixed(4)} ETH`,
 		name: nativeTokenName,
 		decimals: 18,
 		tokenAddress: null,

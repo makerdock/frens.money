@@ -1,6 +1,7 @@
 import { ethers } from "ethers";
 import { Group, Transaction, TransactionLog } from "../contracts";
 import { db, firestoreCollections } from "./firebaseClient";
+import { saveTransaction } from "./firebaseQueries";
 
 export const minimizeAddress = (
 	address?: string,
@@ -31,9 +32,7 @@ export const importTransaction = async (
 		(window as any).ethereum
 	);
 	console.log("hererere");
-	const txn = await provider.getTransaction(
-		"0xe2ff4958b6c1274c59159d226987426bc8a51806ffe09dfa42bf03799ecc0a3b"
-	);
+	const txn = await provider.getTransaction(txId);
 	console.log({ txn }, "hererere");
 	console.log("hererere awerqwer");
 	const block = await provider.getBlock(txn.blockNumber);
@@ -72,5 +71,5 @@ export const importTransaction = async (
 	transaction.groupId = group.id;
 	transaction.createdAt = block.timestamp * 1000;
 	console.log({ transaction });
-	// await saveTransaction({ ...transaction });
+	await saveTransaction({ ...transaction });
 };

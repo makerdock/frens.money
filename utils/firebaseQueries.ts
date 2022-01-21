@@ -1,4 +1,5 @@
-import { Group, Transaction, TransactionLog } from "../contracts";
+import { NotificationTypes } from "./../contracts/index";
+import { Group, Notification, Transaction, TransactionLog } from "../contracts";
 import { db, firestoreCollections } from "./firebaseClient";
 
 export const createGroup = async (
@@ -148,4 +149,35 @@ export const saveNote = async (txnId: string, message: string) => {
 	await db.doc(`${firestoreCollections.TRANSACTIONS}/${txnId}`).update({
 		message,
 	});
+};
+
+export const createNotification = async (
+	group: Group,
+	type: NotificationTypes,
+	amount: number,
+	recipient: string
+) => {
+	const notification: Notification = {
+		...new Notification(),
+		amount,
+		type,
+		groupId: group.id,
+		recipient,
+	};
+
+	const notificationRef = db
+		.collection(firestoreCollections.NOTIFICATIONS)
+		.doc();
+
+	notification.id = notificationRef.id;
+
+	await notificationRef.set({ ...notification });
+};
+
+export const closeNotification = async (notificationId: string) => {
+	await db
+		.doc(`${firestoreCollections.NOTIFICATIONS}/${notificationId}`)
+		.update({
+			closed: true,
+		});
 };

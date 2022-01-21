@@ -2,16 +2,25 @@ import { useRouter } from "next/router";
 import React, { useEffect, useState } from "react";
 import Blockies from "react-blockies";
 import { useCollection } from "react-firebase-hooks/firestore";
+import { toast } from "react-toastify";
 import PaymentSection from "../../components/PaymentSection";
 import RequestNotification from "../../components/RequestNotification";
 import RequestSection from "../../components/RequestSection";
 import Transactions from "../../components/Transactions";
-import { Group, Transaction } from "../../contracts";
+import {
+	Group,
+	Notification,
+	NotificationTypes,
+	Transaction,
+} from "../../contracts";
 import { useMoralisData } from "../../hooks/useMoralisData";
 import useTransactions from "../../hooks/useTransactions";
 import { minimizeAddress } from "../../utils";
 import { db, firestoreCollections } from "../../utils/firebaseClient";
-import { getGroupByPerson } from "../../utils/firebaseQueries";
+import {
+	createNotification,
+	getGroupByPerson,
+} from "../../utils/firebaseQueries";
 import { TransactionQuery, useMoralisObject } from "../../utils/moralis-db";
 import { fetchEnsAddress, useEnsAddress } from "../../utils/useEnsAddress";
 
@@ -53,10 +62,29 @@ const UserPage: React.FC<ProfileProps> = ({
 				.collection(firestoreCollections.TRANSACTIONS)
 				.where("groupId", "==", group?.id)
 	);
-
+	const [notificationSnapshot] = useCollection(
+		group?.id &&
+			address &&
+			db
+				.collection(firestoreCollections.NOTIFICATIONS)
+				.where("groupId", "==", group?.id)
+				.where("recipient", "==", account)
+				.where("closed", "==", false)
+	);
+	console.log({
+		group: group?.id,
+		address: address?.toLowerCase(),
+		false: false,
+	});
 	const [moralisSnapshot] = useMoralisObject(
 		TransactionQuery.equalTo("groupId", group?.id)
 	);
+
+	const notifications: Notification[] =
+		notificationSnapshot?.docs?.map((doc) => doc.data() as Notification) ??
+		[];
+
+	console.log({ notifications });
 
 	const transactions: Transaction[] =
 		(snapshot?.docs.map((doc) => doc.data() as Transaction) ?? []).sort(
@@ -107,6 +135,23 @@ const UserPage: React.FC<ProfileProps> = ({
 			const data = await getGroupByPerson(friendAddress, account);
 
 			setGroup(data);
+		}
+	};
+
+	const handleRequest = async () => {
+		try {
+			const balance = memberBalance[account.toLowerCase()];
+
+			await createNotification(
+				group,
+				NotificationTypes.RequestToSettle,
+				0,
+				account
+			);
+			toast.success("Request sent");
+		} catch (error) {
+			console.error(error);
+			toast.error(error.message);
 		}
 	};
 
@@ -213,7 +258,12 @@ const UserPage: React.FC<ProfileProps> = ({
 															</span>
 														</div>
 														{shouldPay ? (
-															<div className="bg-blue-600 border-2 border-blue-600 hover:border-blue-700 text-white px-3 py-0.5 rounded-md cursor-pointer hover:bg-blue-700 transition-all ease-in-out">
+															<div
+																onClick={
+																	handleRequest
+																}
+																className="bg-blue-600 border-2 border-blue-600 hover:border-blue-700 text-white px-3 py-0.5 rounded-md cursor-pointer hover:bg-blue-700 transition-all ease-in-out"
+															>
 																Request
 															</div>
 														) : (
@@ -279,8 +329,13 @@ const UserPage: React.FC<ProfileProps> = ({
 										<RequestSection />
 									)}
 								</div>
-								<div className="mt-6">
-									{/* <RequestNotification /> */}
+								<div className="mt-6 space-y-2">
+									{notifications.map((notification) => (
+										<RequestNotification
+											notification={notification}
+											key={notification.id}
+										/>
+									))}
 								</div>
 							</div>
 						</section>

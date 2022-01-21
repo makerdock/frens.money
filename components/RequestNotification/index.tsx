@@ -1,14 +1,32 @@
 import React from "react";
 import human from "human-time";
 import Button from "../Button";
+import { Notification } from "../../contracts";
+import { toast } from "react-toastify";
+import { closeNotification } from "../../utils/firebaseQueries";
 
-const RequestNotification = () => {
+const RequestNotification = ({
+	notification,
+}: {
+	notification: Notification;
+}) => {
+	const handleClosed = async () => {
+		try {
+			await closeNotification(notification.id);
+		} catch (error) {
+			console.error(error);
+			toast.error(error.message);
+		}
+	};
+
 	return (
 		<div className="button-gradient p-0.5 rounded-lg">
 			<div className="bg-white rounded-md p-4 border-none">
 				<div className="w-full flex justify-between items-center">
-					<span className="text-gray-400">{human(new Date())}</span>
-					<span className="cursor-pointer">
+					<span className="text-gray-400">
+						{human(new Date(notification.timestamp))}
+					</span>
+					<span onClick={handleClosed} className="cursor-pointer">
 						<svg
 							xmlns="http://www.w3.org/2000/svg"
 							className="h-5 w-5"
