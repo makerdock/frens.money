@@ -12,6 +12,7 @@ const Button: React.FC<IButton> = ({
 	disabled,
 	loading,
 	size = "sm",
+	fullWidth,
 	variant = "primary",
 	...props
 }) => {
@@ -20,18 +21,34 @@ const Button: React.FC<IButton> = ({
 		lg: " px-6 py-3 text-lg ",
 	};
 
+	const disabledButton = disabled || loading;
+
 	const selectedVariant = {
-		primary: "button-gradient hover:opacity-80 text-white ",
-		secondary:
-			"hover:bg-gray-300 bg-gray-200 border-gray-500 text-gray-500 ",
+		primary: `button-gradient ${
+			disabledButton ? "" : "hover:opacity-80"
+		} text-white `,
+		secondary: `
+		${
+			disabledButton ? "" : "hover:bg-gray-300"
+		} bg-gray-200 border-gray-500 text-gray-500 `,
 	};
+
+	console.log({ disabledButton });
 
 	return (
 		<button
 			type="button"
 			disabled={disabled || loading}
 			{...props}
-			className={`border-none ${selectedVariant[variant]} opacity-100 transition-all ease-in-out relative flex justify-center items-center ${selectedSize[size]} text-sm font-medium rounded-md shadow-sm `}
+			className={` ${
+				disabled ? "opacity-30 pointer-events-none" : ""
+			} border-none ${
+				selectedVariant[variant]
+			} opacity-100 transition-all ease-in-out relative flex justify-center items-center ${
+				selectedSize[size]
+			} text-sm font-medium rounded-md shadow-sm ${
+				fullWidth ? "w-full" : ""
+			} `}
 		>
 			<div
 				className={`${

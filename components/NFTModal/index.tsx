@@ -77,6 +77,8 @@ const NFTModal = ({
 			title="Add NFT Transaction"
 			onOk={handleFinalNFTTransaction}
 			okText="Add"
+			disabled={!transactionId || loading || !transactionId.length}
+			loading={loading}
 		>
 			<div className="text-left space-y-4">
 				<label
@@ -93,7 +95,7 @@ const NFTModal = ({
 						name="text"
 						id="text"
 						className="shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full sm:text-sm border-gray-300 rounded-md"
-						placeholder="you@example.com"
+						placeholder="Transaction id of nft mint"
 					/>
 				</div>
 

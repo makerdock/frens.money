@@ -1,7 +1,7 @@
 /* This example requires Tailwind CSS v2.0+ */
-import { Fragment, useState } from "react";
 import { Dialog, Transition } from "@headlessui/react";
-import { CheckIcon } from "@heroicons/react/outline";
+import { Fragment } from "react";
+import Button from "../Button";
 
 interface IModal {
 	readonly open: boolean;
@@ -10,6 +10,8 @@ interface IModal {
 	readonly onOk: () => void;
 	readonly okText: string;
 	readonly width?: string;
+	readonly disabled?: boolean;
+	readonly loading?: boolean;
 }
 
 const Modal: React.FC<IModal> = ({
@@ -20,7 +22,10 @@ const Modal: React.FC<IModal> = ({
 	okText,
 	children,
 	width,
+	disabled,
+	loading,
 }) => {
+	console.log({ disabled });
 	return (
 		<Transition.Root show={open} as={Fragment}>
 			<Dialog
@@ -74,13 +79,17 @@ const Modal: React.FC<IModal> = ({
 								</div>
 							</div>
 							<div className="mt-5 sm:mt-6">
-								<button
+								<Button
+									loading={loading}
+									disabled={disabled}
 									type="button"
-									className="inline-flex justify-center w-full rounded-md border border-transparent shadow-sm px-4 py-2 bg-indigo-600 text-base font-medium text-white hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-cryptopurple sm:text-sm"
+									fullWidth
+									// className="w-full"
+									// className="inline-flex justify-center w-full rounded-md border border-transparent shadow-sm px-4 py-2 bg-indigo-600 text-base font-medium text-white hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-cryptopurple sm:text-sm"
 									onClick={onOk}
 								>
 									{okText}
-								</button>
+								</Button>
 							</div>
 						</div>
 					</Transition.Child>
