@@ -24,7 +24,7 @@ const PaymentSection = ({ propAmount, settleAmount }) => {
 		query: { id },
 	} = useRouter();
 
-	const { address: otherAddress, name: ens } = useEnsAddress(id.toString());
+	const { address: otherAddress, name: ens } = useEnsAddress(id?.toString());
 
 	const { switchNetwork } = useChain();
 

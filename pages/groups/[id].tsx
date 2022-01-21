@@ -2,16 +2,25 @@ import { useRouter } from "next/router";
 import React, { useEffect, useState } from "react";
 import Blockies from "react-blockies";
 import { useCollection } from "react-firebase-hooks/firestore";
+import { toast } from "react-toastify";
 import PaymentSection from "../../components/PaymentSection";
 import RequestNotification from "../../components/RequestNotification";
 import RequestSection from "../../components/RequestSection";
 import Transactions from "../../components/Transactions";
-import { Group, Transaction } from "../../contracts";
+import {
+	Group,
+	Notification,
+	NotificationTypes,
+	Transaction,
+} from "../../contracts";
 import { useMoralisData } from "../../hooks/useMoralisData";
 import useTransactions from "../../hooks/useTransactions";
 import { minimizeAddress } from "../../utils";
 import { db, firestoreCollections } from "../../utils/firebaseClient";
-import { getGroupByPerson } from "../../utils/firebaseQueries";
+import {
+	createNotification,
+	getGroupByPerson,
+} from "../../utils/firebaseQueries";
 import { TransactionQuery, useMoralisObject } from "../../utils/moralis-db";
 import { fetchEnsAddress, useEnsAddress } from "../../utils/useEnsAddress";
 
@@ -24,21 +33,29 @@ export interface ProfileProps {
 	group?: Group;
 }
 
-const Profile: React.FC<ProfileProps> = ({
+const UserPage: React.FC<ProfileProps> = ({
 	transactions: allTransactions,
 	profileAddress,
-	ens,
 	avatar: defaultAvatar,
 	// group,
 }) => {
 	const router = useRouter();
-	const otherPersonAccount = router.query.id?.toString();
+	const queryAddress = router.query.id?.toString();
+
+	const { address: otherAddress, name: ens } = useEnsAddress(queryAddress);
+
+	const otherPersonAccount = queryAddress?.includes(".")
+		? otherAddress
+		: queryAddress?.toLowerCase();
+
 	const [group, setGroup] = useState<Group>();
 	const { account } = useMoralisData();
 	const { address, avatar, error, name } = useEnsAddress(otherPersonAccount);
+
 	const [selectedSection, setSelectedSection] = useState<"pay" | "request">(
 		"pay"
 	);
+	const [settleAmount, setSettleAmount] = useState<number>(0);
 
 	const [snapshot] = useCollection(
 		group?.id &&
@@ -46,10 +63,23 @@ const Profile: React.FC<ProfileProps> = ({
 				.collection(firestoreCollections.TRANSACTIONS)
 				.where("groupId", "==", group?.id)
 	);
+	const [notificationSnapshot] = useCollection(
+		group?.id &&
+			address &&
+			db
+				.collection(firestoreCollections.NOTIFICATIONS)
+				.where("groupId", "==", group?.id)
+				.where("recipient", "==", account)
+				.where("closed", "==", false)
+	);
 
 	const [moralisSnapshot] = useMoralisObject(
 		TransactionQuery.equalTo("groupId", group?.id)
 	);
+
+	const notifications: Notification[] =
+		notificationSnapshot?.docs?.map((doc) => doc.data() as Notification) ??
+		[];
 
 	const transactions: Transaction[] =
 		(snapshot?.docs.map((doc) => doc.data() as Transaction) ?? []).sort(
@@ -60,18 +90,22 @@ const Profile: React.FC<ProfileProps> = ({
 	const memberBalance = transactions?.reduce<
 		Record<string, Record<string, number>>
 	>((balance, transaction) => {
-		const { from: fromAddress, to: toAddress, amount } = transaction;
+		if (transaction.skipped) {
+			return balance;
+		}
+
+		const { from: fromAddress, to: toAddress, amount, gas } = transaction;
 		const from = fromAddress.toLowerCase();
 		const to = toAddress.toLowerCase();
 
 		balance[from] = {
 			...balance[from],
-			[to]: (balance[from]?.[to] ?? 0) + amount,
+			[to]: (balance[from]?.[to] ?? 0) + (amount + gas),
 		};
 
 		balance[to] = {
 			...balance[to],
-			[from]: (balance[to]?.[from] ?? 0) - amount,
+			[from]: (balance[to]?.[from] ?? 0) - (amount + gas),
 		};
 
 		return balance;
@@ -82,37 +116,50 @@ const Profile: React.FC<ProfileProps> = ({
 	)[0];
 	const { result } = useTransactions(otherMember ?? "");
 
-	const userName = name || minimizeAddress(address);
+	const userName = name ?? minimizeAddress(address ?? otherPersonAccount);
 
 	const fetchGroupData = async () => {
-		let friendAddress = router.query.id;
-
-		if (!friendAddress) {
-			return;
-		}
-
-		friendAddress = friendAddress.toString();
-
-		const selfWalletAddress = address;
+		let friendAddress: string = otherPersonAccount?.toLowerCase() ?? "";
 
 		if (friendAddress.includes(".")) {
 			const response = await fetchEnsAddress(friendAddress);
-			friendAddress = response.address;
+			friendAddress = response.address.toLowerCase();
 		}
 
-		if (friendAddress && selfWalletAddress) {
-			const data = await getGroupByPerson(
-				friendAddress,
-				selfWalletAddress
-			);
+		if (friendAddress && account) {
+			const data = await getGroupByPerson(friendAddress, account);
 
 			setGroup(data);
 		}
 	};
 
+	const handleRequest = async () => {
+		try {
+			const balance =
+				memberBalance[account.toLowerCase()][
+					otherAddress?.toLowerCase()
+				];
+
+			await createNotification(
+				group,
+				NotificationTypes.RequestToSettle,
+				balance,
+				otherAddress?.toLowerCase()
+			);
+			toast.success("Request sent");
+		} catch (error) {
+			console.error(error);
+			toast.error(error.message);
+		}
+	};
+
 	useEffect(() => {
 		fetchGroupData();
-	}, []);
+	}, [otherPersonAccount, account]);
+
+	const balanceAmount =
+		memberBalance?.[account?.toLowerCase()]?.[otherAddress.toLowerCase()] ??
+		0;
 
 	return (
 		<>
@@ -140,13 +187,16 @@ const Profile: React.FC<ProfileProps> = ({
 
 											<div>
 												<h1 className="text-3xl font-bold text-gray-900 mb-1">
-													{userName}{" "}
+													{userName}
 												</h1>
-												<span className="text-sm">
-													{`(${minimizeAddress(
-														address
-													)})`}
-												</span>
+												{!!name && (
+													<span className="text-sm">
+														{`(${minimizeAddress(
+															address ??
+																otherPersonAccount
+														)})`}
+													</span>
+												)}
 											</div>
 										</div>
 
@@ -170,17 +220,27 @@ const Profile: React.FC<ProfileProps> = ({
 														className="my-4 flex items-center space-x-6"
 													>
 														<div className="flex-1 text-md">
-															<span className="font-bold text-lg">
-																{userName}{" "}
-															</span>
-															<span>
-																{shouldPay
-																	? "owes you"
-																	: "due to you"}{" "}
-																{" 	"}
-															</span>
+															{!shouldPay ? (
+																<>
+																	You owe
+																	<span className="font-bold text-lg mx-2">
+																		{
+																			userName
+																		}
+																	</span>
+																</>
+															) : (
+																<>
+																	<span className="font-bold mr-2 text-lg">
+																		{
+																			userName
+																		}
+																	</span>
+																	owes you
+																</>
+															)}
 															<span
-																className={`font-bold text-lg ${
+																className={`font-bold ml-2 text-lg ${
 																	shouldSkip
 																		? ""
 																		: shouldPay
@@ -194,17 +254,32 @@ const Profile: React.FC<ProfileProps> = ({
 																	? "+ "
 																	: ""}
 																{balance.toPrecision(
-																	2
+																	3
 																)}{" "}
 																ETH
 															</span>
 														</div>
 														{shouldPay ? (
-															<div className="bg-blue-600 border-2 border-blue-600 hover:border-blue-700 text-white px-3 py-0.5 rounded-md cursor-pointer hover:bg-blue-700 transition-all ease-in-out">
+															<div
+																onClick={
+																	handleRequest
+																}
+																className="border-2 text-white bg-black px-3 py-0.5 rounded-md cursor-pointer transition-all ease-in-out"
+															>
 																Request
 															</div>
 														) : (
-															<div className="bg-white border-2 border-blue-600 hover:border-blue-700 text-blue-600 hover:text-white px-3 py-0.5 rounded-md cursor-pointer hover:bg-blue-700 transition-all ease-in-out">
+															<div
+																onClick={() => {
+																	setSelectedSection(
+																		"pay"
+																	);
+																	setSettleAmount(
+																		balanceAmount
+																	);
+																}}
+																className="bg-black text-white border-2 border-black px-3 py-0.5 rounded-md cursor-pointer transition-all ease-in-out"
+															>
 																Settle
 															</div>
 														)}
@@ -217,12 +292,11 @@ const Profile: React.FC<ProfileProps> = ({
 							</div>
 							<div className="mt-8 border-b -mx-8 xs:hidden" />
 
-							{/* Comments*/}
 							<Transactions
 								transactions={transactions}
 								account={account}
 								group={group}
-								friendAddress={""}
+								friendAddress={otherAddress}
 							/>
 						</div>
 
@@ -232,37 +306,7 @@ const Profile: React.FC<ProfileProps> = ({
 								isOwner ? "grid grid-cols-1 gap-4" : ""
 							} lg:col-start-3 lg:col-span-1 sm:row-span-full`}
 						>
-							<div className="">
-								<div className="hidden p-6 justify-between items-center sm:flex">
-									<div className="flex items-center space-x-5">
-										<div className="flex-shrink-0">
-											{avatar && (
-												<img
-													src={avatar}
-													alt={profileAddress}
-													className="h-16 w-16 rounded-full"
-												/>
-											)}
-											{!avatar && (
-												<Blockies
-													seed={profileAddress}
-													size={9}
-													scale={8}
-													className="rounded-full"
-												/>
-											)}
-										</div>
-										<div className="group">
-											<h1 className="text-2xl font-bold text-gray-900 mb-1">
-												{/* <div className="animate-pulse h-12 w-48 bg-gray-300 rounded-md" /> */}
-												{name ??
-													minimizeAddress(
-														profileAddress
-													)}
-											</h1>
-										</div>
-									</div>
-								</div>
+							<div>
 								<div className="card space-y-4 bg-white rounded-lg">
 									<div className="flex items-center justify-between">
 										<div
@@ -289,14 +333,26 @@ const Profile: React.FC<ProfileProps> = ({
 										</div>
 									</div>
 									{selectedSection === "pay" && (
-										<PaymentSection />
+										<PaymentSection
+											propAmount={settleAmount}
+											settleAmount={setSettleAmount}
+										/>
 									)}
 									{selectedSection === "request" && (
-										<RequestSection />
+										<RequestSection group={group} />
 									)}
 								</div>
-								<div className="mt-6">
-									<RequestNotification />
+								<div className="mt-6 space-y-2">
+									{notifications.map((notification) => (
+										<RequestNotification
+											settleAmount={(amount) => {
+												setSelectedSection("pay");
+												setSettleAmount(amount);
+											}}
+											notification={notification}
+											key={notification.id}
+										/>
+									))}
 								</div>
 							</div>
 						</section>
@@ -347,44 +403,4 @@ const Profile: React.FC<ProfileProps> = ({
 	);
 };
 
-// export const getStaticProps: GetStaticProps = async (context) => {
-// 	const userAddress = context.params.id;
-
-// 	const mainnetEndpoint =
-// 		"https://speedy-nodes-nyc.moralis.io/d35afcfb3d409232f26629cd/eth/mainnet";
-// 	const provider = new ethers.providers.JsonRpcProvider(mainnetEndpoint);
-
-// 	const { address, name, avatar } = await validateAndResolveAddress(
-// 		userAddress.toString(),
-// 		provider
-// 	);
-
-// 	const transactionsResponse = await db
-// 		.collection("transactions")
-// 		.where("to", "==", address.toString().toLowerCase())
-// 		.get();
-
-// 	const transactions: Transaction[] = transactionsResponse.docs.map((doc) => {
-// 		const data = doc.data();
-// 		return {
-// 			...(data as Transaction),
-// 			id: doc.id,
-// 		};
-// 	});
-
-// 	return {
-// 		revalidate: 60,
-// 		props: {
-// 			transactions,
-// 			profileAddress: address,
-// 			ens: name,
-// 			avatar: avatar ?? "",
-// 		},
-// 	};
-// };
-
-// export async function getStaticPaths() {
-// 	return { paths: [], fallback: "blocking" };
-// }
-
-export default Profile;
+export default UserPage;
