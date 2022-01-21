@@ -1,12 +1,14 @@
 import { Menu, Switch, Transition } from "@headlessui/react";
 import { DotsVerticalIcon, ExternalLinkIcon } from "@heroicons/react/solid";
-import classnames from "classnames";
-import classNames from "classnames";
+import { default as classnames, default as classNames } from "classnames";
 import moment from "moment";
-import React, { Fragment, useState } from "react";
+import React, { Fragment } from "react";
 import { toast } from "react-toastify";
 import { Transaction } from "../../contracts";
-import { deleteTransaction, hideTransaction } from "../../utils";
+import {
+	deleteTransaction,
+	hideTransaction,
+} from "../../utils/firebaseQueries";
 import Note from "./Note";
 
 const TransactionLog = ({

@@ -8,8 +8,9 @@ import AddressInput from "../components/AddressInput";
 import Button from "../components/Button";
 import { Group } from "../contracts";
 import { useMoralisData } from "../hooks/useMoralisData";
-import { createGroup } from "../utils";
+
 import { db, firestoreCollections } from "../utils/firebaseClient";
+import { createGroup } from "../utils/firebaseQueries";
 // import { createGroup } from "../utils/moralis-db";
 
 declare let window: any;

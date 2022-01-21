@@ -1,13 +1,11 @@
-import Moralis from "moralis";
 import { useRouter } from "next/router";
 import React, { ReactText, useEffect, useState } from "react";
-import { useChain, useERC20Balances, useNativeBalance } from "react-moralis";
+import { useChain, useNativeBalance } from "react-moralis";
 import { toast } from "react-toastify";
 import { Transaction } from "../../contracts";
 import { useMoralisData } from "../../hooks/useMoralisData";
-import { saveTransaction } from "../../utils";
-import { chainLogo, tokenMetadata } from "../../utils/tokens";
-import AddressInput from "../AddressInput";
+import { saveTransaction } from "../../utils/firebaseQueries";
+import { tokenMetadata } from "../../utils/tokens";
 import Button from "../Button";
 
 interface Token {

@@ -5,7 +5,7 @@ import React, { useEffect } from "react";
 import { toast } from "react-toastify";
 import { TransactionLog } from "../../contracts";
 import useTransactions from "../../hooks/useTransactions";
-import { importTransactionLog } from "../../utils";
+import { importTransactionLog } from "../../utils/firebaseQueries";
 
 const ImportTransactions = ({
 	account,

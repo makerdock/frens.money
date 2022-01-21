@@ -1,7 +1,7 @@
 import React, { useEffect, useRef } from "react";
 import { toast } from "react-toastify";
 import { Transaction } from "../../contracts";
-import { saveNote } from "../../utils";
+import { saveNote } from "../../utils/firebaseQueries";
 import Button from "../Button";
 
 const Note = ({ txn }: { txn: Transaction }) => {

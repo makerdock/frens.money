@@ -9,8 +9,9 @@ import Transactions from "../../components/Transactions";
 import { Group, Transaction } from "../../contracts";
 import { useMoralisData } from "../../hooks/useMoralisData";
 import useTransactions from "../../hooks/useTransactions";
-import { getGroupByPerson, minimizeAddress } from "../../utils";
+import { minimizeAddress } from "../../utils";
 import { db, firestoreCollections } from "../../utils/firebaseClient";
+import { getGroupByPerson } from "../../utils/firebaseQueries";
 import { TransactionQuery, useMoralisObject } from "../../utils/moralis-db";
 import { fetchEnsAddress, useEnsAddress } from "../../utils/useEnsAddress";
 
