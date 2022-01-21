@@ -1,9 +1,4 @@
 import { PlusIcon } from "@heroicons/react/outline";
-import {
-	CheckCircleIcon,
-	CheckIcon,
-	PlusCircleIcon,
-} from "@heroicons/react/solid";
 import classnames from "classnames";
 import moment from "moment";
 import React, { useEffect } from "react";
@@ -100,7 +95,7 @@ const ImportTransactions = ({
 										{(Number(txn.amount) + txn.gas).toFixed(
 											5
 										)}
-										ETH
+										<span className="ml-2">ETH</span>
 									</div>
 									{!isImported ? (
 										<div
@@ -120,17 +115,20 @@ const ImportTransactions = ({
 											<PlusIcon className="h-6 w-6" />
 										</div>
 									) : (
-										<div className="h-12 w-12 bg-blue-200 rounded-full text-blue-400 flex items-center justify-center">
-											<CheckIcon className="h-8 w-8" />
+										<div className="px-2 py-1 text-sm bg-blue-200 rounded-md text-blue-400 flex items-center justify-center">
+											Imported
 										</div>
 									)}
 								</div>
-								<div className="text-sm text-gray-400 space-x-4">
+								{/* <div className="text-sm text-gray-400 space-x-4">
 									<span>+{txn.amount.toFixed(5)} ETH</span>
 								</div>
 								<div className="text-sm text-gray-400 space-x-4">
-									<span>+{txn.gas.toFixed(5)} ETH gas</span>
-								</div>
+									<span></span>
+								</div> */}
+								<span className="text-xs ml-4">
+									Gas: {`${txn.gas.toFixed(5)} ETH`}
+								</span>
 								{!!txn.message?.length && (
 									<div className="mt-1">{txn.message}</div>
 								)}
