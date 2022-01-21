@@ -19,7 +19,6 @@ const NFTModal = ({
 	const { account } = useMoralisData();
 
 	const handleImportTransaction = async () => {
-		console.log("here");
 		setLoading(true);
 		const tx = await importNFTTransaction(transactionId, group);
 		setLoading(false);

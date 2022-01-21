@@ -33,8 +33,6 @@ const Button: React.FC<IButton> = ({
 		} bg-gray-200 border-gray-500 text-gray-500 `,
 	};
 
-	console.log({ disabledButton });
-
 	return (
 		<button
 			type="button"

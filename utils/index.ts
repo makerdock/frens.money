@@ -19,7 +19,6 @@ export const importTransaction = async (
 	txId: string,
 	group: Group
 ): Promise<void> => {
-	console.log({ txId, group });
 	const tx = await db
 		.collection(firestoreCollections.TRANSACTIONS)
 		.where("id", "==", txId)
@@ -31,12 +30,10 @@ export const importTransaction = async (
 	const provider = new ethers.providers.Web3Provider(
 		(window as any).ethereum
 	);
-	console.log("hererere");
+
 	const txn = await provider.getTransaction(txId);
-	console.log({ txn }, "hererere");
-	console.log("hererere awerqwer");
+
 	const block = await provider.getBlock(txn.blockNumber);
-	console.log({ block });
 
 	if (!txn) {
 		throw new Error(
@@ -53,7 +50,6 @@ export const importTransaction = async (
 		group.members.includes(to.toLowerCase()) || group.members.includes(to);
 
 	if (!checkIfSenderIsMember) {
-		console.log(group.members.includes(from.toLowerCase()), from, to);
 		throw new Error("Sender is not a member of this group");
 	}
 	if (!checkIfReceiverIsMember) {
@@ -70,7 +66,7 @@ export const importTransaction = async (
 	transaction.createdAt = new Date().getTime();
 	transaction.groupId = group.id;
 	transaction.createdAt = block.timestamp * 1000;
-	console.log({ transaction });
+
 	await saveTransaction({ ...transaction });
 };
 
@@ -78,7 +74,6 @@ export const importNFTTransaction = async (
 	txId: string,
 	group: Group
 ): Promise<Transaction> => {
-	console.log({ txId, group });
 	const tx = await db
 		.collection(firestoreCollections.TRANSACTIONS)
 		.where("id", "==", txId)

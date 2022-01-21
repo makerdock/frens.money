@@ -72,11 +72,7 @@ const UserPage: React.FC<ProfileProps> = ({
 				.where("recipient", "==", account)
 				.where("closed", "==", false)
 	);
-	console.log({
-		group: group?.id,
-		address: address?.toLowerCase(),
-		false: false,
-	});
+
 	const [moralisSnapshot] = useMoralisObject(
 		TransactionQuery.equalTo("groupId", group?.id)
 	);
@@ -84,8 +80,6 @@ const UserPage: React.FC<ProfileProps> = ({
 	const notifications: Notification[] =
 		notificationSnapshot?.docs?.map((doc) => doc.data() as Notification) ??
 		[];
-
-	console.log({ notifications });
 
 	const transactions: Transaction[] =
 		(snapshot?.docs.map((doc) => doc.data() as Transaction) ?? []).sort(
@@ -104,8 +98,6 @@ const UserPage: React.FC<ProfileProps> = ({
 		const from = fromAddress.toLowerCase();
 		const to = toAddress.toLowerCase();
 
-		console.log({ transaction });
-
 		balance[from] = {
 			...balance[from],
 			[to]: (balance[from]?.[to] ?? 0) + (amount + gas),
@@ -118,8 +110,6 @@ const UserPage: React.FC<ProfileProps> = ({
 
 		return balance;
 	}, {});
-
-	console.log({ memberBalance });
 
 	const otherMember = group?.members.filter(
 		(member) => member !== account

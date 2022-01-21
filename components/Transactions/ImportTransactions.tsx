@@ -16,8 +16,6 @@ const ImportTransactions = ({
 	const { result, isLoading, error, fetchData } =
 		useTransactions(friendAddress);
 
-	console.log({ friendAddress, result, error });
-
 	const [loading, setLoading] = React.useState(false);
 
 	const handleImportTransaction = async (transaction: TransactionLog) => {

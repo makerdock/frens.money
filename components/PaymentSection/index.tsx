@@ -67,7 +67,6 @@ const PaymentSection = ({ propAmount, settleAmount }) => {
 	const handleTransaction = async () => {
 		try {
 			setIsLoading(true);
-			console.log({ receiverAddress });
 			const tx = await sendTx(receiverAddress, price, message);
 			toast.success(`Transaction sent! Tx hash: ${tx.hash}`);
 
@@ -82,6 +81,8 @@ const PaymentSection = ({ propAmount, settleAmount }) => {
 			};
 
 			await saveTransaction(newTx);
+			setMessage("");
+			setPrice(0);
 		} catch (error) {
 			toast.error(error.message);
 			console.error(error);

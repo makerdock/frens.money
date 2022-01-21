@@ -66,7 +66,7 @@ const RequestSection = ({ group }: { group: Group }) => {
 	const handleRequest = async () => {
 		try {
 			setIsLoading(true);
-			console.log({ otherAddress });
+
 			await createNotification(
 				group,
 				NotificationTypes.Request,
@@ -74,7 +74,7 @@ const RequestSection = ({ group }: { group: Group }) => {
 				otherAddress?.toLowerCase()
 			);
 			toast.success("Request sent successfully");
-			console.log("something");
+
 			setMessage("");
 			setPrice(0);
 		} catch (error) {
@@ -90,7 +90,6 @@ const RequestSection = ({ group }: { group: Group }) => {
 	const tokensArray: Token[] = [cleanedNativeTokens];
 
 	const disableRequestButton = isLoadingNative || isFetchingNative || !price;
-	console.log({ disableRequestButton, isLoading });
 
 	const selectedTokenData =
 		tokensArray.find((token) => token.name === selectedToken) ??

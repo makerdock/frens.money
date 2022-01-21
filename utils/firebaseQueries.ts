@@ -42,20 +42,15 @@ export const getGroupByPerson = async (
 	walletAddress: string,
 	senderAddress: string
 ): Promise<Group | null> => {
-	console.log({ walletAddress, senderAddress });
-
 	const groupRef = db
 		.collection("groups")
 		.where("members", "array-contains", walletAddress);
 
 	const group = await groupRef.get();
-	console.log(group.empty);
 
 	if (group.empty) return null;
 
 	const groupData = group.docs[0].data() as Group;
-
-	console.log({ groupData });
 
 	if (
 		groupData.members.includes(senderAddress.toLowerCase()) &&
@@ -97,7 +92,6 @@ export const getGroupByPerson = async (
 export const saveTransaction = async (
 	transaction: Transaction
 ): Promise<void> => {
-	console.log({ transaction });
 	await db
 		.doc(`${firestoreCollections.TRANSACTIONS}/${transaction.id}`)
 		.set(transaction);

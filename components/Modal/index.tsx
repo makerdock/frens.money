@@ -25,7 +25,6 @@ const Modal: React.FC<IModal> = ({
 	disabled,
 	loading,
 }) => {
-	console.log({ disabled });
 	return (
 		<Transition.Root show={open} as={Fragment}>
 			<Dialog
