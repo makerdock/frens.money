@@ -4,6 +4,7 @@ interface IButton extends ButtonHTMLAttributes<HTMLButtonElement> {
 	readonly fullWidth?: boolean;
 	readonly loading?: boolean;
 	readonly size?: "sm" | "lg";
+	readonly variant?: "primary" | "secondary";
 }
 
 const Button: React.FC<IButton> = ({
@@ -11,6 +12,7 @@ const Button: React.FC<IButton> = ({
 	disabled,
 	loading,
 	size = "sm",
+	variant = "primary",
 	...props
 }) => {
 	const selectedSize = {
@@ -18,12 +20,18 @@ const Button: React.FC<IButton> = ({
 		lg: " px-6 py-3 text-lg ",
 	};
 
+	const selectedVariant = {
+		primary: "button-gradient hover:opacity-80 text-white ",
+		secondary:
+			"hover:bg-gray-300 bg-gray-200 border-gray-500 text-gray-500 ",
+	};
+
 	return (
 		<button
 			type="button"
 			disabled={disabled || loading}
 			{...props}
-			className={`button-gradient relative flex justify-center items-center ${selectedSize[size]} border-none text-sm font-medium rounded-md shadow-sm text-white`}
+			className={`border-none ${selectedVariant[variant]} opacity-100 transition-all ease-in-out relative flex justify-center items-center ${selectedSize[size]} text-sm font-medium rounded-md shadow-sm `}
 		>
 			<div
 				className={`${

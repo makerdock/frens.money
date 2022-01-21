@@ -6,7 +6,7 @@ import {
 } from "@heroicons/react/solid";
 import classnames from "classnames";
 import moment from "moment";
-import React from "react";
+import React, { useEffect } from "react";
 import { toast } from "react-toastify";
 import { TransactionLog } from "../../contracts";
 import useTransactions from "../../hooks/useTransactions";
@@ -18,9 +18,11 @@ const ImportTransactions = ({
 	transactions,
 	group,
 }) => {
-	const { result, isLoading } = useTransactions(friendAddress);
+	const { result, isLoading, error, fetchData } =
+		useTransactions(friendAddress);
 
-	// state loading
+	console.log({ friendAddress, result, error });
+
 	const [loading, setLoading] = React.useState(false);
 
 	const handleImportTransaction = async (transaction: TransactionLog) => {
@@ -35,6 +37,10 @@ const ImportTransactions = ({
 			setLoading(false);
 		}
 	};
+
+	useEffect(() => {
+		fetchData();
+	}, []);
 
 	return (
 		<div>

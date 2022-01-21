@@ -66,6 +66,10 @@ const UserPage: React.FC<ProfileProps> = ({
 	const memberBalance = transactions?.reduce<
 		Record<string, Record<string, number>>
 	>((balance, transaction) => {
+		if (transaction.skipped) {
+			return balance;
+		}
+
 		const { from: fromAddress, to: toAddress, amount } = transaction;
 		const from = fromAddress.toLowerCase();
 		const to = toAddress.toLowerCase();
@@ -168,15 +172,25 @@ const UserPage: React.FC<ProfileProps> = ({
 														className="my-4 flex items-center space-x-6"
 													>
 														<div className="flex-1 text-md">
-															<span className="font-bold text-lg">
-																{userName}{" "}
-															</span>
-															<span>
-																{shouldPay
-																	? "owes you"
-																	: "due to you"}{" "}
-																{" 	"}
-															</span>
+															{!shouldPay ? (
+																<>
+																	You owe
+																	<span className="font-bold text-lg mx-2">
+																		{
+																			userName
+																		}
+																	</span>
+																</>
+															) : (
+																<>
+																	<span className="font-bold text-lg">
+																		{
+																			userName
+																		}
+																	</span>
+																	owes you
+																</>
+															)}
 															<span
 																className={`font-bold text-lg ${
 																	shouldSkip
@@ -193,7 +207,7 @@ const UserPage: React.FC<ProfileProps> = ({
 																	: ""}
 																{balance.toFixed(
 																	2
-																)}{" "}
+																)}
 																ETH
 															</span>
 														</div>
@@ -231,37 +245,7 @@ const UserPage: React.FC<ProfileProps> = ({
 								isOwner ? "grid grid-cols-1 gap-4" : ""
 							} lg:col-start-3 lg:col-span-1 sm:row-span-full`}
 						>
-							<div className="">
-								<div className="hidden p-6 justify-between items-center sm:flex">
-									<div className="flex items-center space-x-5">
-										<div className="flex-shrink-0">
-											{avatar && (
-												<img
-													src={avatar}
-													alt={profileAddress}
-													className="h-16 w-16 rounded-full"
-												/>
-											)}
-											{!avatar && (
-												<Blockies
-													seed={profileAddress}
-													size={9}
-													scale={8}
-													className="rounded-full"
-												/>
-											)}
-										</div>
-										<div className="group">
-											<h1 className="text-2xl font-bold text-gray-900 mb-1">
-												{/* <div className="animate-pulse h-12 w-48 bg-gray-300 rounded-md" /> */}
-												{name ??
-													minimizeAddress(
-														profileAddress
-													)}
-											</h1>
-										</div>
-									</div>
-								</div>
+							<div>
 								<div className="card space-y-4 bg-white rounded-lg">
 									<div className="flex items-center justify-between">
 										<div

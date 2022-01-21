@@ -15,6 +15,7 @@ export class Transaction {
 	createdAt: number | null = null;
 	message: string = "";
 	gas: number = 0;
+	skipped: boolean = false;
 }
 
 export interface TransactionLog {

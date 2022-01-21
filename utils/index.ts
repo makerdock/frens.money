@@ -199,3 +199,16 @@ export const importTransactionLog = async (
 		.doc(`${firestoreCollections.TRANSACTIONS}/${transactionLog.id}`)
 		.set({ ...transactionLog });
 };
+
+export const hideTransaction = async (
+	txn: string,
+	toggle: boolean
+): Promise<void> => {
+	await db.doc(`${firestoreCollections.TRANSACTIONS}/${txn}`).update({
+		skipped: toggle,
+	});
+};
+
+export const deleteTransaction = async (txn: string): Promise<void> => {
+	await db.doc(`${firestoreCollections.TRANSACTIONS}/${txn}`).delete();
+};

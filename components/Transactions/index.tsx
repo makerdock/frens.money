@@ -1,4 +1,5 @@
 import { PlusIcon } from "@heroicons/react/outline";
+import { CheckIcon } from "@heroicons/react/solid";
 import classnames from "classnames";
 import moment from "moment";
 import React, { useState } from "react";
@@ -7,7 +8,7 @@ import { Group, Transaction } from "../../contracts";
 import { importTransaction } from "../../utils";
 import Button from "../Button";
 import ImportTransactions from "./ImportTransactions";
-import TransactionLog from "./TransactionLog";
+import TransactionLogList from "./TransactionLogList";
 
 // humanise datestring using intl
 // const humaniseDate = (date: Date) => {
@@ -49,11 +50,18 @@ const Transactions = ({
 			<h3 className="text-2xl font-bold flex items-center justify-between mb-6">
 				Transactions
 				{importing ? (
-					<Button onClick={() => setImporting(false)}>
+					<Button
+						variant="secondary"
+						onClick={() => setImporting(false)}
+					>
+						<CheckIcon className="h-4 w-4 mr-2" />
 						Finish importing
 					</Button>
 				) : (
-					<Button onClick={() => setImporting(true)}>
+					<Button
+						variant="secondary"
+						onClick={() => setImporting(true)}
+					>
 						<div className="h-4 w-4 mr-2">
 							<PlusIcon />
 						</div>
@@ -72,7 +80,11 @@ const Transactions = ({
 					placeholder="Transaction id or url"
 				/>
 				<div>
-					<Button onClick={handleImportTransaction} loading={loading}>
+					<Button
+						variant="secondary"
+						onClick={handleImportTransaction}
+						loading={loading}
+					>
 						<div className="h-4 w-4 mr-2">
 							<PlusIcon />
 						</div>
@@ -89,7 +101,7 @@ const Transactions = ({
 						group={group}
 					/>
 				) : (
-					<TransactionLog
+					<TransactionLogList
 						transactions={transactions}
 						account={account}
 					/>

@@ -9,15 +9,17 @@ const useTransactions = (
 	result: TransactionLog[];
 	error: Error;
 	isLoading: boolean;
+	fetchData: () => void;
 } => {
 	const { account } = useMoralisData();
 
 	const { chainId } = useChain();
 
-	const { data, error, isLoading, isFetching } = useNativeTransactions({
-		chain: chainId as any,
-		address: account,
-	});
+	const { getNativeTransations, data, error, isLoading, isFetching } =
+		useNativeTransactions({
+			chain: chainId as any,
+			address: account,
+		});
 
 	const result =
 		data?.result?.filter(
@@ -49,6 +51,7 @@ const useTransactions = (
 		result: cleanedResult,
 		error,
 		isLoading,
+		fetchData: getNativeTransations,
 	};
 };
 
