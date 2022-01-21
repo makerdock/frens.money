@@ -99,8 +99,8 @@ const UserPage: React.FC<ProfileProps> = ({
 		}
 
 		const { from: fromAddress, to: toAddress, amount, gas } = transaction;
-		const from = fromAddress.toLowerCase();
-		const to = toAddress.toLowerCase();
+		const from = fromAddress?.toLowerCase();
+		const to = toAddress?.toLowerCase();
 
 		balance[from] = {
 			...balance[from],
@@ -127,7 +127,7 @@ const UserPage: React.FC<ProfileProps> = ({
 
 		if (friendAddress.includes(".")) {
 			const response = await fetchEnsAddress(friendAddress);
-			friendAddress = response.address.toLowerCase();
+			friendAddress = response.address?.toLowerCase();
 		}
 
 		console.log({ friendAddress });
@@ -144,7 +144,7 @@ const UserPage: React.FC<ProfileProps> = ({
 	const handleRequest = async () => {
 		try {
 			const balance =
-				memberBalance[account.toLowerCase()][
+				memberBalance[account?.toLowerCase()][
 					otherAddress?.toLowerCase()
 				];
 
@@ -166,8 +166,9 @@ const UserPage: React.FC<ProfileProps> = ({
 	}, [otherAddress, account]);
 
 	const balanceAmount =
-		memberBalance?.[account?.toLowerCase()]?.[otherAddress.toLowerCase()] ??
-		0;
+		memberBalance?.[account?.toLowerCase()]?.[
+			otherAddress?.toLowerCase()
+		] ?? 0;
 
 	return (
 		<>
