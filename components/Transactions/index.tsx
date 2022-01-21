@@ -92,7 +92,7 @@ const Transactions = ({
 					</Button>
 				</div>
 			</div>
-			<div className="bg-white mt-8 sm:rounded-lg sm:overflow-hidden">
+			<div className="bg-white mt-4 sm:rounded-lg sm:overflow-hidden">
 				{importing ? (
 					<ImportTransactions
 						transactions={transactions}
@@ -101,10 +101,12 @@ const Transactions = ({
 						group={group}
 					/>
 				) : (
-					<TransactionLogList
-						transactions={transactions}
-						account={account}
-					/>
+					<>
+						<TransactionLogList
+							transactions={transactions}
+							account={account}
+						/>
+					</>
 				)}
 			</div>
 		</section>
