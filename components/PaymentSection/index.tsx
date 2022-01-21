@@ -6,6 +6,7 @@ import { Transaction } from "../../contracts";
 import { useMoralisData } from "../../hooks/useMoralisData";
 import { saveTransaction } from "../../utils/firebaseQueries";
 import { tokenMetadata } from "../../utils/tokens";
+import { useEnsAddress } from "../../utils/useEnsAddress";
 import Button from "../Button";
 
 interface Token {
@@ -22,6 +23,8 @@ const PaymentSection = ({ propAmount, settleAmount }) => {
 	const {
 		query: { id },
 	} = useRouter();
+
+	const { address: otherAddress, name: ens } = useEnsAddress(id.toString());
 
 	const { switchNetwork } = useChain();
 
@@ -64,6 +67,7 @@ const PaymentSection = ({ propAmount, settleAmount }) => {
 	const handleTransaction = async () => {
 		try {
 			setIsLoading(true);
+			console.log({ receiverAddress });
 			const tx = await sendTx(receiverAddress, price, message);
 			toast.success(`Transaction sent! Tx hash: ${tx.hash}`);
 
@@ -79,9 +83,7 @@ const PaymentSection = ({ propAmount, settleAmount }) => {
 
 			await saveTransaction(newTx);
 		} catch (error) {
-			if (error?.data?.message) {
-				toast.error(error.data.message);
-			}
+			toast.error(error.message);
 			console.error(error);
 		} finally {
 			setIsLoading(false);
@@ -121,6 +123,12 @@ const PaymentSection = ({ propAmount, settleAmount }) => {
 			settleAmount(0);
 		}
 	}, [propAmount]);
+
+	useEffect(() => {
+		if (!!id) {
+			setReceiverAddress(otherAddress);
+		}
+	}, [id, otherAddress]);
 
 	return (
 		<div className="grid gap-6 w-full">
@@ -170,6 +178,7 @@ const PaymentSection = ({ propAmount, settleAmount }) => {
 				type="button"
 				disabled={isLoading}
 				onClick={handleTransaction}
+				loading={isLoading}
 				size="lg"
 			>
 				Send {!!symbol ? `( ${price} ${symbol} )` : ""}

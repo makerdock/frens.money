@@ -6,6 +6,7 @@ import { Group, Notification, NotificationTypes } from "../../contracts";
 import { useMoralisData } from "../../hooks/useMoralisData";
 import { createNotification } from "../../utils/firebaseQueries";
 import { tokenMetadata } from "../../utils/tokens";
+import { useEnsAddress } from "../../utils/useEnsAddress";
 import Button from "../Button";
 
 interface Token {
@@ -19,9 +20,10 @@ interface Token {
 
 const RequestSection = ({ group }: { group: Group }) => {
 	const { account: address, user, web3, chainId, sendTx } = useMoralisData();
-	const {
-		query: { id },
-	} = useRouter();
+	const router = useRouter();
+
+	const queryAddress = router.query.id?.toString();
+	const { address: otherAddress, name: ens } = useEnsAddress(queryAddress);
 
 	const { switchNetwork } = useChain();
 
@@ -64,13 +66,15 @@ const RequestSection = ({ group }: { group: Group }) => {
 	const handleRequest = async () => {
 		try {
 			setIsLoading(true);
+			console.log({ otherAddress });
 			await createNotification(
 				group,
 				NotificationTypes.Request,
 				price,
-				address
+				otherAddress?.toLowerCase()
 			);
 			toast.success("Request sent successfully");
+			console.log("something");
 			setMessage("");
 			setPrice(0);
 		} catch (error) {
