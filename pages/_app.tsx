@@ -1,24 +1,22 @@
+import "antd/dist/antd.css";
 import Head from "next/head";
 import Link from "next/link";
-import React, { useEffect } from "react";
+import NextNProgress from "nextjs-progressbar";
+import React from "react";
 import { MoralisProvider } from "react-moralis";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import ReactTooltip from "react-tooltip";
 import "tailwindcss/tailwind.css";
-import "./globals.css";
 import Account from "../components/Account";
 import Chains from "../components/Chains";
 import Logo from "../components/Logo";
-
-import NextNProgress from "nextjs-progressbar";
 import MetaHead from "../components/MetaHead";
-import "antd/dist/antd.css";
-import dynamic from "next/dynamic";
-import Button from "../components/Button";
+import "./globals.css";
 
 const APP_ID = process.env.NEXT_PUBLIC_MORALIS_APPLICATION_ID;
 const SERVER_URL = process.env.NEXT_PUBLIC_MORALIS_SERVER_URL;
+const GTag = "G-4HENSLHDZS";
 
 function MyApp({ Component, pageProps: { session, ...pageProps } }) {
 	const hideNavbar = pageProps.hideNavbar;
@@ -37,6 +35,38 @@ function MyApp({ Component, pageProps: { session, ...pageProps } }) {
 					href="https://fonts.googleapis.com/css2?family=Abril+Fatface&family=Space+Grotesk:wght@300;400;500;700&display=swap"
 					rel="stylesheet"
 				/>
+
+				{process.env.NODE_ENV === "production" &&
+					typeof window !== "undefined" && (
+						<>
+							<script
+								async
+								type="text/javascript"
+								src={`https://www.googletagmanager.com/gtag/js?id=${GTag}`}
+							/>
+							{/* <!-- Google Tag Manager --> */}
+							<script
+								dangerouslySetInnerHTML={{
+									__html: `(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+								new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+								j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+								'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+								})(window,document,'script','dataLayer','GTM-PWX4GJW');`,
+								}}
+							/>
+							{/* <!-- End Google Tag Manager --> */}
+							<script
+								dangerouslySetInnerHTML={{
+									__html: `
+										window.dataLayer = window.dataLayer || [];
+										function gtag(){dataLayer.push(arguments);}
+										gtag('js', new Date());
+										gtag('config', '${GTag}', { page_path: window.location.pathname });
+										`,
+								}}
+							/>
+						</>
+					)}
 			</Head>
 
 			{!hideNavbar && (

@@ -70,15 +70,17 @@ function Account() {
 	}
 
 	if (!isAuthenticated) {
-		return (
-			<button
-				type="button"
-				onClick={handleAuth}
-				className="relative inline-flex items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-cryptopurple focus:outline-none"
-			>
-				Connect Wallet
-			</button>
-		);
+        router.push("/");
+		// return (
+		// 	<button
+		// 		type="button"
+		// 		onClick={handleAuth}
+		// 		className="relative inline-flex items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-cryptopurple focus:outline-none"
+		// 	>
+		// 		Connect Wallet
+		// 	</button>
+		// );
+        return <></>;
 	}
 
 	return (

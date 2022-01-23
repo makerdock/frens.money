@@ -11,8 +11,6 @@ import { useMoralisData } from "../hooks/useMoralisData";
 import { getSignedNonce } from "../utils/crypto";
 import firebaseClient from "../utils/firebaseClient";
 
-declare let window: any;
-
 const Dashboard: React.FC = () => {
 	const router = useRouter();
 	const [loading, setLoading] = useState(false);
