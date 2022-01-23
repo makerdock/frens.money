@@ -138,16 +138,6 @@ const PaymentSection = ({ propAmount, settleAmount }) => {
 				onChange={setReceiverAddress}
 			/> */}
 
-			<textarea
-				value={message}
-				onChange={(e) => setMessage(e.target.value)}
-				rows={4}
-				name="comment"
-				id="comment"
-				placeholder="Add notes to the payment"
-				className=" shadow-sm placeholder-opacity-50 placeholder-border-gray-600 block w-full sm:text-sm border border-solid  border-gray-600 border-opacity-20 bg-white bg-opacity-10 rounded-md p-2"
-			/>
-
 			<div className="rounded-md mt-2 ">
 				<div className="flex items-center justify-between border border-solid  border-gray-600 border-opacity-20 bg-white bg-opacity-10 rounded-md">
 					<input
@@ -174,6 +164,16 @@ const PaymentSection = ({ propAmount, settleAmount }) => {
 					BALANCE: {selectedTokenData?.balance ?? 0}
 				</div>
 			</div>
+
+			<textarea
+				value={message}
+				onChange={(e) => setMessage(e.target.value)}
+				rows={4}
+				name="comment"
+				id="comment"
+				placeholder="Add notes to the payment"
+				className=" shadow-sm placeholder-opacity-50 placeholder-border-gray-600 block w-full sm:text-sm border border-solid  border-gray-600 border-opacity-20 bg-white bg-opacity-10 rounded-md p-2"
+			/>
 
 			<Button
 				type="button"

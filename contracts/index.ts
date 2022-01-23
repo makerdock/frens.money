@@ -28,16 +28,6 @@ export interface TransactionLog {
 	fromBlock: number;
 	gas: number;
 }
-export class User {
-	profileImage: string = "";
-	coverImage: string = "";
-	id: string = "";
-	name: string = "";
-	description: string = "";
-	address: string = "";
-	ens: string | null = null;
-}
-
 // export class Transaction {
 // 	from: string = "";
 // 	fromEns: string | null = null;
@@ -67,4 +57,11 @@ export class Notification {
 	recipient: string = "";
 	timestamp: number = new Date().getTime();
 	message: string = "";
+	skipTransaction: boolean = false;
+}
+
+export class User {
+	id: string;
+	nonce: string;
+	address: string;
 }

@@ -96,7 +96,7 @@ export const saveTransaction = async (
 ): Promise<void> => {
 	await db
 		.doc(`${firestoreCollections.TRANSACTIONS}/${transaction.id}`)
-		.set(transaction);
+		.set({ ...transaction });
 };
 
 export const importTransactionLog = async (
@@ -123,9 +123,7 @@ export const importTransactionLog = async (
 
 	if (!tx.empty) throw new Error("Transaction already imported");
 
-	return db
-		.doc(`${firestoreCollections.TRANSACTIONS}/${transactionLog.id}`)
-		.set({ ...transactionLog });
+	await saveTransaction(transactionLog);
 };
 
 export const hideTransaction = async (
@@ -148,19 +146,21 @@ export const saveNote = async (txnId: string, message: string) => {
 };
 
 export const createNotification = async (
-	group: Group,
+	groupId: string,
 	type: NotificationTypes,
 	amount: number,
 	recipient: string,
-	message: string
+	message: string,
+	skipTransaction?: boolean
 ) => {
 	const notification: Notification = {
 		...new Notification(),
 		amount,
 		type,
-		groupId: group.id,
+		groupId,
 		recipient,
 		message,
+		skipTransaction: !!skipTransaction,
 	};
 
 	const notificationRef = db

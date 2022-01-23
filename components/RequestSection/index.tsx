@@ -34,6 +34,8 @@ const RequestSection = ({ group }: { group: Group }) => {
 	const [selectedToken, setSelectedToken] = useState<string>();
 	const [isLoading, setIsLoading] = React.useState(false);
 
+	const [isChecked, setIsChecked] = useState(false);
+
 	const {
 		getBalances,
 		data: nativeData,
@@ -68,11 +70,12 @@ const RequestSection = ({ group }: { group: Group }) => {
 			setIsLoading(true);
 
 			await createNotification(
-				group,
+				group.id,
 				NotificationTypes.Request,
 				price,
 				(otherAddress ?? queryAddress)?.toLowerCase(),
-				message
+				message,
+				isChecked
 			);
 			toast.success("Request sent successfully");
 
@@ -106,16 +109,6 @@ const RequestSection = ({ group }: { group: Group }) => {
 
 	return (
 		<div className="grid gap-6 w-full">
-			<textarea
-				value={message}
-				onChange={(e) => setMessage(e.target.value)}
-				rows={4}
-				name="comment"
-				id="comment"
-				placeholder="Add notes to request"
-				className=" shadow-sm placeholder-opacity-50 placeholder-border-gray-600 block w-full sm:text-sm border border-solid  border-gray-600 border-opacity-20 bg-white bg-opacity-10 rounded-md p-2"
-			/>
-
 			<div className="rounded-md mt-2 ">
 				<div className="flex items-center justify-between border border-solid  border-gray-600 border-opacity-20 bg-white bg-opacity-10 rounded-md">
 					<input
@@ -132,8 +125,36 @@ const RequestSection = ({ group }: { group: Group }) => {
 						placeholder="Enter amount in ETH"
 					/>
 				</div>
-				<div className="mt-2 text-xs text-right">
-					BALANCE: {selectedTokenData?.balance ?? 0}
+			</div>
+			<textarea
+				value={message}
+				onChange={(e) => setMessage(e.target.value)}
+				rows={4}
+				name="comment"
+				id="comment"
+				placeholder="Add notes to request"
+				className=" shadow-sm placeholder-opacity-50 placeholder-border-gray-600 block w-full sm:text-sm border border-solid  border-gray-600 border-opacity-20 bg-white bg-opacity-10 rounded-md p-2"
+			/>
+
+			<div className="flex items-center">
+				<div className="flex items-center h-5 cursor-pointer">
+					<input
+						id="skip-transaction"
+						aria-describedby="skip-description"
+						name="skip-transaction"
+						type="checkbox"
+						className="h-4 w-4 border-gray-300 rounded outline-none"
+						onChange={() => setIsChecked(!isChecked)}
+						checked={isChecked}
+					/>
+				</div>
+				<div className="ml-3 text-sm">
+					<label
+						htmlFor="skip-transaction"
+						className="font-medium text-gray-700 cursor-pointer"
+					>
+						Do not record this transaction
+					</label>
 				</div>
 			</div>
 

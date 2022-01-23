@@ -48,8 +48,11 @@ function MyApp({ Component, pageProps: { session, ...pageProps } }) {
 									<Link href="/">
 										<div className="inline-flex items-center">
 											<Logo />
-											<h1 className="text-2xl ml-4 font-bold">
+											<h1 className="text-2xl ml-2 font-bold m-0 flex items-center">
 												Cryptowise
+												<span className="text-xs ml-2 bg-gray-200 text-gray-500 font-light rounded-md px-2 py-1">
+													Beta
+												</span>
 											</h1>
 										</div>
 									</Link>

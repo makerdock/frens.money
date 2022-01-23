@@ -1,12 +1,15 @@
-import illustration from "../assets/illustration.png";
-import wallet from "../assets/Wallet.svg";
+import axios from "axios";
+import Image from "next/image";
 import { useRouter } from "next/router";
 import React, { useEffect, useState } from "react";
 import toast from "react-hot-toast";
 import { AuthenticateOptions } from "react-moralis/lib/hooks/core/useMoralis/_useMoralisAuth";
-import { useMoralisData } from "../hooks/useMoralisData";
-import Image from "next/image";
+import illustration from "../assets/illustration.png";
+import wallet from "../assets/Wallet.svg";
 import Button from "../components/Button";
+import { useMoralisData } from "../hooks/useMoralisData";
+import { getSignedNonce } from "../utils/crypto";
+import firebaseClient from "../utils/firebaseClient";
 
 declare let window: any;
 
@@ -44,6 +47,26 @@ const Dashboard: React.FC = () => {
 			}
 
 			await authenticate(options);
+
+			const nonce = await axios.get(
+				`/api/auth/getNonce?address=${account}`
+			);
+
+			console.log({ nonce: nonce.data });
+
+			const signature = getSignedNonce(nonce.data);
+			console.log({ signature });
+
+			const token = await axios.post(`/api/auth/verifyNonce`, {
+				address: account,
+				signature,
+			});
+
+			console.log({ token: token.data });
+
+			await firebaseClient.default
+				.auth()
+				.signInWithCustomToken(token.data.token);
 
 			router.push("/dashboard");
 		} catch (error) {
@@ -101,3 +124,18 @@ export default Dashboard;
 export const getStaticProps = async () => {
 	return { props: { hideNavbar: true } };
 };
+
+/**
+ *
+ *
+ * nonce ->
+ * FE gets nonce -> metamask -> signature
+ * BE verifies signature -> and check address
+ * user gets nonce in DB
+ *
+ *
+ *
+ *
+ *
+ *
+ */

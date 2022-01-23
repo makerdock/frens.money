@@ -3,6 +3,26 @@ import { useEffect, useState } from "react";
 
 declare let window: any;
 
+export const getSignedNonce = async (nonce: number) => {
+	const { ethereum } = window;
+
+	if (!ethereum) {
+		console.log("Make sure you have metamask!");
+		return;
+	} else {
+		console.log("We have the ethereum object");
+	}
+
+	const hexNonce = ethers.utils.hexlify(nonce);
+
+	const signature = await ethereum.request({
+		method: "personal_sign",
+		params: [`0x${hexNonce}`, ethereum.selectedAddress],
+	});
+
+	console.log({ signature });
+};
+
 export const checkIfWalletIsConnected = async (): Promise<string> => {
 	try {
 		if (!window) {
