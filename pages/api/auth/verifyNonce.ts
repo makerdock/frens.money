@@ -1,3 +1,4 @@
+import { ACCOUNT } from "./../../../utils/cookie";
 // Next.js API route support: https://nextjs.org/docs/api-routes/introduction
 import type { NextApiRequest, NextApiResponse } from "next";
 import {
@@ -6,6 +7,7 @@ import {
 	updateUser,
 } from "../../../utils/server";
 import firebaseAdmin from "../../../utils/firebaseServer";
+import { setTokenCookie } from "../../../utils/cookie";
 
 export default async function verifyNonce(
 	req: NextApiRequest,
@@ -39,6 +41,9 @@ export default async function verifyNonce(
 			});
 
 			const token = firebaseAdmin.auth().createCustomToken(address);
+
+			setTokenCookie(res, signature);
+			setTokenCookie(res, address, ACCOUNT);
 
 			res.status(200).json({
 				nonce: user.nonce,

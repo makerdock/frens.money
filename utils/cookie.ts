@@ -2,6 +2,7 @@ import { serialize, parse } from "cookie";
 import { NextApiRequest, NextApiResponse } from "next";
 
 export const TOKEN_NAME = "signature";
+export const ACCOUNT = "account";
 export const API_KEY_TOKEN_NAME = "apiKey";
 const MAX_AGE = 60 * 60 * 8;
 
@@ -28,9 +29,13 @@ export const createCookie = (name: string, data: any, options = {}) => {
 	});
 };
 
-export const setTokenCookie = (res: NextApiResponse, token: string) => {
+export const setTokenCookie = (
+	res: NextApiResponse,
+	token: string,
+	tokenName?: string
+) => {
 	res.setHeader("Set-Cookie", [
-		createCookie(TOKEN_NAME, token),
+		createCookie(tokenName ?? TOKEN_NAME, token),
 		createCookie("authed", true, { httpOnly: false }),
 	]);
 };

@@ -64,9 +64,9 @@ const Dashboard: React.FC = () => {
 
 			console.log({ token: token.data });
 
-			await firebaseClient.default
-				.auth()
-				.signInWithCustomToken(token.data.token);
+			// await firebaseClient.default
+			// 	.auth()
+			// 	.signInWithCustomToken(token.data.token);
 
 			router.push("/dashboard");
 		} catch (error) {
