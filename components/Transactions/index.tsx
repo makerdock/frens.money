@@ -11,6 +11,8 @@ import Modal from "../Modal";
 import NFTModal from "../NFTModal";
 import ImportTransactions from "./ImportTransactions";
 import TransactionLogList from "./TransactionLogList";
+import Image from "next/image";
+import emptyinbox from "../../assets/emptyinbox.png";
 
 // humanise datestring using intl
 // const humaniseDate = (date: Date) => {
@@ -127,6 +129,10 @@ const Transactions = ({
 				setAddNftTransactionModal={setAddNftTransactionModal}
 				group={group}
 			/>
+            {transactions?.length === 0 && <div className="flex justify-center items-center flex-col">
+                <Image src={emptyinbox} />
+                <div className="mt-8">When you add a fren, they will show up here.</div>
+            </div> }
 		</section>
 	);
 };
