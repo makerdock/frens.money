@@ -27,7 +27,6 @@ export default async function verifyNonce(
 		}
 
 		const user = await getUserFromAddress(address);
-
 		if (!user) {
 			throw new Error("No user found");
 		}

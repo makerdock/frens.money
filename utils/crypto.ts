@@ -21,6 +21,8 @@ export const getSignedNonce = async (nonce: number) => {
 	});
 
 	console.log({ signature });
+
+	return signature;
 };
 
 export const checkIfWalletIsConnected = async (): Promise<string> => {

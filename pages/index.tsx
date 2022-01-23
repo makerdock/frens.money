@@ -54,7 +54,7 @@ const Dashboard: React.FC = () => {
 
 			console.log({ nonce: nonce.data });
 
-			const signature = getSignedNonce(nonce.data);
+			const signature = await getSignedNonce(nonce.data);
 			console.log({ signature });
 
 			const token = await axios.post(`/api/auth/verifyNonce`, {
