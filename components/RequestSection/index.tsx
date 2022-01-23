@@ -2,10 +2,11 @@ import { useRouter } from "next/router";
 import React, { ReactText, useEffect, useState } from "react";
 import { useChain, useNativeBalance } from "react-moralis";
 import { toast } from "react-toastify";
-import { Transaction } from "../../contracts";
+import { Group, Notification, NotificationTypes } from "../../contracts";
 import { useMoralisData } from "../../hooks/useMoralisData";
-import { saveTransaction } from "../../utils";
+import { createNotification } from "../../utils/firebaseQueries";
 import { tokenMetadata } from "../../utils/tokens";
+import { useEnsAddress } from "../../utils/useEnsAddress";
 import Button from "../Button";
 
 interface Token {
@@ -17,11 +18,12 @@ interface Token {
 	readonly logo?: string;
 }
 
-const RequestSection = ({}) => {
+const RequestSection = ({ group }: { group: Group }) => {
 	const { account: address, user, web3, chainId, sendTx } = useMoralisData();
-	const {
-		query: { id },
-	} = useRouter();
+	const router = useRouter();
+
+	const queryAddress = router.query.id?.toString();
+	const { address: otherAddress, name: ens } = useEnsAddress(queryAddress);
 
 	const { switchNetwork } = useChain();
 
@@ -31,6 +33,8 @@ const RequestSection = ({}) => {
 
 	const [selectedToken, setSelectedToken] = useState<string>();
 	const [isLoading, setIsLoading] = React.useState(false);
+
+	const [isChecked, setIsChecked] = useState(false);
 
 	const {
 		getBalances,
@@ -54,7 +58,7 @@ const RequestSection = ({}) => {
 			`${(nativeData.balance
 				? Number(nativeData.balance) / 10 ** 18
 				: 0
-			).toFixed(4)} MATIC`,
+			).toPrecision(3)} ETH`,
 		name: nativeTokenName,
 		decimals: 18,
 		tokenAddress: null,
@@ -64,20 +68,19 @@ const RequestSection = ({}) => {
 	const handleRequest = async () => {
 		try {
 			setIsLoading(true);
-			// const tx = await sendTx(receiverAddress, price, message);
-			// toast.success(`Transaction sent! Tx hash: ${tx.hash}`);
 
-			// const newTx: Transaction = {
-			// 	...new Transaction(),
-			// 	id: tx.hash,
-			// 	groupId: String(id),
-			// 	from: address,
-			// 	to: receiverAddress,
-			// 	amount: price,
-			// 	createdAt: new Date().getTime(),
-			// };
+			await createNotification(
+				group.id,
+				NotificationTypes.Request,
+				price,
+				(otherAddress ?? queryAddress)?.toLowerCase(),
+				message,
+				isChecked
+			);
+			toast.success("Request sent successfully");
 
-			// await saveTransaction(newTx);
+			setMessage("");
+			setPrice(0);
 		} catch (error) {
 			if (error?.data?.message) {
 				toast.error(error.data.message);
@@ -106,16 +109,6 @@ const RequestSection = ({}) => {
 
 	return (
 		<div className="grid gap-6 w-full">
-			<textarea
-				value={message}
-				onChange={(e) => setMessage(e.target.value)}
-				rows={4}
-				name="comment"
-				id="comment"
-				placeholder="Add notes to request"
-				className=" shadow-sm placeholder-opacity-50 placeholder-border-gray-600 block w-full sm:text-sm border border-solid  border-gray-600 border-opacity-20 bg-white bg-opacity-10 rounded-md p-2"
-			/>
-
 			<div className="rounded-md mt-2 ">
 				<div className="flex items-center justify-between border border-solid  border-gray-600 border-opacity-20 bg-white bg-opacity-10 rounded-md">
 					<input
@@ -132,8 +125,36 @@ const RequestSection = ({}) => {
 						placeholder="Enter amount in ETH"
 					/>
 				</div>
-				<div className="mt-2 text-xs text-right">
-					BALANCE: {selectedTokenData?.balance ?? 0}
+			</div>
+			<textarea
+				value={message}
+				onChange={(e) => setMessage(e.target.value)}
+				rows={4}
+				name="comment"
+				id="comment"
+				placeholder="Add notes to request"
+				className=" shadow-sm placeholder-opacity-50 placeholder-border-gray-600 block w-full sm:text-sm border border-solid  border-gray-600 border-opacity-20 bg-white bg-opacity-10 rounded-md p-2"
+			/>
+
+			<div className="flex items-center">
+				<div className="flex items-center h-5 cursor-pointer">
+					<input
+						id="skip-transaction"
+						aria-describedby="skip-description"
+						name="skip-transaction"
+						type="checkbox"
+						className="h-4 w-4 border-gray-300 rounded outline-none"
+						onChange={() => setIsChecked(!isChecked)}
+						checked={isChecked}
+					/>
+				</div>
+				<div className="ml-3 text-sm">
+					<label
+						htmlFor="skip-transaction"
+						className="font-medium text-gray-700 cursor-pointer"
+					>
+						Do not record this transaction
+					</label>
 				</div>
 			</div>
 

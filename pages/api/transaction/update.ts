@@ -1,19 +1,19 @@
 // Next.js API route support: https://nextjs.org/docs/api-routes/introduction
 import type { NextApiRequest, NextApiResponse } from "next";
-import { createGroup } from "../../../utils/firebaseQueries";
+import { saveTransaction } from "../../../utils/firebaseQueries";
 
-export default async function handler(
+export default async function updateTransaction(
 	req: NextApiRequest,
 	res: NextApiResponse
 ) {
 	try {
 		if (req.method !== "POST") throw new Error("Method not allowed");
 
-		const { members } = req.body;
+		const { transaction } = req.body;
 
-		const group = await createGroup(members, members[0]);
+		await saveTransaction({ ...transaction });
 
-		res.status(200).json(group);
+		res.status(200).json({});
 	} catch (error) {
 		res.status(404).json({ error: (error as any).message });
 	}

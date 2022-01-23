@@ -64,11 +64,11 @@ const UserPage: React.FC<ProfileProps> = ({
 	);
 	const [notificationSnapshot] = useCollection(
 		group?.id &&
-			address &&
+			account &&
 			db
 				.collection(firestoreCollections.NOTIFICATIONS)
 				.where("groupId", "==", group?.id)
-				.where("recipient", "==", account)
+				.where("recipient", "==", account.toLowerCase())
 				.where("closed", "==", false)
 	);
 
@@ -76,6 +76,7 @@ const UserPage: React.FC<ProfileProps> = ({
 		notificationSnapshot?.docs?.map((doc) => doc.data() as Notification) ??
 		[];
 
+	console.log({ notifications, account });
 	const transactions: Transaction[] =
 		(snapshot?.docs.map((doc) => doc.data() as Transaction) ?? []).sort(
 			(a, b) => a.createdAt - b.createdAt
@@ -90,8 +91,8 @@ const UserPage: React.FC<ProfileProps> = ({
 		}
 
 		const { from: fromAddress, to: toAddress, amount, gas } = transaction;
-		const from = fromAddress.toLowerCase();
-		const to = toAddress.toLowerCase();
+		const from = fromAddress?.toLowerCase();
+		const to = toAddress?.toLowerCase();
 
 		balance[from] = {
 			...balance[from],
@@ -118,7 +119,7 @@ const UserPage: React.FC<ProfileProps> = ({
 
 		if (friendAddress.includes(".")) {
 			const response = await fetchEnsAddress(friendAddress);
-			friendAddress = response.address.toLowerCase();
+			friendAddress = response.address?.toLowerCase();
 		}
 
 		if (friendAddress && account) {
@@ -131,7 +132,7 @@ const UserPage: React.FC<ProfileProps> = ({
 	const handleRequest = async () => {
 		try {
 			const balance =
-				memberBalance[account.toLowerCase()][
+				memberBalance[account?.toLowerCase()][
 					otherAddress?.toLowerCase()
 				];
 
@@ -140,7 +141,7 @@ const UserPage: React.FC<ProfileProps> = ({
 				NotificationTypes.RequestToSettle,
 				balance,
 				otherAddress?.toLowerCase(),
-				"Hey! Paisa lautau"
+				"Hey! Paisa lautau..."
 			);
 			toast.success("Request sent");
 		} catch (error) {
@@ -151,11 +152,14 @@ const UserPage: React.FC<ProfileProps> = ({
 
 	useEffect(() => {
 		fetchGroupData();
-	}, [otherPersonAccount, account]);
+	}, [otherAddress, account]);
 
 	const balanceAmount =
-		memberBalance?.[account?.toLowerCase()]?.[otherAddress.toLowerCase()] ??
-		0;
+		memberBalance?.[account?.toLowerCase()]?.[
+			otherAddress?.toLowerCase()
+		] ?? 0;
+
+	console.log({ group });
 
 	return (
 		<>

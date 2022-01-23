@@ -1,13 +1,12 @@
-import Moralis from "moralis";
 import { useRouter } from "next/router";
 import React, { ReactText, useEffect, useState } from "react";
-import { useChain, useERC20Balances, useNativeBalance } from "react-moralis";
+import { useChain, useNativeBalance } from "react-moralis";
 import { toast } from "react-toastify";
 import { Transaction } from "../../contracts";
 import { useMoralisData } from "../../hooks/useMoralisData";
-import { saveTransaction } from "../../utils";
-import { chainLogo, tokenMetadata } from "../../utils/tokens";
-import AddressInput from "../AddressInput";
+import { saveTransaction } from "../../utils/firebaseQueries";
+import { tokenMetadata } from "../../utils/tokens";
+import { useEnsAddress } from "../../utils/useEnsAddress";
 import Button from "../Button";
 
 interface Token {
@@ -19,11 +18,13 @@ interface Token {
 	readonly logo?: string;
 }
 
-const PaymentSection = ({}) => {
+const PaymentSection = ({ propAmount, settleAmount }) => {
 	const { account: address, user, web3, chainId, sendTx } = useMoralisData();
 	const {
 		query: { id },
 	} = useRouter();
+
+	const { address: otherAddress, name: ens } = useEnsAddress(id?.toString());
 
 	const { switchNetwork } = useChain();
 
@@ -56,7 +57,7 @@ const PaymentSection = ({}) => {
 			`${(nativeData.balance
 				? Number(nativeData.balance) / 10 ** 18
 				: 0
-			).toFixed(4)} MATIC`,
+			).toPrecision(3)} ETH`,
 		name: nativeTokenName,
 		decimals: 18,
 		tokenAddress: null,
@@ -80,10 +81,10 @@ const PaymentSection = ({}) => {
 			};
 
 			await saveTransaction(newTx);
+			setMessage("");
+			setPrice(0);
 		} catch (error) {
-			if (error?.data?.message) {
-				toast.error(error.data.message);
-			}
+			toast.error(error.message);
 			console.error(error);
 		} finally {
 			setIsLoading(false);
@@ -116,22 +117,26 @@ const PaymentSection = ({}) => {
 		}
 	}, [address]);
 
+	useEffect(() => {
+		if (!!propAmount) {
+			setPrice(Math.abs(propAmount));
+			setMessage(`Sending you ${Math.abs(propAmount)} ETH`);
+			settleAmount(0);
+		}
+	}, [propAmount]);
+
+	useEffect(() => {
+		if (!!id) {
+			setReceiverAddress(otherAddress);
+		}
+	}, [id, otherAddress]);
+
 	return (
 		<div className="grid gap-6 w-full">
 			{/* <AddressInput
 				defaultValue={receiverAddress}
 				onChange={setReceiverAddress}
 			/> */}
-
-			<textarea
-				value={message}
-				onChange={(e) => setMessage(e.target.value)}
-				rows={4}
-				name="comment"
-				id="comment"
-				placeholder="Add notes to the payment"
-				className=" shadow-sm placeholder-opacity-50 placeholder-border-gray-600 block w-full sm:text-sm border border-solid  border-gray-600 border-opacity-20 bg-white bg-opacity-10 rounded-md p-2"
-			/>
 
 			<div className="rounded-md mt-2 ">
 				<div className="flex items-center justify-between border border-solid  border-gray-600 border-opacity-20 bg-white bg-opacity-10 rounded-md">
@@ -160,10 +165,21 @@ const PaymentSection = ({}) => {
 				</div>
 			</div>
 
+			<textarea
+				value={message}
+				onChange={(e) => setMessage(e.target.value)}
+				rows={4}
+				name="comment"
+				id="comment"
+				placeholder="Add notes to the payment"
+				className=" shadow-sm placeholder-opacity-50 placeholder-border-gray-600 block w-full sm:text-sm border border-solid  border-gray-600 border-opacity-20 bg-white bg-opacity-10 rounded-md p-2"
+			/>
+
 			<Button
 				type="button"
 				disabled={isLoading}
 				onClick={handleTransaction}
+				loading={isLoading}
 				size="lg"
 			>
 				Send {!!symbol ? `( ${price} ${symbol} )` : ""}

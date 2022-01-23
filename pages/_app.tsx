@@ -1,21 +1,18 @@
+import "antd/dist/antd.css";
 import Head from "next/head";
 import Link from "next/link";
-import React, { useEffect } from "react";
+import NextNProgress from "nextjs-progressbar";
+import React from "react";
 import { MoralisProvider } from "react-moralis";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import ReactTooltip from "react-tooltip";
 import "tailwindcss/tailwind.css";
-import "./globals.css";
 import Account from "../components/Account";
 import Chains from "../components/Chains";
 import Logo from "../components/Logo";
-
-import NextNProgress from "nextjs-progressbar";
 import MetaHead from "../components/MetaHead";
-import "antd/dist/antd.css";
-import dynamic from "next/dynamic";
-import Button from "../components/Button";
+import "./globals.css";
 
 const APP_ID = process.env.NEXT_PUBLIC_MORALIS_APPLICATION_ID;
 const SERVER_URL = process.env.NEXT_PUBLIC_MORALIS_SERVER_URL;
@@ -81,8 +78,11 @@ function MyApp({ Component, pageProps: { session, ...pageProps } }) {
 									<Link href="/">
 										<div className="inline-flex items-center">
 											<Logo />
-											<h1 className="text-2xl ml-4 font-bold">
+											<h1 className="text-2xl ml-2 font-bold m-0 flex items-center">
 												Cryptowise
+												<span className="text-xs ml-2 bg-gray-200 text-gray-500 font-light rounded-md px-2 py-1">
+													Beta
+												</span>
 											</h1>
 										</div>
 									</Link>

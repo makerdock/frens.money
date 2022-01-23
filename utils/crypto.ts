@@ -1,7 +1,26 @@
 import { ethers } from "ethers";
-import { useEffect, useState } from "react";
 
 declare let window: any;
+
+export const getSignedNonce = async (nonce: string) => {
+	const { ethereum } = window;
+
+	if (!ethereum) {
+		console.log("Make sure you have metamask!");
+		return;
+	} else {
+		console.log("We have the ethereum object");
+	}
+
+	const signature = await ethereum.request({
+		method: "personal_sign",
+		params: [nonce, ethereum.selectedAddress],
+	});
+
+	console.log({ signature });
+
+	return signature;
+};
 
 export const checkIfWalletIsConnected = async (): Promise<string> => {
 	try {

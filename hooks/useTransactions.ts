@@ -9,15 +9,17 @@ const useTransactions = (
 	result: TransactionLog[];
 	error: Error;
 	isLoading: boolean;
+	fetchData: () => void;
 } => {
 	const { account } = useMoralisData();
 
 	const { chainId } = useChain();
 
-	const { data, error, isLoading, isFetching } = useNativeTransactions({
-		chain: chainId as any,
-		address: account,
-	});
+	const { getNativeTransations, data, error, isLoading, isFetching } =
+		useNativeTransactions({
+			chain: chainId as any,
+			address: account,
+		});
 
 	const result =
 		data?.result?.filter(
@@ -38,10 +40,10 @@ const useTransactions = (
 			from: transaction.from_address,
 			to: transaction.to_address,
 			amount: Number(ethers.utils.formatEther(transaction.value)),
-			message: transaction.input,
+			message: transaction.input === "0x" ? "" : transaction.input,
 			createdAt: new Date(transaction.block_timestamp).getTime(),
 			fromBlock: parseInt(transaction.block_number, 10),
-			gas: parseFloat(gasAmount.toFixed(5)),
+			gas: parseFloat(gasAmount.toPrecision(3)),
 		};
 	});
 
@@ -49,6 +51,7 @@ const useTransactions = (
 		result: cleanedResult,
 		error,
 		isLoading,
+		fetchData: getNativeTransations,
 	};
 };
 

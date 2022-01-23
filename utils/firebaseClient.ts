@@ -1,4 +1,5 @@
 import firebase from "firebase/app";
+import * as firebaseClient from "firebase/app";
 import "firebase/auth";
 import "firebase/firestore";
 import "firebase/storage";
@@ -24,8 +25,10 @@ const storage = firebase.storage();
 export const firestoreCollections = {
 	GROUPS: "groups",
 	TRANSACTIONS: "transactions",
+	NOTIFICATIONS: "notifications",
+	USERS: "users",
 };
 
 export { db, storage };
 
-export default firebase;
+export default firebaseClient;
