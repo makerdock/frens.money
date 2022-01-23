@@ -137,7 +137,7 @@ const UserPage: React.FC<ProfileProps> = ({
 				];
 
 			await createNotification(
-				group,
+				group.id,
 				NotificationTypes.RequestToSettle,
 				balance,
 				otherAddress?.toLowerCase(),
