@@ -58,7 +58,7 @@ const AddressInput: React.FC<AddressInputProps> = ({
 						ref={inputRef}
 						value={value}
 						className={classnames(
-							"shadow-sm placeholder-opacity-50 placeholder-white w-full block sm:text-sm rounded-md bg-white bg-opacity-10 p-2 px-4",
+							"shadow-sm placeholder-opacity-50 placeholder-white w-full block sm:text-sm rounded-md bg-white bg-opacity-10 p-2 px-4 border border-black",
 							error &&
 								"border border-red-500 ring-red-500 focus:ring-red-500 focus:border-red-500 ring-1",
 							!error &&

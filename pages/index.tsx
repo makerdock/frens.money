@@ -1,8 +1,6 @@
 import React from "react";
 import Members from "../components/Members";
 
-declare let window: any;
-
 const Dashboard: React.FC = () => {
 	return (
 		<div className="flex justify-center items-center">

@@ -19,6 +19,7 @@ import Button from "../components/Button";
 
 const APP_ID = process.env.NEXT_PUBLIC_MORALIS_APPLICATION_ID;
 const SERVER_URL = process.env.NEXT_PUBLIC_MORALIS_SERVER_URL;
+const GTag = "G-4HENSLHDZS";
 
 function MyApp({ Component, pageProps: { session, ...pageProps } }) {
 	const hideNavbar = pageProps.hideNavbar;
@@ -37,6 +38,38 @@ function MyApp({ Component, pageProps: { session, ...pageProps } }) {
 					href="https://fonts.googleapis.com/css2?family=Abril+Fatface&family=Space+Grotesk:wght@300;400;500;700&display=swap"
 					rel="stylesheet"
 				/>
+
+				{process.env.NODE_ENV === "production" &&
+					typeof window !== "undefined" && (
+						<>
+							<script
+								async
+								type="text/javascript"
+								src={`https://www.googletagmanager.com/gtag/js?id=${GTag}`}
+							/>
+							{/* <!-- Google Tag Manager --> */}
+							<script
+								dangerouslySetInnerHTML={{
+									__html: `(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+								new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+								j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+								'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+								})(window,document,'script','dataLayer','GTM-PWX4GJW');`,
+								}}
+							/>
+							{/* <!-- End Google Tag Manager --> */}
+							<script
+								dangerouslySetInnerHTML={{
+									__html: `
+										window.dataLayer = window.dataLayer || [];
+										function gtag(){dataLayer.push(arguments);}
+										gtag('js', new Date());
+										gtag('config', '${GTag}', { page_path: window.location.pathname });
+										`,
+								}}
+							/>
+						</>
+					)}
 			</Head>
 
 			{!hideNavbar && (
@@ -48,7 +81,9 @@ function MyApp({ Component, pageProps: { session, ...pageProps } }) {
 									<Link href="/">
 										<div className="inline-flex items-center">
 											<Logo />
-                                            <h1 className="text-2xl ml-4 font-bold">Cryptowise</h1>
+											<h1 className="text-2xl ml-4 font-bold">
+												Cryptowise
+											</h1>
 										</div>
 									</Link>
 								</div>

@@ -1,16 +1,26 @@
-import React from "react";
-import Members from "../components/Members";
-import Image from "next/image";
-import AddressInput from "../components/AddressInput";
+import classnames from "classnames";
 import { useRouter } from "next/router";
+import React from "react";
+import Blockies from "react-blockies";
+import { useCollectionData } from "react-firebase-hooks/firestore";
+import AddressInput from "../components/AddressInput";
 import { useMoralisData } from "../hooks/useMoralisData";
+import { minimizeAddress } from "../utils";
+import { db, firestoreCollections } from "../utils/firebaseClient";
 import { createGroup } from "../utils/moralis-db";
+import { useEnsAddress } from "../utils/useEnsAddress";
 
 declare let window: any;
 
 const Dashboard: React.FC = () => {
 	const router = useRouter();
 	const { account: selfAddress } = useMoralisData();
+
+	const [groups, loading] = useCollectionData<SplitwiseGroup>(
+		db
+			.collection(firestoreCollections.GROUPS)
+			.where("members", "array-contains", selfAddress)
+	);
 
 	const handleAddressChange = async (address: string, ens: string) => {
 		if (!address) {
@@ -55,25 +65,74 @@ const Dashboard: React.FC = () => {
 						<AddressInput onChange={handleAddressChange} />
 					</div>
 					<h4 className="text-2xl font-bold">Existing Frens</h4>
-					<div className="rounded-lg border-solid border-2 border-dark-gray p-6 flex justify-between items-center">
-						<div className="inline-flex justify-center items-center">
-							<div>
-								<Image
-									src={"/../assets/Wallet.svg"}
-									width={32}
-									height={32}
-								/>
-							</div>
-							<h6 className="text-2xl font-bold mb-0">
-								0xAbhishekKumar
-							</h6>
-						</div>
-						<div className="text-base font-medium text-sea-green">
-							+ 0.005 ETH
-						</div>
+					<div className="grid gap-4">
+						{groups?.map((group) => (
+							<GroupTab group={group} />
+						))}
 					</div>
 				</div>
 			</div>
+		</div>
+	);
+};
+
+interface SplitwiseGroup {
+	createdAt: string;
+	creator: string;
+	id: string;
+	members: string[];
+	name: string;
+	balance: number;
+}
+
+interface GroupTabProps {
+	group: SplitwiseGroup;
+}
+const GroupTab: React.FC<GroupTabProps> = ({ group }) => {
+	const { account: selfAddress } = useMoralisData();
+	const router = useRouter();
+
+	const otherAddress = group.members.find(
+		(address) => address !== selfAddress
+	);
+
+	const { address, avatar, error, name } = useEnsAddress(otherAddress);
+
+	const balance = group.balance || 0;
+
+	const handleAddressChange = async () => {
+		router.push(`/groups/${otherAddress}`);
+	};
+
+	return (
+		<div
+			onClick={handleAddressChange}
+			className="rounded-lg border-solid border border-lighter-gray p-2 flex justify-between items-center hover:bg-gray-100 cursor-pointer"
+		>
+			<div className="inline-flex justify-center items-center gap-4">
+				{avatar?.length ? (
+					<img src={avatar} className="h-16 w-16 rounded-xl" />
+				) : (
+					<Blockies
+						seed={otherAddress}
+						size={8}
+						className="h-16 w-16 rounded-lg"
+					/>
+				)}
+				<h6 className="text-xl mb-0">
+					{name ?? minimizeAddress(otherAddress)}
+				</h6>
+			</div>
+			{!!balance && (
+				<div
+					className={classnames(
+						"text-base font-medium",
+						balance > 0 ? "text-green" : "text-orange"
+					)}
+				>
+					{balance > 0 ? "+" : "-"}+ {balance} ETH
+				</div>
+			)}
 		</div>
 	);
 };
