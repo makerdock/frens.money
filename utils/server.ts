@@ -25,8 +25,9 @@ export const getOrCreateUser = async (address: string): Promise<User> => {
 
 		return user;
 	}
+	const generatedNonce = Math.floor(Math.random() * 1000000).toString();
 
-	return response;
+	return { ...response, nonce: generatedNonce.toString() };
 };
 
 export const getUserFromAddress = async (

@@ -37,11 +37,6 @@ export default async function verifyNonce(
 		const recoveredAddress = recoverAddress(user.nonce, signature);
 
 		if (address === recoveredAddress) {
-			await updateUser({
-				...user,
-				nonce: Math.floor(Math.random() * 1000000).toString(),
-			});
-
 			const cookies: ICookie[] = [
 				{
 					name: ACCOUNT,

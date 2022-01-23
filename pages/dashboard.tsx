@@ -172,7 +172,7 @@ const GroupTab: React.FC<GroupTabProps> = ({ group }) => {
 	const balance = group.balance || 0;
 
 	const handleAddressChange = async () => {
-		router.push(`/groups/${otherAddress}`);
+		router.push(`/user/${otherAddress}`);
 	};
 
 	return (

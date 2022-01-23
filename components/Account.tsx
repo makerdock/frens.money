@@ -82,12 +82,6 @@ function Account() {
 	// 	// );
 	// }
 
-	useEffect(() => {
-		if (!account) {
-			router.push("/");
-		}
-	}, [account]);
-
 	return (
 		<>
 			<Menu as="div" className="relative inline-block text-left z-40">

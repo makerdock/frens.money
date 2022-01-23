@@ -14,11 +14,9 @@ const updateGroupAPI = async (
 
 		const { group } = req.body;
 
-		console.log({ group });
-
 		if (!group) throw new Error("Group is required");
 
-		const memeberInGroup = group.members.include(
+		const memeberInGroup = group.members.includes(
 			user.address.toLowerCase()
 		);
 
