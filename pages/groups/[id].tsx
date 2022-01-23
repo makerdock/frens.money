@@ -21,7 +21,6 @@ import {
 	createNotification,
 	getGroupByPerson,
 } from "../../utils/firebaseQueries";
-import { TransactionQuery, useMoralisObject } from "../../utils/moralis-db";
 import { fetchEnsAddress, useEnsAddress } from "../../utils/useEnsAddress";
 
 declare let window: any;
@@ -71,10 +70,6 @@ const UserPage: React.FC<ProfileProps> = ({
 				.where("groupId", "==", group?.id)
 				.where("recipient", "==", account)
 				.where("closed", "==", false)
-	);
-
-	const [moralisSnapshot] = useMoralisObject(
-		TransactionQuery.equalTo("groupId", group?.id)
 	);
 
 	const notifications: Notification[] =
@@ -141,7 +136,7 @@ const UserPage: React.FC<ProfileProps> = ({
 				];
 
 			await createNotification(
-				group,
+				group.id,
 				NotificationTypes.RequestToSettle,
 				balance,
 				otherAddress?.toLowerCase(),
