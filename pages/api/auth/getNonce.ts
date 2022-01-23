@@ -19,7 +19,7 @@ export default async function getNonceToSign(
 
 		// setTokenCookie(res, user.nonce);
 
-		return res.status(200).send(user.nonce);
+		return res.status(200).send({ nonce: user.nonce });
 	} catch (error) {
 		res.status(404).json({ error: (error as any).message });
 	}

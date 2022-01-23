@@ -25,8 +25,9 @@ export const getOrCreateUser = async (address: string): Promise<User> => {
 
 		return user;
 	}
+	const generatedNonce = Math.floor(Math.random() * 1000000).toString();
 
-	return response;
+	return { ...response, nonce: generatedNonce.toString() };
 };
 
 export const getUserFromAddress = async (
@@ -61,8 +62,11 @@ export const updateUser = async (user: User): Promise<void> => {
 export const recoverAddress = (existingNonce: string, sig: string): string => {
 	const hexNonce = ethers.utils.hexlify(Number(existingNonce));
 
+	console.log({ hexNonce });
+	console.log({ asd: existingNonce.toString() });
+
 	const recoveredAddress = recoverPersonalSignature({
-		data: `0x${hexNonce}`,
+		data: hexNonce,
 		signature: sig,
 	});
 

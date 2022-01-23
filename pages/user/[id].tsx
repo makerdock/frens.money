@@ -1,3 +1,4 @@
+import axios from "axios";
 import { useRouter } from "next/router";
 import React, { useEffect, useState } from "react";
 import Blockies from "react-blockies";
@@ -76,7 +77,6 @@ const UserPage: React.FC<ProfileProps> = ({
 		notificationSnapshot?.docs?.map((doc) => doc.data() as Notification) ??
 		[];
 
-	console.log({ notifications, account });
 	const transactions: Transaction[] =
 		(snapshot?.docs.map((doc) => doc.data() as Transaction) ?? []).sort(
 			(a, b) => a.createdAt - b.createdAt
@@ -150,16 +150,41 @@ const UserPage: React.FC<ProfileProps> = ({
 		}
 	};
 
+	const updateGroupData = async () => {
+		try {
+			if (!group) {
+				return;
+			}
+
+			const updatedGroup: Group = {
+				...group,
+				groupBalance: memberBalance,
+			};
+
+			await axios.post(`/api/group/update`, {
+				group: updatedGroup,
+			});
+		} catch (error) {
+			console.error(error);
+		}
+	};
+
 	useEffect(() => {
 		fetchGroupData();
 	}, [otherAddress, account]);
+
+	const validTx = transactions.filter((tx) => !tx.skipped);
+
+	useEffect(() => {
+		if (transactions?.length && !!group) {
+			updateGroupData();
+		}
+	}, [!!validTx.length]);
 
 	const balanceAmount =
 		memberBalance?.[account?.toLowerCase()]?.[
 			otherAddress?.toLowerCase()
 		] ?? 0;
-
-	console.log({ group });
 
 	return (
 		<>

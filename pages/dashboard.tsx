@@ -16,6 +16,8 @@ import { minimizeAddress } from "../utils";
 import { db, firestoreCollections } from "../utils/firebaseClient";
 import { createGroup } from "../utils/firebaseQueries";
 import { useEnsAddress } from "../utils/useEnsAddress";
+import Image from "next/image";
+import sadface from "../assets/sadface.png";
 
 // import { createGroup } from "../utils/moralis-db";
 
@@ -115,6 +117,14 @@ const Dashboard: React.FC = () => {
 						</div>
 					</div>
 					<div className="grid gap-4">
+						{groups?.length === 0 && (
+							<div className="flex justify-center items-center flex-col">
+								<Image src={sadface} />
+								<div className="mt-8">
+									When you add a fren, they will show up here.
+								</div>
+							</div>
+						)}
 						{groups?.map((group) => (
 							<GroupTab group={group} />
 						))}
@@ -150,7 +160,7 @@ const GroupTab: React.FC<GroupTabProps> = ({ group }) => {
 	const balance = group.balance || 0;
 
 	const handleAddressChange = async () => {
-		router.push(`/groups/${otherAddress}`);
+		router.push(`/user/${otherAddress}`);
 	};
 
 	return (
