@@ -31,6 +31,9 @@ export default async function verifyNonce(
 			throw new Error("No user found");
 		}
 
+		console.log(user.nonce);
+		console.log(signature);
+
 		const recoveredAddress = recoverAddress(user.nonce, signature);
 
 		if (address === recoveredAddress) {

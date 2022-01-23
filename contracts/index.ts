@@ -4,6 +4,7 @@ export class Group {
 	creator: string = "";
 	members: string[] = [];
 	createdAt: string = "";
+	groupBalance: Record<string, Record<string, number>>;
 }
 
 export class Transaction {

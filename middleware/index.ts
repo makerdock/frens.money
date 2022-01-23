@@ -1,6 +1,6 @@
 import { NextApiRequest, NextApiResponse } from "next";
 import { User } from "next-auth";
-import { getDataFromCookie, TOKEN_NAME } from "../utils/cookie";
+import { ACCOUNT, getDataFromCookie, TOKEN_NAME } from "../utils/cookie";
 import { db, firestoreCollections } from "../utils/firebaseClient";
 import {
 	getUserFromAddress,
@@ -10,15 +10,22 @@ import {
 
 export const withAuth =
 	(api: any) => async (req: NextApiRequest, res: NextApiResponse) => {
+		console.log("1 hee");
+
 		const signature = getDataFromCookie(req, TOKEN_NAME);
-		const address = getDataFromCookie(req, "address");
+		console.log("3 hee", signature);
+		const address = getDataFromCookie(req, ACCOUNT);
+		console.log("4hee", address);
 
 		// fetch user from firebase
 		const user = await getUserFromAddress(address);
+		console.log("asdf hee");
+
+		console.log({ user });
 
 		const recoveredAddress = recoverAddress(user.nonce, signature);
 
-		if (recoverAddress !== address) {
+		if (recoveredAddress !== address) {
 			return res.status(401).json({
 				message: "You are not authorized to access this resource",
 			});

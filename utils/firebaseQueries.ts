@@ -28,6 +28,13 @@ export const createGroup = async (
 	return group;
 };
 
+export const updateGroup = async (group: Group) => {
+	console.log(group);
+	const groupRef = db.collection(firestoreCollections.GROUPS).doc(group.id);
+
+	await groupRef.set({ ...group });
+};
+
 export const getGroup = async (id: string): Promise<Group | null> => {
 	const groupRef = db.collection(firestoreCollections.GROUPS).doc(id);
 

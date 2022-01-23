@@ -12,12 +12,16 @@ export const getSignedNonce = async (nonce: string) => {
 		console.log("We have the ethereum object");
 	}
 
+	const hexNonce = ethers.utils.hexlify(Number(nonce));
+
+	console.log({ hexNonce });
+
 	const signature = await ethereum.request({
 		method: "personal_sign",
-		params: [nonce, ethereum.selectedAddress],
+		params: [hexNonce, ethereum.selectedAddress],
 	});
 
-	console.log({ signature });
+	console.log({ signature, nonce });
 
 	return signature;
 };
