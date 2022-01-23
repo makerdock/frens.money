@@ -29,13 +29,18 @@ export const createCookie = (name: string, data: any, options = {}) => {
 	});
 };
 
-export const setTokenCookie = (
-	res: NextApiResponse,
-	token: string,
-	tokenName?: string
-) => {
+export interface ICookie {
+	name: string;
+	value: string;
+}
+
+export const setTokenCookie = (res: NextApiResponse, cookies: ICookie[]) => {
 	res.setHeader("Set-Cookie", [
-		createCookie(tokenName ?? TOKEN_NAME, token),
+		...cookies.map((cookie) =>
+			createCookie(cookie.name, cookie.value, {
+				maxAge: MAX_AGE,
+			})
+		),
 		createCookie("authed", true, { httpOnly: false }),
 	]);
 };
