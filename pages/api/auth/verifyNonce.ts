@@ -1,6 +1,6 @@
 // Next.js API route support: https://nextjs.org/docs/api-routes/introduction
 import type { NextApiRequest, NextApiResponse } from "next";
-import { setTokenCookie } from "../../../utils/cookie";
+import { ICookie, setTokenCookie, TOKEN_NAME } from "../../../utils/cookie";
 import firebaseAdmin from "../../../utils/firebaseServer";
 import {
 	getUserFromAddress,
@@ -39,15 +39,20 @@ export default async function verifyNonce(
 				nonce: Math.floor(Math.random() * 1000000).toString(),
 			});
 
-			const token = firebaseAdmin.auth().createCustomToken(address);
+			const cookies: ICookie[] = [
+				{
+					name: ACCOUNT,
+					value: address,
+				},
+				{
+					name: TOKEN_NAME,
+					value: signature,
+				},
+			];
 
-			setTokenCookie(res, signature);
-			setTokenCookie(res, address, ACCOUNT);
+			setTokenCookie(res, cookies);
 
-			res.status(200).json({
-				nonce: user.nonce,
-				token,
-			});
+			return res.status(200).send({});
 		} else {
 			res.status(401).json({ error: "Signature is invalid" });
 		}
