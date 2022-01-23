@@ -26,9 +26,10 @@ const Dashboard: React.FC = () => {
 	const { account: selfAddress } = useMoralisData();
 
 	const [groups, transactionLoading] = useCollectionData<SplitwiseGroup>(
-		db
-			.collection(firestoreCollections.GROUPS)
-			.where("members", "array-contains", selfAddress)
+		selfAddress &&
+			db
+				.collection(firestoreCollections.GROUPS)
+				.where("members", "array-contains", selfAddress)
 	);
 	const [address, setAddress] = useState("");
 	const [ens, setEns] = useState<string | null>("");
