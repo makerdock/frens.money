@@ -77,7 +77,6 @@ const UserPage: React.FC<ProfileProps> = ({
 		notificationSnapshot?.docs?.map((doc) => doc.data() as Notification) ??
 		[];
 
-	console.log({ notifications, account });
 	const transactions: Transaction[] =
 		(snapshot?.docs.map((doc) => doc.data() as Transaction) ?? []).sort(
 			(a, b) => a.createdAt - b.createdAt
@@ -174,18 +173,18 @@ const UserPage: React.FC<ProfileProps> = ({
 		fetchGroupData();
 	}, [otherAddress, account]);
 
+	const validTx = transactions.filter((tx) => !tx.skipped);
+
 	useEffect(() => {
 		if (transactions?.length && !!group) {
 			updateGroupData();
 		}
-	}, [transactions]);
+	}, [!!validTx.length]);
 
 	const balanceAmount =
 		memberBalance?.[account?.toLowerCase()]?.[
 			otherAddress?.toLowerCase()
 		] ?? 0;
-
-	console.log({ group });
 
 	return (
 		<>
