@@ -25,10 +25,11 @@ const Dashboard: React.FC = () => {
 	const router = useRouter();
 	const { account: selfAddress } = useMoralisData();
 
-	const [groups, transactionLoading] = useCollectionData<SplitwiseGroup>(
-		db
-			.collection(firestoreCollections.GROUPS)
-			.where("members", "array-contains", selfAddress)
+	const [groups] = useCollectionData<SplitwiseGroup>(
+		selfAddress &&
+			db
+				.collection(firestoreCollections.GROUPS)
+				.where("members", "array-contains", selfAddress)
 	);
 	const [address, setAddress] = useState("");
 	const [ens, setEns] = useState<string | null>("");
@@ -72,29 +73,6 @@ const Dashboard: React.FC = () => {
 		}
 	};
 
-	const handleRedirect = (group: Group) => {
-		const recipient = group.members.filter(
-			(member) => member.toLowerCase() !== selfAddress.toLowerCase()
-		)[0];
-
-		if (!recipient) {
-			toast.error("Could not find recipient");
-			return;
-		}
-
-		router.push(`/user/${recipient}`);
-	};
-
-	const [snapshot] = useCollection(
-		selfAddress &&
-			db
-				.collection(firestoreCollections.GROUPS)
-				.where("members", "array-contains", selfAddress)
-	);
-
-	const cleanedGroups =
-		snapshot?.docs.map((doc) => doc.data() as Group) ?? [];
-
 	return (
 		<div>
 			<div className="max-w-3xl bg-dark-gray rounded-t-3xl my-0 mx-auto pb-0">
@@ -124,17 +102,18 @@ const Dashboard: React.FC = () => {
 				<div className="w-full rounded-t-3xl bg-white p-12">
 					<div className="mb-8 space-y-4">
 						<h4 className="text-2xl font-bold">Add Fren</h4>
-						<AddressInput onChange={handleAddressChange} />
-						<Button
-							loading={loading}
-							onClick={handleCreateGroup}
-							className="space-x-2 flex"
-						>
-							<div>Create group</div>
-							<ArrowRightIcon className="h-4 w-4 ml-2" />{" "}
-						</Button>
+						<div className="flex items-stretch space-x-4">
+							<AddressInput onChange={handleAddressChange} />
+							<Button
+								loading={loading}
+								onClick={handleCreateGroup}
+								className="space-x-2 flex"
+							>
+								<div>Create group</div>
+								<ArrowRightIcon className="h-4 w-4 ml-2" />{" "}
+							</Button>
+						</div>
 					</div>
-					<h4 className="text-2xl font-bold">Existing Frens</h4>
 					<div className="grid gap-4">
 						{groups?.map((group) => (
 							<GroupTab group={group} />

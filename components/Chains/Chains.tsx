@@ -101,13 +101,9 @@ const Chains = () => {
 		switchNetwork(key);
 	};
 
-	const handleSolanaAuth = async () => {
-		// connect();
-	};
-
-	return null;
-
-	if (!isAuthenticated) return <div />;
+	// const handleSolanaAuth = async () => {
+	// 	// connect();
+	// };
 
 	return (
 		<div className="space-x-4 items-center hidden md:flex">
@@ -116,11 +112,7 @@ const Chains = () => {
 			{menuItems.map((item) => (
 				<button
 					key={item.key}
-					onClick={() =>
-						item.solana
-							? handleSolanaAuth()
-							: handleMenuClick(item.key)
-					}
+					onClick={() => handleMenuClick(item.key)}
 					className={classNames(
 						"rounded-lg focus:bg-indigo-100 hover:bg-indigo-100 text-white",
 						selected?.key === item.key
