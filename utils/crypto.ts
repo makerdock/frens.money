@@ -1,9 +1,8 @@
 import { ethers } from "ethers";
-import { useEffect, useState } from "react";
 
 declare let window: any;
 
-export const getSignedNonce = async (nonce: number) => {
+export const getSignedNonce = async (nonce: string) => {
 	const { ethereum } = window;
 
 	if (!ethereum) {
@@ -13,14 +12,14 @@ export const getSignedNonce = async (nonce: number) => {
 		console.log("We have the ethereum object");
 	}
 
-	const hexNonce = ethers.utils.hexlify(nonce);
-
 	const signature = await ethereum.request({
 		method: "personal_sign",
-		params: [`0x${hexNonce}`, ethereum.selectedAddress],
+		params: [nonce, ethereum.selectedAddress],
 	});
 
 	console.log({ signature });
+
+	return signature;
 };
 
 export const checkIfWalletIsConnected = async (): Promise<string> => {
