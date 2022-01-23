@@ -1,13 +1,13 @@
-import { ACCOUNT } from "./../../../utils/cookie";
 // Next.js API route support: https://nextjs.org/docs/api-routes/introduction
 import type { NextApiRequest, NextApiResponse } from "next";
+import { setTokenCookie } from "../../../utils/cookie";
+import firebaseAdmin from "../../../utils/firebaseServer";
 import {
 	getUserFromAddress,
 	recoverAddress,
 	updateUser,
 } from "../../../utils/server";
-import firebaseAdmin from "../../../utils/firebaseServer";
-import { setTokenCookie } from "../../../utils/cookie";
+import { ACCOUNT } from "./../../../utils/cookie";
 
 export default async function verifyNonce(
 	req: NextApiRequest,

@@ -1,6 +1,5 @@
 // Next.js API route support: https://nextjs.org/docs/api-routes/introduction
 import type { NextApiRequest, NextApiResponse } from "next";
-import { setTokenCookie } from "../../../utils/cookie";
 import { getOrCreateUser } from "../../../utils/server";
 
 export default async function getNonceToSign(

@@ -1,4 +1,5 @@
 import { recoverPersonalSignature } from "@metamask/eth-sig-util";
+import { ethers } from "ethers";
 import { User } from "../contracts";
 import { firestoreCollections } from "./firebaseClient";
 import firebaseAdmin, { adminDb } from "./firebaseServer";
@@ -13,7 +14,7 @@ export const getOrCreateUser = async (address: string): Promise<User> => {
 		const user: User = {
 			address: address,
 			id: docRef.id,
-			nonce: generatedNonce,
+			nonce: generatedNonce.toString(),
 		};
 
 		await firebaseAdmin.auth().createUser({
@@ -58,8 +59,10 @@ export const updateUser = async (user: User): Promise<void> => {
 };
 
 export const recoverAddress = (existingNonce: string, sig: string): string => {
+	const hexNonce = ethers.utils.hexlify(Number(existingNonce));
+
 	const recoveredAddress = recoverPersonalSignature({
-		data: `0x${toHex(existingNonce)}`,
+		data: `0x${hexNonce}`,
 		signature: sig,
 	});
 
