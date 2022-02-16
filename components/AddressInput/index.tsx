@@ -1,14 +1,23 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, {
+	Dispatch,
+	SetStateAction,
+	useEffect,
+	useRef,
+	useState,
+} from "react";
 import { useDebounce } from "use-debounce";
 import { useEnsAddress } from "../../utils/useEnsAddress";
 import classnames from "classnames";
 import Loader from "../Loader";
 
 interface AddressInputProps {
+	setLoading?: Dispatch<SetStateAction<boolean>>;
 	defaultValue?: string;
 	onChange?: (address: string, ens?: string) => void;
 }
+
 const AddressInput: React.FC<AddressInputProps> = ({
+	setLoading,
 	defaultValue,
 	onChange,
 }) => {
@@ -32,7 +41,8 @@ const AddressInput: React.FC<AddressInputProps> = ({
 		}
 	};
 
-	const loading = debouncedValue && !ensAddress && !error;
+	const loading = debouncedValue && !address && !error;
+	setLoading(loading);
 
 	useEffect(() => {
 		setEditable(!address);
@@ -93,7 +103,7 @@ const AddressInput: React.FC<AddressInputProps> = ({
 			</div>
 
 			{!!error?.length && (
-				<span className="text-sm text-red-500 absolute bottom-0 transform translate-y-full mt-1">
+				<span className="text-sm text-red absolute bottom-0 transform translate-y-full mt-1">
 					{error}
 				</span>
 			)}

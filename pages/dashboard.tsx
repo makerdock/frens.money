@@ -105,7 +105,10 @@ const Dashboard: React.FC = () => {
 					<div className="mb-8 space-y-4">
 						<h4 className="text-2xl font-bold">Add Fren</h4>
 						<div className="flex items-stretch space-x-4">
-							<AddressInput onChange={handleAddressChange} />
+							<AddressInput
+								onChange={handleAddressChange}
+								setLoading={setLoading}
+							/>
 							<Button
 								loading={loading}
 								onClick={handleCreateGroup}

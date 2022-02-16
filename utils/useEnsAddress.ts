@@ -18,7 +18,7 @@ export const fetchEnsAddress = async (
 	const request = await fetch(`/api/resolve-wallet?name=${currAccount}`);
 	const res: ENSResponse = await request.json();
 
-	if (res.name) {
+	if (res.address) {
 		localStorage.setItem(`ensAddress-${currAccount}`, JSON.stringify(res));
 		return res;
 	}
