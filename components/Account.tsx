@@ -55,11 +55,15 @@ function Account() {
 		}
 	};
 
-	useEffect(() => {
-		if (!isAuthenticated && !loading) {
-			router.push("/");
-		}
-	}, [isAuthenticated, loading, router]);
+	/**
+	 * NOTE: The following wasn't allowing me to access /mint.
+	 * Fix if necessary.
+	 */
+	// useEffect(() => {
+	// 	if (!isAuthenticated && !loading) {
+	// 		router.push("/");
+	// 	}
+	// }, [isAuthenticated, loading, router]);
 
 	if (loading) {
 		return (

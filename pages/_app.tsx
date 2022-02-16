@@ -7,6 +7,7 @@ import { MoralisProvider } from "react-moralis";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import ReactTooltip from "react-tooltip";
+import { ThirdwebWeb3Provider } from "@3rdweb/hooks";
 import "tailwindcss/tailwind.css";
 import Account from "../components/Account";
 import Chains from "../components/Chains";
@@ -19,90 +20,106 @@ const SERVER_URL = process.env.NEXT_PUBLIC_MORALIS_SERVER_URL;
 const GTag = "G-4HENSLHDZS";
 
 function MyApp({ Component, pageProps: { session, ...pageProps } }) {
+	// Support Ethereum mainnet & rinkeby
+	const supportedChainIds = [1, 4];
+
+	// Support the Metamask wallet
+	const connectors = {
+		injected: {},
+	};
+
 	const hideNavbar = pageProps.hideNavbar;
 	return (
 		<MoralisProvider appId={APP_ID} serverUrl={SERVER_URL}>
-			<NextNProgress height={7} color="#9366F9" />
-			<MetaHead />
-			<Head key="main-head">
-				<link rel="preconnect" href="https://fonts.googleapis.com" />
-				<link
-					rel="preconnect"
-					href="https://fonts.gstatic.com"
-					crossOrigin="anonymous"
-				/>
-				<link
-					href="https://fonts.googleapis.com/css2?family=Abril+Fatface&family=Space+Grotesk:wght@300;400;500;700&display=swap"
-					rel="stylesheet"
-				/>
+			<ThirdwebWeb3Provider
+				supportedChainIds={supportedChainIds}
+				connectors={connectors}
+			>
+				<NextNProgress height={7} color="#9366F9" />
+				<MetaHead />
+				<Head key="main-head">
+					<link
+						rel="preconnect"
+						href="https://fonts.googleapis.com"
+					/>
+					<link
+						rel="preconnect"
+						href="https://fonts.gstatic.com"
+						crossOrigin="anonymous"
+					/>
+					<link
+						href="https://fonts.googleapis.com/css2?family=Abril+Fatface&family=Space+Grotesk:wght@300;400;500;700&display=swap"
+						rel="stylesheet"
+					/>
 
-				{process.env.NODE_ENV === "production" &&
-					typeof window !== "undefined" && (
-						<>
-							<script
-								async
-								type="text/javascript"
-								src={`https://www.googletagmanager.com/gtag/js?id=${GTag}`}
-							/>
-							{/* <!-- Google Tag Manager --> */}
-							<script
-								dangerouslySetInnerHTML={{
-									__html: `(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+					{process.env.NODE_ENV === "production" &&
+						typeof window !== "undefined" && (
+							<>
+								<script
+									async
+									type="text/javascript"
+									src={`https://www.googletagmanager.com/gtag/js?id=${GTag}`}
+								/>
+								{/* <!-- Google Tag Manager --> */}
+								<script
+									dangerouslySetInnerHTML={{
+										__html: `(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
 								new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
 								j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
 								'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
 								})(window,document,'script','dataLayer','GTM-PWX4GJW');`,
-								}}
-							/>
-							{/* <!-- End Google Tag Manager --> */}
-							<script
-								dangerouslySetInnerHTML={{
-									__html: `
+									}}
+								/>
+								{/* <!-- End Google Tag Manager --> */}
+								<script
+									dangerouslySetInnerHTML={{
+										__html: `
 										window.dataLayer = window.dataLayer || [];
 										function gtag(){dataLayer.push(arguments);}
 										gtag('js', new Date());
 										gtag('config', '${GTag}', { page_path: window.location.pathname });
 										`,
-								}}
-							/>
-						</>
-					)}
-			</Head>
+									}}
+								/>
+							</>
+						)}
+				</Head>
 
-			{!hideNavbar && (
-				<header>
-					<div className="container lg:px-8">
-						<div className="flex items-center justify-between py-5">
-							<div className="flex px-2 lg:px-0">
-								<div className="flex-shrink-0 flex items-center">
-									<Link href="/">
-										<div className="inline-flex items-center">
-											<Logo />
-											<h1 className="text-2xl ml-2 font-bold m-0 flex items-center">
-												Cryptowise
-												<span className="text-xs ml-2 bg-gray-200 text-gray-500 font-light rounded-md px-2 py-1">
-													Beta
-												</span>
-											</h1>
-										</div>
-									</Link>
+				{!hideNavbar && (
+					<header>
+						<div className="container lg:px-8">
+							<div className="flex items-center justify-between py-5">
+								<div className="flex px-2 lg:px-0">
+									<div className="flex-shrink-0 flex items-center">
+										<Link href="/">
+											<div className="inline-flex items-center">
+												<Logo />
+												<h1 className="text-2xl ml-2 font-bold m-0 flex items-center">
+													Cryptowise
+													<span className="text-xs ml-2 bg-gray-200 text-gray-500 font-light rounded-md px-2 py-1">
+														Beta
+													</span>
+												</h1>
+											</div>
+										</Link>
+									</div>
+								</div>
+								<div className="flex space-x-6 items-center">
+									{/* <Chains /> */}
+									<Account />
 								</div>
 							</div>
-							<div className="flex space-x-6 items-center">
-								{/* <Chains /> */}
-								<Account />
-							</div>
 						</div>
-					</div>
-				</header>
-			)}
+					</header>
+				)}
 
-			<div className="yellow-blur"></div>
-			<div className="pink-blur"></div>
+				<div className="yellow-blur"></div>
+				<div className="pink-blur"></div>
 
-			<Component {...pageProps} />
-			<ToastContainer />
-			<ReactTooltip effect="solid" />
+				<Component {...pageProps} />
+				<ToastContainer />
+				<ReactTooltip effect="solid" />
+			</ThirdwebWeb3Provider>
 		</MoralisProvider>
 	);
 }
