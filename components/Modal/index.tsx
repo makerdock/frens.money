@@ -6,12 +6,13 @@ import Button from "../Button";
 interface IModal {
 	readonly open: boolean;
 	readonly onClose: () => void;
-	readonly title: string;
-	readonly onOk: () => void;
-	readonly okText: string;
+	readonly title?: string;
+	readonly onOk?: () => void;
+	readonly okText?: string;
 	readonly width?: string;
 	readonly disabled?: boolean;
 	readonly loading?: boolean;
+	readonly showCTA?: boolean;
 }
 
 const Modal: React.FC<IModal> = ({
@@ -24,6 +25,7 @@ const Modal: React.FC<IModal> = ({
 	width,
 	disabled,
 	loading,
+	showCTA = true
 }) => {
 	return (
 		<Transition.Root show={open} as={Fragment}>
@@ -32,7 +34,7 @@ const Modal: React.FC<IModal> = ({
 				className="fixed z-10 inset-0 overflow-y-auto"
 				onClose={onClose}
 			>
-				<div className="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
+				<div className="flex items-center justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
 					<Transition.Child
 						as={Fragment}
 						enter="ease-out duration-300"
@@ -77,19 +79,23 @@ const Modal: React.FC<IModal> = ({
 									<div className="mt-2">{children}</div>
 								</div>
 							</div>
-							<div className="mt-5 sm:mt-6">
-								<Button
-									loading={loading}
-									disabled={disabled}
-									type="button"
-									fullWidth
-									// className="w-full"
-									// className="inline-flex justify-center w-full rounded-md border border-transparent shadow-sm px-4 py-2 bg-indigo-600 text-base font-medium text-white hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-cryptopurple sm:text-sm"
-									onClick={onOk}
-								>
-									{okText}
-								</Button>
-							</div>
+							{
+								showCTA && (
+									<div className="mt-5 sm:mt-6">
+										<Button
+											loading={loading}
+											disabled={disabled}
+											type="button"
+											fullWidth
+											// className="w-full"
+											// className="inline-flex justify-center w-full rounded-md border border-transparent shadow-sm px-4 py-2 bg-indigo-600 text-base font-medium text-white hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-cryptopurple sm:text-sm"
+											onClick={onOk}
+										>
+											{okText}
+										</Button>
+									</div>
+								)
+							}
 						</div>
 					</Transition.Child>
 				</div>

@@ -6,6 +6,7 @@ import toast from "react-hot-toast";
 import { AuthenticateOptions } from "react-moralis/lib/hooks/core/useMoralis/_useMoralisAuth";
 import { getEllipsisTxt } from "../helpers/formatters";
 import { useMoralisData } from "../hooks/useMoralisData";
+import { useChainId } from "../utils/useChainId";
 import { useEnsAddress } from "../utils/useEnsAddress";
 import Blockie from "./Blockie";
 import Loader from "./Loader";
@@ -17,19 +18,23 @@ function Account() {
 		isAuthenticated,
 		account: walletAddress,
 		user,
-		chainId,
 		logout,
 	} = useMoralisData();
 	const [loading, setLoading] = useState(false);
+	const isOnMintPage = router.pathname.includes("/mint");
 
 	const queriedAddress = user?.get("ethAddress");
 	const account = walletAddress ?? queriedAddress;
 
 	const { name: ensAddress, avatar } = useEnsAddress(account);
+	const { switchToDesiredChainId, isOnDesiredChainId } = useChainId(isOnMintPage);
 
 	const handleAuth = async () => {
 		try {
 			setLoading(true);
+			if(!isOnDesiredChainId) {
+				await switchToDesiredChainId();
+			}
 			const options: AuthenticateOptions = {
 				signingMessage: `
 					Get your audience support with crypto!\n
@@ -39,7 +44,6 @@ function Account() {
 					- They enter their favorite creator’s wallet address and donate crypto.
 					- Creators can create their own crypto coffee page and share with their audience too
 				`,
-				chainId: process.env.NODE_ENV === "development" ? 4 : 1,
 			};
 
 			if (!(window as any).ethereum) {
@@ -55,11 +59,17 @@ function Account() {
 		}
 	};
 
-	useEffect(() => {
-		if (!isAuthenticated && !loading) {
-			router.push("/");
-		}
-	}, [isAuthenticated, loading, router]);
+	if(!isAuthenticated) {
+		return (
+			<button
+				type="button"
+				onClick={handleAuth}
+				className="relative inline-flex h-14 w-48 justify-center backdrop-blur-lg items-center px-4 py-2 border border-transparent shadow-sm text-base font-medium rounded-lg text-white bg-gradient-to-r from-purple to-pink border-opacity-10 hover:bg-opacity-30 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-800 focus:ring-cryptopurple"
+			>
+				Connect Wallet
+			</button>
+		);
+	}
 
 	if (loading) {
 		return (

@@ -1,4 +1,5 @@
 import { ethers } from "ethers";
+import CryptoWise from "../abis/CryptoWise.json";
 
 declare let window: any;
 
@@ -183,4 +184,20 @@ export const validateAndResolveAddress = async (
 		console.error(error);
 		return {};
 	}
+};
+
+export const nftContract = (walletAddress?: string, externalProvider?: ethers.providers.JsonRpcProvider) => {
+  const { ethereum } = window;
+  if (ethereum) {
+    const provider = new ethers.providers.Web3Provider(ethereum);
+    const signer = (externalProvider ?? provider).getSigner(walletAddress);
+    const contractReader = new ethers.Contract(
+      "0x022635A0A3f14Eab0A8B97ee6aB7Ed1D710EFfb0",
+      CryptoWise,
+      signer
+    );
+    return contractReader;
+  }
+
+  return null;
 };

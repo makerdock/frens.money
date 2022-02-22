@@ -18,6 +18,7 @@ import { createGroup } from "../utils/firebaseQueries";
 import { useEnsAddress } from "../utils/useEnsAddress";
 import Image from "next/image";
 import sadface from "../assets/sadface.png";
+import { useWalletMembershipAccess } from "../utils/useWalletMembershipAccess";
 
 // import { createGroup } from "../utils/moralis-db";
 
@@ -36,6 +37,7 @@ const Dashboard: React.FC = () => {
 	const [address, setAddress] = useState("");
 	const [ens, setEns] = useState<string | null>("");
 	const [loading, setLoading] = useState(false);
+	const access = useWalletMembershipAccess();
 	const handleAddressChange = async (address: string, ens: string) => {
 		if (!address) {
 			return;
@@ -102,6 +104,14 @@ const Dashboard: React.FC = () => {
 					</div>
 				</div>
 				<div className="w-full rounded-t-3xl bg-white p-12">
+					{
+						!access && (
+							<div className="flex items-center justify-between p-3 bg-gradient-to-r from-purple to-pink rounded-lg text-white mb-4">
+								<p className="h-full text-base">Mint Cryptowise Gen 1 to get full access to the app. </p>
+								<button onClick={() => router.push('/mint')} className="p-2 text-black bg-white rounded-md items-center">Mint Now</button>
+							</div>
+						)
+					}
 					<div className="mb-8 space-y-4">
 						<h4 className="text-2xl font-bold">Add Fren</h4>
 						<div className="flex items-stretch space-x-4">
