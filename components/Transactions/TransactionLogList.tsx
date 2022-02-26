@@ -8,12 +8,12 @@ const TransactionLogList = ({ transactions, account }) => {
 	return (
 		<div>
 			<div className="relative flex items-start my-2">
-				<div className="flex items-center justify-center h-5 cursor-pointer">
-					<label
-						className="font-medium text-gray-700 cursor-pointer mr-2"
+				<div className="flex items-center justify-center h-5">
+					<p
+						className="font-medium text-gray-700 mr-2"
 					>
 						Show Skipped txn.
-					</label>
+					</p>
 					<Switch
 						checked={skipped}
 						onChange={setSkipped}
