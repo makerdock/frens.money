@@ -43,7 +43,7 @@ const useChainId = (isForNft: boolean) => {
 
     React.useEffect(() => {
         Moralis.Web3.enableWeb3();
-    }, [])
+    }, [isWeb3Enabled])
 
     return {
         chainId,

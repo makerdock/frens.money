@@ -266,12 +266,12 @@ const GroupTab: React.FC<GroupTabProps> = ({ group, memberBalance }) => {
 		>
 			<div className="inline-flex justify-center items-center gap-4">
 				{avatar?.length ? (
-					<img src={avatar} className="h-16 w-16 rounded-xl" />
+					<img src={avatar} className="h-10 w-10 rounded-xl" />
 				) : (
 					<Blockies
 						seed={otherAddress}
-						size={8}
-						className="h-16 w-16 rounded-lg"
+						size={10}
+						className="rounded-lg"
 					/>
 				)}
 				<h6 className="text-xl mb-0">
