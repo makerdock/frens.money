@@ -83,7 +83,7 @@ function Account() {
 		<>
 			<Menu as="div" className="relative inline-block text-left z-40">
 				<div>
-					<Menu.Button className="inline-flex justify-center items-center space-x-2 w-full rounded-md border border-gray-300 shadow-sm px-3 py-2 bg-white text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-100 focus:ring-cryptopurple">
+					<Menu.Button className="inline-flex bg-gradient-to-r from-purple to-pink justify-center items-center space-x-2 w-full rounded-md border border-gray-300 shadow-sm px-3 py-2 bg-white text-sm font-medium text-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-100 focus:ring-cryptopurple">
 						{!!avatar && (
 							<img src={avatar} className="h-6 w-6 rounded-lg" />
 						)}

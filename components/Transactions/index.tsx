@@ -34,6 +34,7 @@ const Transactions = ({
 	const [addNftTransactionModal, setAddNftTransactionModal] = useState(false);
 	const [loading, setLoading] = useState(false);
 	const [transactionId, setTransactionId] = useState("");
+	const [shouldShowAddTxButton, setShouldShowAddTxButton] = useState(false)
 
 	const handleImportTransaction = async () => {
 		try {
@@ -93,19 +94,25 @@ const Transactions = ({
 					id="text"
 					className="shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full sm:text-sm border-gray-300 rounded-md py-1.5"
 					placeholder="Transaction id or url"
+					onFocus={() => setShouldShowAddTxButton(true)}
+					onBlur={(e) => !e.target.value.length && setShouldShowAddTxButton(false)}
 				/>
-				<div>
-					<Button
-						variant="secondary"
-						onClick={handleImportTransaction}
-						loading={loading}
-					>
-						<div className="h-4 w-4 mr-2">
-							<PlusIcon />
+				{
+					shouldShowAddTxButton && (
+						<div>
+							<Button
+								onClick={handleImportTransaction}
+								className="bg-gradient-to-r from-purple to-pink p-4"
+								loading={loading}
+								size="equal"
+							>
+								<div className="h-4 w-4">
+									<PlusIcon />
+								</div>
+							</Button>
 						</div>
-						Transaction
-					</Button>
-				</div>
+					)
+				}
 			</div>
 			<div className="bg-white mt-4 sm:rounded-lg sm:overflow-hidden">
 				{importing ? (

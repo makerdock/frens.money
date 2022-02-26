@@ -1,3 +1,4 @@
+import { Switch } from "@headlessui/react";
 import React, { useState } from "react";
 import TransactionLog from "./TransactionLog";
 
@@ -7,24 +8,25 @@ const TransactionLogList = ({ transactions, account }) => {
 	return (
 		<div>
 			<div className="relative flex items-start my-2">
-				<div className="flex items-center h-5 cursor-pointer">
-					<input
-						id="skip"
-						aria-describedby="skip-description"
-						name="skip"
-						type="checkbox"
-						className="h-4 w-4 border-gray-300 rounded outline-none"
-						onChange={() => setSkipped(!skipped)}
-						checked={skipped}
-					/>
-				</div>
-				<div className="ml-3 text-sm">
+				<div className="flex items-center justify-center h-5 cursor-pointer">
 					<label
-						htmlFor="skip"
-						className="font-medium text-gray-700 cursor-pointer"
+						className="font-medium text-gray-700 cursor-pointer mr-2"
 					>
-						Hide skipped transactions
+						Show Skipped txn.
 					</label>
+					<Switch
+						checked={skipped}
+						onChange={setSkipped}
+						className={`${skipped ? "bg-gray-800" : "bg-gray-400"}
+						relative inline-flex flex-shrink-0 h-4 w-7 border-2 border-transparent rounded-full cursor-pointer transition-colors ease-in-out duration-200 focus:outline-none focus-visible:ring-2  focus-visible:ring-white focus-visible:ring-opacity-75`}
+					>
+						<span className="sr-only">Use setting</span>
+						<span
+						aria-hidden="true"
+						className={`${skipped ? 'translate-x-3' : 'translate-x-0'}
+							pointer-events-none inline-block h-3 w-3 rounded-full bg-white shadow-lg transform ring-0 transition ease-in-out duration-200`}
+						/>
+					</Switch>
 				</div>
 			</div>
 			{transactions

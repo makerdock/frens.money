@@ -3,7 +3,7 @@ import React, { ButtonHTMLAttributes } from "react";
 interface IButton extends ButtonHTMLAttributes<HTMLButtonElement> {
 	readonly fullWidth?: boolean;
 	readonly loading?: boolean;
-	readonly size?: "sm" | "lg";
+	readonly size?: "sm" | "lg" | "equal";
 	readonly variant?: "primary" | "secondary";
 }
 
@@ -19,6 +19,7 @@ const Button: React.FC<IButton> = ({
 	const selectedSize = {
 		sm: " px-5 py-2 text-sm ",
 		lg: " px-6 py-3 text-lg ",
+		equal: " p-3 text-sm ",
 	};
 
 	const disabledButton = disabled || loading;
@@ -46,7 +47,7 @@ const Button: React.FC<IButton> = ({
 				selectedSize[size]
 			} text-sm font-medium rounded-md shadow-sm ${
 				fullWidth ? "w-full" : ""
-			} `}
+			}`}
 		>
 			<div
 				className={`${
