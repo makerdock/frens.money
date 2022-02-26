@@ -56,7 +56,7 @@ const Mint: React.FC = () => {
         <div>
             <div>
 				<div className="max-w-7xl min-h-screen mx-auto px-2 sm:px-4 lg:px-8 flex space-x-4 items-center font-urbanist">
-					<div className="flex-1 px-4 md:px-0">
+					<div className="flex-1 -mt-12 px-4 md:px-0">
 						<h1 className="text-5xl font-bold mb-14">
 							Mint your{" "}<br/>
 							<span className="bg-gradient-to-r from-purple to-pink text-transparent bg-clip-text">Cryptowise pass</span>
@@ -68,7 +68,7 @@ const Mint: React.FC = () => {
                         </ul>
 					</div>
 					<div className="md:block xs:hidden flex-1 px-16">
-                        <video className="rounded-xl" src="/access-pass.mp4" muted controls={false} autoPlay preload='auto' loop />
+                        <video className="w-96 rounded-xl mx-auto" src="/access-pass.mp4" muted controls={false} autoPlay preload='auto' loop />
                         <button onClick={mintPass} disabled={access || isAccessLoading} className='bg-gradient-to-r from-purple to-pink rounded-xl w-full mt-3 py-4 text-white text-2xl disabled:bg-gray-400 disabled:bg-none'>
                             {!isAuthenticated ? 'Connect Wallet' : isAccessLoading ? 'Loading...' : access ? "Already Minted" : "Mint for 10 $MATIC"}
                         </button>
