@@ -9,6 +9,7 @@ import successAnimation from '../utils/lottie-success.json';
 import { useWalletMembershipAccess } from '../utils/useWalletMembershipAccess';
 import Lottie from 'lottie-react'
 import { useRouter } from 'next/router';
+import SwitchChainModal from '../components/SwitchChainModal';
 
 const Mint: React.FC = () => {
 
@@ -20,14 +21,13 @@ const Mint: React.FC = () => {
 		account: walletAddress,
 		user,
 	} = useMoralisData();
-    const isDevelopment = process.env.NODE_ENV === 'development';
+    const isDevelopment = process.env.NEXT_PUBLIC_ENV === 'testnet';
 
     const [minted, setMinted] = React.useState(false);
     const [txHash, setTxHash] = React.useState('');
 
     const {access, isAccessLoading} = useWalletMembershipAccess();
     const { chainId, switchToDesiredChainId, isOnDesiredChainId } = useChainId(true);
-    console.log(isAccessLoading)
 
     const mintPass = async () => {
         if(!isAuthenticated) {
@@ -70,11 +70,16 @@ const Mint: React.FC = () => {
 					<div className="md:block xs:hidden flex-1 px-16">
                         <video className="rounded-xl" src="/access-pass.mp4" muted controls={false} autoPlay preload='auto' loop />
                         <button onClick={mintPass} disabled={access || isAccessLoading} className='bg-gradient-to-r from-purple to-pink rounded-xl w-full mt-3 py-4 text-white text-2xl disabled:bg-gray-400 disabled:bg-none'>
-                            {isAccessLoading ? 'Loading...' : access ? "Already Minted" : "Mint for 10 $MATIC"}
+                            {!isAuthenticated ? 'Connect Wallet' : isAccessLoading ? 'Loading...' : access ? "Already Minted" : "Mint for 10 $MATIC"}
                         </button>
 					</div>
 				</div>
 			</div>
+            <SwitchChainModal 
+                visible={!isOnDesiredChainId}
+                onSwitch={switchToDesiredChainId}
+                switchingTo={'Polygon'}
+            />
             <Modal
                 showCTA={false}
                 open={minted}
@@ -88,7 +93,7 @@ const Mint: React.FC = () => {
                     <h3 className='text-2xl font-bold'>Mint Successful</h3>
                     <p className='my-2'>Cryptowise Pass has been successfully minted to your address. Now you have full access to the app</p>
                     {/* need to add isDevelopment in below condition later on */}
-                    <a href={true ? `https://mumbai.polygonscan.com/tx/${txHash}` : `https://polygonscan.com/tx/${txHash}`} className='underline hover:text-black hover:underline'>Check on Etherscan</a>
+                    <a href={isDevelopment ? `https://mumbai.polygonscan.com/tx/${txHash}` : `https://polygonscan.com/tx/${txHash}`} className='underline hover:text-black hover:underline'>Check on PolygonScan</a>
                     <button onClick={() => router.push('/dashboard')} className=' bg-gradient-to-r from-purple to-pink rounded-xl w-full mt-8 py-2 text-white text-base'>
                         Go to Dashboard
                     </button>

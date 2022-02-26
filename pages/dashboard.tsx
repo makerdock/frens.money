@@ -1,7 +1,7 @@
 import { ArrowRightIcon } from "@heroicons/react/solid";
 import classNames from "classnames";
 import { useRouter } from "next/router";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Blockies from "react-blockies";
 import {
 	useCollection,
@@ -19,6 +19,8 @@ import { useEnsAddress } from "../utils/useEnsAddress";
 import Image from "next/image";
 import sadface from "../assets/sadface.png";
 import { useWalletMembershipAccess } from "../utils/useWalletMembershipAccess";
+import { useChainId } from "../utils/useChainId";
+import SwitchChainModal from "../components/SwitchChainModal";
 
 // import { createGroup } from "../utils/moralis-db";
 
@@ -37,7 +39,76 @@ const Dashboard: React.FC = () => {
 	const [address, setAddress] = useState("");
 	const [ens, setEns] = useState<string | null>("");
 	const [loading, setLoading] = useState(false);
+	const [owes, setOwes] = useState(0)
+	const [owed, setOwed] = useState(0)
 	const access = useWalletMembershipAccess();
+	const { chainId, switchToDesiredChainId, isOnDesiredChainId } = useChainId(false);
+
+	const groupIds = groups?.map(group => group.id) ?? [];
+
+	const [transactions] = useCollectionData(
+		selfAddress && !!groupIds.length &&
+			db
+				.collection(firestoreCollections.TRANSACTIONS)
+				.where("groupId", "in", groupIds)
+	)
+
+	const memberBalance = transactions?.reduce<
+		Record<string, Record<string, number>>
+	>((balance, transaction) => {
+		if (transaction.skipped) {
+			return balance;
+		}
+
+		const { from: fromAddress, to: toAddress, amount, gas } = transaction;
+		const from = fromAddress?.toLowerCase();
+		const to = toAddress?.toLowerCase();
+
+		balance[from] = {
+			...balance[from],
+			[to]: (balance[from]?.[to] ?? 0) + (amount + gas),
+		};
+
+		balance[to] = {
+			...balance[to],
+			[from]: (balance[to]?.[from] ?? 0) - (amount + gas),
+		};
+
+		return balance;
+	}, {});
+
+	const getBalanceForAccount = () => {
+		let owes = 0;
+		let owed = 0;
+
+		Object.entries(
+			memberBalance?.[
+				selfAddress?.toLowerCase()
+			] ?? {}
+		).forEach(([address, balance]) => {
+			const shouldSkip =
+				balance === 0 ||
+				address ===
+					selfAddress?.toLowerCase();
+			const shouldPay = balance < 0;
+
+			if(shouldSkip) return;
+			if(shouldPay) {
+				owes += balance
+			} else {
+				owed += balance
+			};
+		})
+
+		setOwed(owed)
+		setOwes(owes)
+
+	}
+
+	useEffect(() => {
+		getBalanceForAccount();
+	}, [memberBalance, selfAddress])
+
 	const handleAddressChange = async (address: string, ens: string) => {
 		if (!address) {
 			return;
@@ -77,6 +148,8 @@ const Dashboard: React.FC = () => {
 		}
 	};
 
+	const overallOwed = (owed - owes).toPrecision(3)
+
 	return (
 		<div>
 			<div className="max-w-3xl bg-dark-gray rounded-t-3xl my-0 mx-auto pb-0">
@@ -84,21 +157,21 @@ const Dashboard: React.FC = () => {
 					<div className="text-xl text-white font-medium mb-2">
 						Overall, You are Owed{" "}
 						<span className="text-sea-green text-2xl ml-2">
-							+ 0.5712 Eth
+							{owed - owes < 0 ? '-' : '+'} {overallOwed} Eth
 						</span>
 					</div>
 					<div className="w-full p-3 inline-flex justify-between items-center bg-light-gray rounded-lg">
 						<span className="text-l text-white font-medium">
 							You owe{" "}
 							<span className="text-xl font-bold">
-								0.2512 Eth
+								{owes.toPrecision(3)} Eth
 							</span>{" "}
 						</span>
 						<p className="h-max border-r-2 border-white border-solid"></p>
 						<span className="text-l text-white font-medium">
 							You are owed{" "}
 							<span className="text-xl font-bold">
-								0.2512 Eth
+								{owed.toPrecision(3)} Eth
 							</span>{" "}
 						</span>
 					</div>
@@ -122,7 +195,8 @@ const Dashboard: React.FC = () => {
 							<Button
 								loading={loading}
 								onClick={handleCreateGroup}
-								className="space-x-2 flex"
+								disabled={!access && groups?.length >= 5}
+								className="space-x-2 flex disabled:cursor-pointer"
 							>
 								<div>Create group</div>
 								<ArrowRightIcon className="h-4 w-4 ml-2" />{" "}
@@ -130,7 +204,7 @@ const Dashboard: React.FC = () => {
 						</div>
 					</div>
 					<div className="grid gap-4">
-						{groups?.length === 0 && (
+						{!groups?.length && (
 							<div className="flex justify-center items-center flex-col">
 								<Image src={sadface} />
 								<div className="mt-8">
@@ -138,10 +212,18 @@ const Dashboard: React.FC = () => {
 								</div>
 							</div>
 						)}
+						{!!groups?.length && (
+							<h4 className="text-2xl font-bold">Existing Frens</h4>
+						)}
 						{groups?.map((group) => (
-							<GroupTab group={group} />
+							<GroupTab group={group} memberBalance={memberBalance} />
 						))}
 					</div>
+					<SwitchChainModal 
+						visible={!isOnDesiredChainId}
+						onSwitch={switchToDesiredChainId}
+						switchingTo={'Ethereum'}
+					/>
 				</div>
 			</div>
 		</div>
@@ -159,8 +241,9 @@ interface SplitwiseGroup {
 
 interface GroupTabProps {
 	group: SplitwiseGroup;
+	memberBalance: Record<string, Record<string, number>>; 
 }
-const GroupTab: React.FC<GroupTabProps> = ({ group }) => {
+const GroupTab: React.FC<GroupTabProps> = ({ group, memberBalance }) => {
 	const { account: selfAddress } = useMoralisData();
 	const router = useRouter();
 
@@ -170,7 +253,7 @@ const GroupTab: React.FC<GroupTabProps> = ({ group }) => {
 
 	const { address, avatar, error, name } = useEnsAddress(otherAddress);
 
-	const balance = group.balance || 0;
+	const balance = memberBalance?.[otherAddress]?.[selfAddress];
 
 	const handleAddressChange = async () => {
 		router.push(`/user/${otherAddress}`);
@@ -202,7 +285,7 @@ const GroupTab: React.FC<GroupTabProps> = ({ group }) => {
 						balance > 0 ? "text-green" : "text-orange"
 					)}
 				>
-					{balance > 0 ? "+" : "-"}+ {balance} ETH
+					{balance > 0 ? "+" : ""}{balance.toPrecision(3)} ETH
 				</div>
 			)}
 		</div>

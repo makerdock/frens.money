@@ -11,7 +11,7 @@ const polygonMainnetNode = "https://speedy-nodes-nyc.moralis.io/d3fb7f6ee224bc9e
 const useWalletMembershipAccess = () => {
     const [access, setAccess] = React.useState(false);
     const [loading, setLoading] = React.useState(true);
-    const isDevelopment = process.env.NODE_ENV === 'development';
+    const isDevelopment = process.env.NEXT_PUBLIC_ENV === 'testnet';
 
     const {
 		authenticate,
@@ -26,7 +26,7 @@ const useWalletMembershipAccess = () => {
         try{
             // need to change to isDevelopment
             const endpoint =
-				true ? mumbaiNode : polygonMainnetNode;
+				isDevelopment ? mumbaiNode : polygonMainnetNode;
 			const rpcProvider = new ethers.providers.JsonRpcProvider(
                 endpoint
             );

@@ -9,7 +9,6 @@ import wallet from "../assets/Wallet.svg";
 import Button from "../components/Button";
 import { useMoralisData } from "../hooks/useMoralisData";
 import { getSignedNonce } from "../utils/crypto";
-import firebaseClient from "../utils/firebaseClient";
 
 const Dashboard: React.FC = () => {
 	const router = useRouter();

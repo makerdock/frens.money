@@ -16,16 +16,16 @@ const useChainId = (isForNft: boolean) => {
         isWeb3Enabled
 	} = useMoralisData();
     const { chainId: connectedChainId, switchNetwork } = useChain();
-    const isDevelopment = process.env.NODE_ENV === 'development';
+    const isDevelopment = process.env.NEXT_PUBLIC_ENV === 'testnet';
     const [chainId, setChainId] = React.useState(null);
     // need to change to isDevelopment
-    const desiredChainId = true
+    const desiredChainId = isDevelopment
     ? isForNft ? POLYGON_CHAIN_ID_TESTNET : ETH_RINKBY_CHAIN_ID
     : isForNft ? POLYGON_CHAIN_ID : ETH_MAINNET_CHAIN_ID;
 
     const checkChainId = async () => {
         // need to change to isDevelopment
-        if(true) {
+        if(isDevelopment) {
             setChainId(isForNft ? POLYGON_CHAIN_ID_TESTNET : ETH_RINKBY_CHAIN_ID);
             return;
         }
