@@ -41,7 +41,7 @@ const Dashboard: React.FC = () => {
 	const [loading, setLoading] = useState(false);
 	const [owes, setOwes] = useState(0)
 	const [owed, setOwed] = useState(0)
-	const access = useWalletMembershipAccess();
+	const {access} = useWalletMembershipAccess();
 	const { chainId, switchToDesiredChainId, isOnDesiredChainId } = useChainId(false);
 
 	const groupIds = groups?.map(group => group.id) ?? [];
@@ -179,7 +179,7 @@ const Dashboard: React.FC = () => {
 				<div className="w-full rounded-t-3xl bg-white p-12">
 					{
 						!access && (
-							<div className="flex items-center justify-between p-3 bg-gradient-to-r from-purple to-pink rounded-lg text-white mb-4">
+							<div className="flex items-center justify-between px-3 py-2 bg-gradient-to-r from-purple to-pink rounded-lg text-white mb-4">
 								<p className="h-full text-base">Mint Cryptowise Gen 1 to get full access to the app. </p>
 								<button onClick={() => router.push('/mint')} className="p-2 text-black bg-white rounded-md items-center">Mint Now</button>
 							</div>
