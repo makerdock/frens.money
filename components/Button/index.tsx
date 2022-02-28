@@ -45,7 +45,7 @@ const Button: React.FC<IButton> = ({
 				selectedVariant[variant]
 			} opacity-100 transition-all ease-in-out relative flex justify-center items-center ${
 				selectedSize[size]
-			} text-sm font-medium rounded-md shadow-sm ${
+			} ${props.className} text-sm font-medium rounded-md shadow-sm ${
 				fullWidth ? "w-full" : ""
 			}`}
 		>

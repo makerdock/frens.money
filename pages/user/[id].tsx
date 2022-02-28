@@ -1,3 +1,4 @@
+import { DuplicateIcon } from "@heroicons/react/outline";
 import axios from "axios";
 import { useRouter } from "next/router";
 import React, { useEffect, useState } from "react";
@@ -23,6 +24,8 @@ import {
 	getGroupByPerson,
 } from "../../utils/firebaseQueries";
 import { fetchEnsAddress, useEnsAddress } from "../../utils/useEnsAddress";
+import copy from 'copy-to-clipboard';
+import { CheckIcon } from "@heroicons/react/solid";
 
 declare let window: any;
 export interface ProfileProps {
@@ -56,6 +59,7 @@ const UserPage: React.FC<ProfileProps> = ({
 		"pay"
 	);
 	const [settleAmount, setSettleAmount] = useState<number>(0);
+	const [addressCopied, setAddressCopied] = useState(false)
 
 	const [snapshot] = useCollection(
 		group?.id &&
@@ -186,15 +190,21 @@ const UserPage: React.FC<ProfileProps> = ({
 			otherAddress?.toLowerCase()
 		] ?? 0;
 
+	const handleCopy = () => {
+		copy(address ?? otherPersonAccount)
+		setAddressCopied(true)
+		setTimeout(() => setAddressCopied(false), 2000)
+	}
+
 	return (
 		<>
 			<div className="min-h-screen">
 				<div className="container rounded-xl py-12 ">
-					<div className="mx-auto grid grid-cols-1 gap-6 sm:px-6 xs:px-0 lg:max-w-7xl lg:grid-flow-col-dense lg:grid-cols-3">
-						<div className="space-y-6 card xs:p-4 rounded-lg bg-white lg:col-start-1 lg:col-span-2">
+					<div className="mx-auto grid gap-6 sm:px-6 xs:px-0 lg:max-w-7xl lg:grid-flow-col-dense lg:grid-cols-5">
+						<div className="space-y-6 card xs:p-4 rounded-lg bg-white lg:col-start-1 lg:col-span-3">
 							<div className="flex justify-between items-center sm:hidden">
-								<div className="flex items-center space-x-5">
-									<div className="group">
+								<div className="flex items-center space-x-5 w-full">
+									<div className="group w-full">
 										<div className="flex space-x-4 items-center">
 											{avatar?.length ? (
 												<img
@@ -211,17 +221,24 @@ const UserPage: React.FC<ProfileProps> = ({
 											)}
 
 											<div>
-												<h1 className="text-3xl font-bold text-gray-900 mb-1">
+												<h1 className="text-[32px] font-bold text-gray-900 mb-1">
 													{userName}
 												</h1>
-												{!!name && (
-													<span className="text-sm">
-														{`(${minimizeAddress(
-															address ??
-																otherPersonAccount
-														)})`}
-													</span>
-												)}
+												<div className="cursor-pointer" onClick={handleCopy}>
+													{
+														addressCopied 
+														? <CheckIcon className="w-4 h-4 text-green" />
+														: <DuplicateIcon className="w-4 h-4" />
+													}
+													{!!name && (
+														<span className="text-sm">
+															{`(${minimizeAddress(
+																address ??
+																	otherPersonAccount
+															)})`}
+														</span>
+													)}
+												</div>
 											</div>
 										</div>
 
@@ -242,13 +259,13 @@ const UserPage: React.FC<ProfileProps> = ({
 												return (
 													<div
 														key={address}
-														className="my-4 flex items-center space-x-6"
+														className="my-4 flex justify-between items-center space-x-6"
 													>
-														<div className="flex-1 text-md">
+														<div className="flex-1 text-base">
 															{!shouldPay ? (
 																<>
 																	You owe
-																	<span className="font-bold text-lg mx-2">
+																	<span className="font-bold text-xl mx-2">
 																		{
 																			userName
 																		}
@@ -256,7 +273,7 @@ const UserPage: React.FC<ProfileProps> = ({
 																</>
 															) : (
 																<>
-																	<span className="font-bold mr-2 text-lg">
+																	<span className="font-bold mr-2 text-xl">
 																		{
 																			userName
 																		}
@@ -265,7 +282,7 @@ const UserPage: React.FC<ProfileProps> = ({
 																</>
 															)}
 															<span
-																className={`font-bold ml-2 text-lg ${
+																className={`font-bold ml-2 text-xl ${
 																	shouldSkip
 																		? ""
 																		: shouldPay
@@ -289,7 +306,7 @@ const UserPage: React.FC<ProfileProps> = ({
 																onClick={
 																	handleRequest
 																}
-																className="border-2 text-white bg-black px-3 py-0.5 rounded-md cursor-pointer transition-all ease-in-out"
+																className="border-2 text-white bg-black px-6 py-3 rounded-xl cursor-pointer transition-all ease-in-out"
 															>
 																Request
 															</div>
@@ -303,7 +320,7 @@ const UserPage: React.FC<ProfileProps> = ({
 																		balanceAmount
 																	);
 																}}
-																className="bg-black text-white border-2 border-black px-3 py-0.5 rounded-md cursor-pointer transition-all ease-in-out"
+																className="bg-black text-white border-2 border-black px-6 py-3 rounded-xl cursor-pointer transition-all ease-in-out"
 															>
 																Settle
 															</div>
@@ -329,7 +346,7 @@ const UserPage: React.FC<ProfileProps> = ({
 							aria-labelledby="timeline-title"
 							className={`${
 								isOwner ? "grid grid-cols-1 gap-4" : ""
-							} lg:col-start-3 lg:col-span-1 sm:row-span-full`}
+							} lg:col-span-2 sm:row-span-full`}
 						>
 							<div>
 								<div className="card space-y-4 bg-white rounded-lg">

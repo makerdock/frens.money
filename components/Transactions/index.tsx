@@ -92,27 +92,23 @@ const Transactions = ({
 					type="text"
 					name="text"
 					id="text"
-					className="shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full sm:text-sm border-gray-300 rounded-md py-1.5"
+					className="shadow-sm transition-all duration-200 ease-in-out focus:ring-indigo-500 focus:border-indigo-500 block w-full sm:text-sm border-gray-300 rounded-md py-1.5"
 					placeholder="Transaction id or url"
 					onFocus={() => setShouldShowAddTxButton(true)}
 					onBlur={(e) => !e.target.value.length && setShouldShowAddTxButton(false)}
 				/>
-				{
-					shouldShowAddTxButton && (
-						<div>
-							<Button
-								onClick={handleImportTransaction}
-								className="bg-gradient-to-r from-purple to-pink p-4"
-								loading={loading}
-								size="equal"
-							>
-								<div className="h-4 w-4">
-									<PlusIcon />
-								</div>
-							</Button>
+				<div>
+					<Button
+						onClick={handleImportTransaction}
+						className={`bg-gradient-to-r from-purple transition-all ease-in-out duration-200 to-pink ${shouldShowAddTxButton ? "p-3" : "p-0"}`}
+						loading={loading}
+						size="equal"
+					>
+						<div className={`${shouldShowAddTxButton ? "h-4 w-4" : "h-0 w-0"}`}>
+							<PlusIcon />
 						</div>
-					)
-				}
+					</Button>
+				</div>
 			</div>
 			<div className="bg-white mt-4 sm:rounded-lg sm:overflow-hidden">
 				{importing ? (

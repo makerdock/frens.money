@@ -74,7 +74,7 @@ const TransactionLog = ({
 								leaveFrom="transform opacity-100 scale-100"
 								leaveTo="transform opacity-0 scale-95"
 							>
-								<Menu.Items className="origin-top-right absolute right-0 mt-2 w-36 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 focus:outline-none">
+								<Menu.Items className="origin-top-right z-10 absolute right-0 mt-2 w-36 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 focus:outline-none">
 									<Menu.Item>
 										<div
 											className={classNames(
