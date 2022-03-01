@@ -9,9 +9,9 @@ import "react-toastify/dist/ReactToastify.css";
 import ReactTooltip from "react-tooltip";
 import "tailwindcss/tailwind.css";
 import Account from "../components/Account";
-import Chains from "../components/Chains";
 import Logo from "../components/Logo";
 import MetaHead from "../components/MetaHead";
+import Notification from "../components/Notification";
 import "./globals.css";
 
 const APP_ID = process.env.NEXT_PUBLIC_MORALIS_APPLICATION_ID;
@@ -20,6 +20,8 @@ const GTag = "G-4HENSLHDZS";
 
 function MyApp({ Component, pageProps: { session, ...pageProps } }) {
 	const hideNavbar = pageProps.hideNavbar;
+
+
 	return (
 		<MoralisProvider appId={APP_ID} serverUrl={SERVER_URL}>
 			<NextNProgress height={7} color="#9366F9" />
@@ -79,7 +81,7 @@ function MyApp({ Component, pageProps: { session, ...pageProps } }) {
 										<div className="inline-flex items-center">
 											<Logo />
 											<h1 className="text-2xl ml-2 font-bold m-0 flex items-center">
-												Cryptowise
+												Frens.money
 												<span className="text-xs ml-2 bg-gray-200 text-gray-500 font-light rounded-md px-2 py-1">
 													Beta
 												</span>
@@ -89,6 +91,7 @@ function MyApp({ Component, pageProps: { session, ...pageProps } }) {
 								</div>
 							</div>
 							<div className="flex space-x-6 items-center">
+								<Notification />
 								{/* <Chains /> */}
 								<Account />
 							</div>

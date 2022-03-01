@@ -51,7 +51,7 @@ div.embed-modal .ant-modal-header {
 	/* Pink */
 
 	background: #FFA3E0;
-	filter: blur(500px);
+	filter: blur(200px);
 	z-index: -1;
 }
 
@@ -60,13 +60,13 @@ div.embed-modal .ant-modal-header {
 	position: fixed;
 	width: 365px;
 	height: 365px;
-	left: 1123px;
+	right: -119px;
 	top: -98px;
 
 	/* Yellow */
 
 	background: #FFE5A3;
-	filter: blur(400px);
+	filter: blur(200px);
 
 	z-index: -1;
 }

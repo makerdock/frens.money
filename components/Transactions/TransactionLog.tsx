@@ -45,7 +45,7 @@ const TransactionLog = ({
 		<div key={txn.id} className="mb-4">
 			<div
 				key={txn.id}
-				className="relative hover:shadow-md transition-all ease-in-out p-4 rounded-md -mx-4 group"
+				className="relative hover:shadow-md rounded-lg transition-all ease-in-out p-4 -mx-4 group"
 			>
 				<div className=" text-gray-400 text-xs flex items-center justify-between">
 					{moment(new Date(txn.createdAt)).format("DD MMM, YYYY")}

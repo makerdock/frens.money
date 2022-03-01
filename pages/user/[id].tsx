@@ -145,7 +145,7 @@ const UserPage: React.FC<ProfileProps> = ({
 				NotificationTypes.RequestToSettle,
 				balance,
 				otherAddress?.toLowerCase(),
-				"Hey! Paisa lautau..."
+				`${minimizeAddress(otherAddress?.toLowerCase())} has requested to settle with you`
 			);
 			toast.success("Request sent");
 		} catch (error) {
@@ -201,7 +201,7 @@ const UserPage: React.FC<ProfileProps> = ({
 			<div className="min-h-screen">
 				<div className="container rounded-xl py-12 ">
 					<div className="mx-auto grid gap-6 sm:px-6 xs:px-0 lg:max-w-7xl lg:grid-flow-col-dense lg:grid-cols-5">
-						<div className="space-y-6 card xs:p-4 rounded-lg bg-white lg:col-start-1 lg:col-span-3">
+						<div className="space-y-6 card xs:p-4 rounded-3xl bg-white lg:col-start-1 lg:col-span-3">
 							<div className="flex justify-between items-center sm:hidden">
 								<div className="flex items-center space-x-5 w-full">
 									<div className="group w-full">
@@ -224,14 +224,14 @@ const UserPage: React.FC<ProfileProps> = ({
 												<h1 className="text-[32px] font-bold text-gray-900 mb-1">
 													{userName}
 												</h1>
-												<div className="cursor-pointer" onClick={handleCopy}>
+												<div className="flex items-center cursor-pointer" onClick={handleCopy}>
 													{
 														addressCopied 
 														? <CheckIcon className="w-4 h-4 text-green" />
 														: <DuplicateIcon className="w-4 h-4" />
 													}
 													{!!name && (
-														<span className="text-sm">
+														<span className="ml-2 text-sm">
 															{`(${minimizeAddress(
 																address ??
 																	otherPersonAccount
@@ -349,7 +349,7 @@ const UserPage: React.FC<ProfileProps> = ({
 							} lg:col-span-2 sm:row-span-full`}
 						>
 							<div>
-								<div className="card space-y-4 bg-white rounded-lg">
+								<div className="card space-y-4 bg-white rounded-3xl">
 									<div className="flex items-center justify-between">
 										<div
 											className={`px-4 py-2 pb-4 relative text-center w-full cursor-pointer border-b-2 border-transparent text-sm ${

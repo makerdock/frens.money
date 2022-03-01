@@ -20,7 +20,9 @@ import Image from "next/image";
 import sadface from "../assets/sadface.png";
 import { useWalletMembershipAccess } from "../utils/useWalletMembershipAccess";
 import { useChainId } from "../utils/useChainId";
+import loadingAnimation from "../utils/lottie-loading.json";
 import SwitchChainModal from "../components/SwitchChainModal";
+import Lottie from "lottie-react";
 
 // import { createGroup } from "../utils/moralis-db";
 
@@ -30,7 +32,7 @@ const Dashboard: React.FC = () => {
 	const router = useRouter();
 	const { account: selfAddress } = useMoralisData();
 
-	const [groups] = useCollectionData<SplitwiseGroup>(
+	const [groups, groupsLoading] = useCollectionData<SplitwiseGroup>(
 		selfAddress &&
 			db
 				.collection(firestoreCollections.GROUPS)
@@ -41,17 +43,19 @@ const Dashboard: React.FC = () => {
 	const [loading, setLoading] = useState(false);
 	const [owes, setOwes] = useState(0)
 	const [owed, setOwed] = useState(0)
-	const {access} = useWalletMembershipAccess();
+	const { access, isAccessLoading } = useWalletMembershipAccess();
 	const { chainId, switchToDesiredChainId, isOnDesiredChainId } = useChainId(false);
 
 	const groupIds = groups?.map(group => group.id) ?? [];
 
-	const [transactions] = useCollectionData(
+	const [transactions, transactionsLoading] = useCollectionData(
 		selfAddress && !!groupIds.length &&
 			db
 				.collection(firestoreCollections.TRANSACTIONS)
 				.where("groupId", "in", groupIds)
 	)
+
+	const dataLoading = groupsLoading || transactionsLoading || isAccessLoading || loading;
 
 	const memberBalance = transactions?.reduce<
 		Record<string, Record<string, number>>
@@ -178,47 +182,57 @@ const Dashboard: React.FC = () => {
 				</div>
 				<div className="w-full rounded-t-3xl bg-white p-12">
 					{
-						!access && (
-							<div className="flex items-center justify-between px-3 py-2 bg-gradient-to-r from-purple to-pink rounded-lg text-white mb-4">
-								<p className="h-full text-base">Mint Cryptowise Gen 1 to get full access to the app. </p>
-								<button onClick={() => router.push('/mint')} className="p-2 text-black bg-white rounded-md items-center">Mint Now</button>
+						dataLoading ? (
+							<div>
+								<Lottie animationData={loadingAnimation} loop className='w-80 mx-auto' />
 							</div>
+						) : (
+							<>
+								{
+									!access && (
+										<div className="flex items-center justify-between px-3 py-2 bg-gradient-to-r from-purple to-pink rounded-lg text-white mb-4">
+											<p className="h-full text-base">Mint Cryptowise Gen 1 to get full access to the app. </p>
+											<button onClick={() => router.push('/mint')} className="p-2 text-black bg-white rounded-md items-center">Mint Now</button>
+										</div>
+									)
+								}
+								<div className="mb-8 space-y-4">
+									<h4 className="text-2xl font-bold">Add Fren</h4>
+									<div className="flex items-stretch space-x-4">
+										<AddressInput
+											onChange={handleAddressChange}
+											setLoading={setLoading}
+										/>
+										<Button
+											loading={loading}
+											onClick={handleCreateGroup}
+											disabled={!access && groups?.length >= 5}
+											className="space-x-2 flex disabled:cursor-pointer"
+										>
+											<div>Create group</div>
+											<ArrowRightIcon className="h-4 w-4 ml-2" />{" "}
+										</Button>
+									</div>
+								</div>
+								<div className="grid gap-4">
+									{!groups?.length && (
+										<div className="flex justify-center items-center flex-col">
+											<Image src={sadface} />
+											<div className="mt-8">
+												When you add a fren, they will show up here.
+											</div>
+										</div>
+									)}
+									{!!groups?.length && (
+										<h4 className="text-2xl font-bold">Existing Frens</h4>
+									)}
+									{groups?.map((group) => (
+										<GroupTab group={group} memberBalance={memberBalance} />
+									))}
+								</div>
+							</>
 						)
 					}
-					<div className="mb-8 space-y-4">
-						<h4 className="text-2xl font-bold">Add Fren</h4>
-						<div className="flex items-stretch space-x-4">
-							<AddressInput
-								onChange={handleAddressChange}
-								setLoading={setLoading}
-							/>
-							<Button
-								loading={loading}
-								onClick={handleCreateGroup}
-								disabled={!access && groups?.length >= 5}
-								className="space-x-2 flex disabled:cursor-pointer"
-							>
-								<div>Create group</div>
-								<ArrowRightIcon className="h-4 w-4 ml-2" />{" "}
-							</Button>
-						</div>
-					</div>
-					<div className="grid gap-4">
-						{!groups?.length && (
-							<div className="flex justify-center items-center flex-col">
-								<Image src={sadface} />
-								<div className="mt-8">
-									When you add a fren, they will show up here.
-								</div>
-							</div>
-						)}
-						{!!groups?.length && (
-							<h4 className="text-2xl font-bold">Existing Frens</h4>
-						)}
-						{groups?.map((group) => (
-							<GroupTab group={group} memberBalance={memberBalance} />
-						))}
-					</div>
 					<SwitchChainModal 
 						visible={!isOnDesiredChainId}
 						onSwitch={switchToDesiredChainId}
