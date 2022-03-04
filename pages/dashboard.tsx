@@ -55,7 +55,7 @@ const Dashboard: React.FC = () => {
 				.where("groupId", "in", groupIds)
 	)
 
-	const dataLoading = groupsLoading || transactionsLoading || isAccessLoading || loading;
+	const dataLoading = groupsLoading || transactionsLoading || isAccessLoading;
 
 	const memberBalance = transactions?.reduce<
 		Record<string, Record<string, number>>
