@@ -73,16 +73,16 @@ function MyApp({ Component, pageProps: { session, ...pageProps } }) {
 
 			{!hideNavbar && (
 				<header>
-					<div className="container lg:px-8">
+					<div className="container xs:px-0">
 						<div className="flex items-center justify-between py-5">
 							<div className="flex px-2 lg:px-0">
 								<div className="flex-shrink-0 flex items-center">
 									<Link href="/">
 										<div className="inline-flex items-center">
 											<Logo />
-											<h1 className="text-2xl ml-2 font-bold m-0 flex items-center">
+											<h1 className="text-2xl xs:text-sm ml-2 font-bold m-0 flex items-center">
 												Frens.money
-												<span className="text-xs ml-2 bg-gray-200 text-gray-500 font-light rounded-md px-2 py-1">
+												<span className="text-xs xs:hidden ml-2 bg-gray-200 text-gray-500 font-light rounded-md px-2 py-1">
 													Beta
 												</span>
 											</h1>
@@ -90,7 +90,7 @@ function MyApp({ Component, pageProps: { session, ...pageProps } }) {
 									</Link>
 								</div>
 							</div>
-							<div className="flex space-x-6 items-center">
+							<div className="flex space-x-6 xs:space-x-0 items-center">
 								<Notification />
 								{/* <Chains /> */}
 								<Account />

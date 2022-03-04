@@ -20,7 +20,7 @@ const Logo: React.FC<{ isWhite?: boolean }> = ({ isWhite = false }) => {
 					src={isWhite ? cryptocoffeewhite : cryptocoffee}
 				/>
 			</div> */}
-            <div>
+            <div className="xs:w-5 xs:h-5">
                 <Image src={wallet} />
             </div>
 		</>

@@ -155,32 +155,32 @@ const Dashboard: React.FC = () => {
 	const overallOwed = (owed - owes).toPrecision(3)
 
 	return (
-		<div>
-			<div className="max-w-3xl bg-dark-gray rounded-t-3xl my-0 mx-auto pb-0">
-				<div className="w-full rounded-t-3xl bg-dark-gray p-12">
-					<div className="text-xl text-white font-medium mb-2">
+		<div >
+			<div className="max-w-3xl bg-dark-gray rounded-t-3xl xs:mx-2 my-0 mx-auto pb-0">
+				<div className="w-full rounded-t-3xl bg-dark-gray p-12 xs:p-6">
+					<div className="text-xl text-white xs:text-sm font-medium mb-2 xs:mb-6">
 						Overall, You are Owed{" "}
-						<span className="text-sea-green text-2xl ml-2">
+						<span className="text-sea-green xs:text-xl text-2xl ml-2">
 							{owed - owes < 0 ? '-' : '+'} {overallOwed} Eth
 						</span>
 					</div>
 					<div className="w-full p-3 inline-flex justify-between items-center bg-light-gray rounded-lg">
-						<span className="text-l text-white font-medium">
+						<span className="text-l xs:text-xs text-white font-medium">
 							You owe{" "}
-							<span className="text-xl font-bold">
-								{owes.toPrecision(3)} Eth
+							<span className="text-xl xs:block xs:text-base font-bold">
+								{Math.abs(owes).toPrecision(3)} Eth
 							</span>{" "}
 						</span>
 						<p className="h-max border-r-2 border-white border-solid"></p>
-						<span className="text-l text-white font-medium">
+						<span className="text-l xs:text-xs text-white font-medium">
 							You are owed{" "}
-							<span className="text-xl font-bold">
+							<span className="text-xl xs:block xs:text-base font-bold">
 								{owed.toPrecision(3)} Eth
 							</span>{" "}
 						</span>
 					</div>
 				</div>
-				<div className="w-full rounded-t-3xl bg-white p-12">
+				<div className="w-full rounded-t-3xl bg-white p-12 xs:p-6 h-full">
 					{
 						dataLoading ? (
 							<div>
@@ -191,14 +191,14 @@ const Dashboard: React.FC = () => {
 								{
 									!access && (
 										<div className="flex items-center justify-between px-3 py-2 bg-gradient-to-r from-purple to-pink rounded-lg text-white mb-4">
-											<p className="h-full text-base">Mint Cryptowise Gen 1 to get full access to the app. </p>
+											<p className="h-full text-base">Mint Frens.money Gen 1 to get full access to the app. </p>
 											<button onClick={() => router.push('/mint')} className="p-2 text-black bg-white rounded-md items-center">Mint Now</button>
 										</div>
 									)
 								}
 								<div className="mb-8 space-y-4">
 									<h4 className="text-2xl font-bold">Add Fren</h4>
-									<div className="flex items-stretch space-x-4">
+									<div className="flex items-stretch xs:flex-col space-x-4 xs:space-x-0 xs:space-y-2">
 										<AddressInput
 											onChange={handleAddressChange}
 											setLoading={setLoading}

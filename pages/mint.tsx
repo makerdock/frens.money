@@ -59,7 +59,7 @@ const Mint: React.FC = () => {
 					<div className="flex-1 -mt-12 px-4 md:px-0">
 						<h1 className="text-5xl font-bold mb-14">
 							Mint your{" "}<br/>
-							<span className="bg-gradient-to-r from-purple to-pink text-transparent bg-clip-text">Cryptowise pass</span>
+							<span className="bg-gradient-to-r from-purple to-pink text-transparent bg-clip-text">Frens.money pass</span>
 						</h1>
                         <ul className='list-disc py-8 pl-16 pr-8 text-2xl shadow-md rounded-md'>
                             <li>Unlimited groups with your frens</li>
@@ -91,7 +91,7 @@ const Mint: React.FC = () => {
                 <div className='text-left w-96 p-6'>
                     <Lottie animationData={successAnimation} loop className='w-60 mx-auto' />
                     <h3 className='text-2xl font-bold'>Mint Successful</h3>
-                    <p className='my-2'>Cryptowise Pass has been successfully minted to your address. Now you have full access to the app</p>
+                    <p className='my-2'>Frens.money Pass has been successfully minted to your address. Now you have full access to the app</p>
                     {/* need to add isDevelopment in below condition later on */}
                     <a href={isDevelopment ? `https://mumbai.polygonscan.com/tx/${txHash}` : `https://polygonscan.com/tx/${txHash}`} className='underline hover:text-black hover:underline'>Check on PolygonScan</a>
                     <button onClick={() => router.push('/dashboard')} className=' bg-gradient-to-r from-purple to-pink rounded-xl w-full mt-8 py-2 text-white text-base'>

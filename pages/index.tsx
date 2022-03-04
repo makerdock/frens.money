@@ -5,6 +5,7 @@ import React, { useEffect, useState } from "react";
 import toast from "react-hot-toast";
 import { AuthenticateOptions } from "react-moralis/lib/hooks/core/useMoralis/_useMoralisAuth";
 import illustration from "../assets/illustration.png";
+import mobileillustration from "../assets/mobileillustration.png";
 import wallet from "../assets/Wallet.svg";
 import Button from "../components/Button";
 import { useMoralisData } from "../hooks/useMoralisData";
@@ -84,22 +85,22 @@ const Dashboard: React.FC = () => {
 	return (
 		<div className="flex justify-center items-center">
 			<div className="max-w-7xl flex space-x-4 justify-center items-center font-urbanist py-12 pb-0">
-				<div className="w-full min-h-full flex justify-between items-center flex-col">
+				<div className="w-full min-h-full flex justify-between items-center flex-col xs:mt-3">
 					<div>
 						<div className="flex justify-center items-center mb-8">
 							<Image src={wallet} />
 							<h1 className="text-3xl ml-4 mb-0 font-bold">
-								Cryptowise
+								Frens.money
 							</h1>
 						</div>
 						<div className="flex justify-center items-center flex-col mb-10">
-							<p className="text-6xl text-center font-bold leading-tight mb-8">
+							<p className="text-6xl xs:text-2xl text-center font-bold leading-tight mb-8">
 								Crypto is Expensive 🤑, Manage all transactions
-								with Cryptowise{" "}
+								with Frens.money{" "}
 							</p>
-							<div className="flex space-x-6 items-center">
+							<div className="flex items-center xs:w-full px-4">
 								{!loading && (
-									<Button size="lg" onClick={handleAuth}>
+									<Button size="lg" className="w-full" onClick={handleAuth}>
 										Connect your wallet
 									</Button>
 								)}
@@ -108,8 +109,11 @@ const Dashboard: React.FC = () => {
 							</div>
 						</div>
 					</div>
-					<div>
+					<div className="xs:hidden">
 						<Image src={illustration} />
+					</div>
+					<div className="hidden xs:block">
+						<Image src={mobileillustration} />
 					</div>
 				</div>
 			</div>
