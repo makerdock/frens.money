@@ -233,11 +233,11 @@ const Dashboard: React.FC = () => {
 							</>
 						)
 					}
-					<SwitchChainModal 
+					{/* <SwitchChainModal 
 						visible={!isOnDesiredChainId}
 						onSwitch={switchToDesiredChainId}
 						switchingTo={'Ethereum'}
-					/>
+					/> */}
 				</div>
 			</div>
 		</div>

@@ -6,6 +6,7 @@ import { Transaction } from "../../contracts";
 import { useMoralisData } from "../../hooks/useMoralisData";
 import { saveTransaction } from "../../utils/firebaseQueries";
 import { tokenMetadata } from "../../utils/tokens";
+import { useChainId } from "../../utils/useChainId";
 import { useEnsAddress } from "../../utils/useEnsAddress";
 import Button from "../Button";
 
@@ -34,6 +35,8 @@ const PaymentSection = ({ propAmount, settleAmount }) => {
 
 	const [selectedToken, setSelectedToken] = useState<string>();
 	const [isLoading, setIsLoading] = React.useState(false);
+
+	const { switchToDesiredChainId, isOnDesiredChainId } = useChainId(false);
 
 	const {
 		getBalances,
@@ -67,6 +70,9 @@ const PaymentSection = ({ propAmount, settleAmount }) => {
 	const handleTransaction = async () => {
 		try {
 			setIsLoading(true);
+			if(!isOnDesiredChainId) {
+				await switchToDesiredChainId();
+			}
 			const tx = await sendTx(receiverAddress, price, message);
 			toast.success(`Transaction sent! Tx hash: ${tx.hash}`);
 

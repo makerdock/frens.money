@@ -35,6 +35,9 @@ const Mint: React.FC = () => {
             return;
         }
         try {
+            if(!isOnDesiredChainId) {
+				await switchToDesiredChainId();
+			}
             const transaction = await nftContract().mintPass(
                 walletAddress,
                 {
@@ -75,11 +78,6 @@ const Mint: React.FC = () => {
 					</div>
 				</div>
 			</div>
-            <SwitchChainModal 
-                visible={!isOnDesiredChainId}
-                onSwitch={switchToDesiredChainId}
-                switchingTo={'Polygon'}
-            />
             <Modal
                 showCTA={false}
                 open={minted}
