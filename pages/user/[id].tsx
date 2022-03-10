@@ -1,7 +1,7 @@
 import { DuplicateIcon } from "@heroicons/react/outline";
 import axios from "axios";
 import { useRouter } from "next/router";
-import React, { useEffect, useState } from "react";
+import React, { Fragment, useEffect, useState } from "react";
 import Blockies from "react-blockies";
 import { useCollection } from "react-firebase-hooks/firestore";
 import { toast } from "react-toastify";
@@ -9,6 +9,7 @@ import PaymentSection from "../../components/PaymentSection";
 import RequestNotification from "../../components/RequestNotification";
 import RequestSection from "../../components/RequestSection";
 import Transactions from "../../components/Transactions";
+import QuestionIllustration from "../../assets/question.png";
 import {
 	Group,
 	Notification,
@@ -25,7 +26,11 @@ import {
 } from "../../utils/firebaseQueries";
 import { fetchEnsAddress, useEnsAddress } from "../../utils/useEnsAddress";
 import copy from 'copy-to-clipboard';
-import { CheckIcon } from "@heroicons/react/solid";
+import { ArrowSmLeftIcon, CheckIcon, DotsVerticalIcon, TrashIcon } from "@heroicons/react/solid";
+import { Menu, Transition } from "@headlessui/react";
+import classNames from "classnames";
+import Modal from "../../components/Modal";
+import Image from 'next/image'
 
 declare let window: any;
 export interface ProfileProps {
@@ -60,6 +65,8 @@ const UserPage: React.FC<ProfileProps> = ({
 	);
 	const [settleAmount, setSettleAmount] = useState<number>(0);
 	const [addressCopied, setAddressCopied] = useState(false)
+	const [deleteModalVisible, setDeleteModalVisible] = useState(false)
+	const [loading, setLoading] = useState(false)
 
 	const [snapshot] = useCollection(
 		group?.id &&
@@ -196,13 +203,38 @@ const UserPage: React.FC<ProfileProps> = ({
 		setTimeout(() => setAddressCopied(false), 2000)
 	}
 
+	const handleDelete = async () => {
+		if(!group.id || loading) return;
+		setLoading(true)
+		try {
+			await db
+				.collection(firestoreCollections.GROUPS)
+				.doc(group.id)
+				.delete();
+			toast.success('Group deleted!')
+			router.push("/dashboard")
+		} catch (error) {
+			toast.error('Error deleting')
+			console.error(error)
+		} finally {
+			setLoading(false)
+		}
+	}
+
 	return (
 		<>
 			<div className="min-h-screen">
 				<div className="container rounded-xl py-12 ">
+					<button
+						className="p-2 shadow-md flex items-center rounded-md mb-6 text-base"
+						onClick={() => router.back()}
+					>
+						<ArrowSmLeftIcon className='w-6 h-6 mr-2' />
+						Go Back
+					</button>
 					<div className="mx-auto grid gap-6 sm:px-6 xs:px-0 lg:max-w-7xl lg:grid-flow-col-dense lg:grid-cols-5">
 						<div className="space-y-6 card xs:p-4 rounded-3xl bg-white lg:col-start-1 lg:col-span-3">
-							<div className="flex justify-between items-center sm:hidden">
+							<div className="flex justify-between relative items-center sm:hidden">
 								<div className="flex items-center space-x-5 w-full">
 									<div className="group w-full">
 										<div className="flex space-x-4 items-center">
@@ -331,6 +363,37 @@ const UserPage: React.FC<ProfileProps> = ({
 										</div>
 									</div>
 								</div>
+								<Menu as="div" className="absolute top-0 right-0 inline-block text-left">
+									<div>
+										<Menu.Button className="">
+											<DotsVerticalIcon className="h-6 w-6" />
+										</Menu.Button>
+									</div>
+
+									<Transition
+										as={Fragment}
+										enter="transition ease-out duration-100"
+										enterFrom="transform opacity-0 scale-95"
+										enterTo="transform opacity-100 scale-100"
+										leave="transition ease-in duration-75"
+										leaveFrom="transform opacity-100 scale-100"
+										leaveTo="transform opacity-0 scale-95"
+									>
+										<Menu.Items className="origin-top-right z-10 absolute right-0 mt-2 w-36 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 focus:outline-none">
+											<Menu.Item>
+												<div
+													onClick={() => setDeleteModalVisible(true)}
+													className={classNames(
+														"cursor-pointer flex items-center text-orange justify-between px-4 py-2 text-sm hover:text-white hover:bg-orange rounded-b-md"
+													)}
+												>
+													<TrashIcon className="w-4 h-4" />
+													Remove Fren
+												</div>
+											</Menu.Item>
+										</Menu.Items>
+									</Transition>
+								</Menu>
 							</div>
 							<div className="mt-8 border-b -mx-8 xs:hidden" />
 
@@ -400,6 +463,25 @@ const UserPage: React.FC<ProfileProps> = ({
 						</section>
 					</div>
 				</div>
+				<Modal 
+					open={deleteModalVisible}
+					onClose={() => setDeleteModalVisible(false)}
+					showCTA={false}
+				>
+					<div className="p-4">
+						<Image src={QuestionIllustration} alt='question' />
+						<h1 className="text-left text-2xl font-bold">Are you Sure</h1>
+						<p className="text-left text-base mt-2 mb-6">Once deleted you will have to import the <br /> transactions again.</p>
+						<div className="flex items-center justify-between">
+							<button onClick={() => setDeleteModalVisible(false)} className="px-6 py-2 rounded-md bg-gray-200">
+								Cancel
+							</button>
+							<button onClick={handleDelete} disabled={loading} className={`px-6 text-white py-2 rounded-md bg-gradient-to-r from-purple to-pink disabled:bg-gray-200 disabled:text-black`}>
+								{!loading ? 'Yes, Proceed' : 'Deleting...'}
+							</button>
+						</div>
+					</div>
+				</Modal>
 				{/* <Modal
 					visible={isModalVisible}
 					onCancel={() => setIsModalVisible(false)}

@@ -78,7 +78,7 @@ function MyApp({ Component, pageProps: { session, ...pageProps } }) {
 							<div className="flex px-2 lg:px-0">
 								<div className="flex-shrink-0 flex items-center">
 									<Link href="/">
-										<div className="inline-flex items-center">
+										<div className="inline-flex items-center cursor-pointer">
 											<Logo />
 											<h1 className="text-2xl xs:text-sm ml-2 font-bold m-0 flex items-center">
 												Frens.money

@@ -6,12 +6,12 @@ interface MetaHeadProps {
     url?: string;
 }
 const MetaHead: React.FC<MetaHeadProps> = ({ title, description, url }) => {
-    title = title || "Get your audience support with crypto!";
+    title = title || "Frens.Money";
     description = description || "With BuyMeACryptoCoffee your audience can support you with cryptocurrency";
     url = url || "https://www.buymeacryptocoffee.xyz/";
     return (
         <Head>
-            <title>BuyMeACryptoCoffee</title>
+            <title>Frens.Money</title>
             <meta name="description" content={description} />
             <meta
                 name="viewport"

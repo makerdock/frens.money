@@ -58,9 +58,12 @@ const Transactions = ({
 					<Button
 						variant="secondary"
 						onClick={() => setImporting(false)}
+						className="bg-gradient-to-r from-purple to-pink"
 					>
-						<CheckIcon className="h-4 w-4 mr-2" />
-						Finish importing
+						<div className="flex items-center text-white">
+							<CheckIcon className="h-4 w-4 mr-2" />
+							Finish importing
+						</div>
 					</Button>
 				) : (
 					<div className="flex items-center space-x-2">

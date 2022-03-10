@@ -94,9 +94,8 @@ const Dashboard: React.FC = () => {
 							</h1>
 						</div>
 						<div className="flex justify-center items-center flex-col mb-10">
-							<p className="text-6xl xs:text-2xl text-center font-bold leading-tight mb-8">
-								Crypto is Expensive 🤑, Manage all transactions
-								with Frens.money{" "}
+							<p className="text-5xl xs:text-2xl text-center font-bold leading-tight mb-8">
+								Crypto is easy. Settlements in friends are complex. Manage settlements with <span className="bg-gradient-to-r from-purple to-pink text-transparent bg-clip-text ">frens.money</span> {" "}
 							</p>
 							<div className="flex items-center xs:w-full px-4">
 								{!loading && (

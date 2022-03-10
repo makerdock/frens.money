@@ -184,7 +184,7 @@ const Dashboard: React.FC = () => {
 					{
 						dataLoading ? (
 							<div>
-								<Lottie animationData={loadingAnimation} loop className='w-80 mx-auto' />
+								<Lottie animationData={loadingAnimation} loop className='w-60 mx-auto' />
 							</div>
 						) : (
 							<>
