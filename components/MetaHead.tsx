@@ -7,8 +7,8 @@ interface MetaHeadProps {
 }
 const MetaHead: React.FC<MetaHeadProps> = ({ title, description, url }) => {
     title = title || "Frens.Money";
-    description = description || "With BuyMeACryptoCoffee your audience can support you with cryptocurrency";
-    url = url || "https://www.buymeacryptocoffee.xyz/";
+    description = description || "Crypto is easy. Settlements in friends are complex. Manage settlements with frens money ";
+    url = url || "https://www.frens.money/";
     return (
         <Head>
             <title>Frens.Money</title>
@@ -37,7 +37,7 @@ const MetaHead: React.FC<MetaHeadProps> = ({ title, description, url }) => {
             <meta name="twitter:description" content={description} />
             <meta
                 name="twitter:image"
-                content="https://www.buymeacryptocoffee.xyz/meta-background.png"
+                content="https://www.frens.money/meta-background.png"
             />
             <meta name="twitter:url" content={url} />
             <link
