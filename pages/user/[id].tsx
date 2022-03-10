@@ -60,7 +60,7 @@ const UserPage: React.FC<ProfileProps> = ({
 	const { account } = useMoralisData();
 	const { address, avatar, error, name } = useEnsAddress(otherPersonAccount);
 
-	const [selectedSection, setSelectedSection] = useState<"pay" | "request">(
+	const [selectedSection, setSelectedSection] = useState<"pay" | "request" | "transaction">(
 		"pay"
 	);
 	const [settleAmount, setSettleAmount] = useState<number>(0);
@@ -226,15 +226,15 @@ const UserPage: React.FC<ProfileProps> = ({
 			<div className="min-h-screen">
 				<div className="container rounded-xl py-12 ">
 					<button
-						className="p-2 shadow-md flex items-center rounded-md mb-6 text-base"
+						className="p-2 shadow-md bg-white sm:text-sm flex items-center rounded-md mb-6 text-base"
 						onClick={() => router.back()}
 					>
 						<ArrowSmLeftIcon className='w-6 h-6 mr-2' />
 						Go Back
 					</button>
 					<div className="mx-auto grid gap-6 sm:px-6 xs:px-0 lg:max-w-7xl lg:grid-flow-col-dense lg:grid-cols-5">
-						<div className="space-y-6 card xs:p-4 rounded-3xl bg-white lg:col-start-1 lg:col-span-3">
-							<div className="flex justify-between relative items-center sm:hidden">
+						<div className="space-y-6 card xs:p-4 sm:hidden rounded-3xl bg-white lg:col-start-1 lg:col-span-3">
+							<div className="flex justify-between relative items-center">
 								<div className="flex items-center space-x-5 w-full">
 									<div className="group w-full">
 										<div className="flex space-x-4 items-center">
@@ -413,7 +413,179 @@ const UserPage: React.FC<ProfileProps> = ({
 						>
 							<div>
 								<div className="card space-y-4 bg-white rounded-3xl">
+									<div className="justify-between relative items-center hidden sm:flex">
+										<div className="flex items-center space-x-5 w-full">
+											<div className="group w-full">
+												<div className="flex space-x-4 items-center">
+													{avatar?.length ? (
+														<img
+															src={avatar}
+															className="sm:w-10 sm:h-10 h-16 w-16 rounded-xl"
+														/>
+													) : (
+														<Blockies
+															seed={userName}
+															size={8}
+															scale={5}
+															className="sm:w-10 sm:h-10 h-16 w-16 rounded-xl"
+														/>
+													)}
+
+													<div>
+														<h1 className="text-xl font-bold text-gray-900 mb-1">
+															{userName}
+														</h1>
+														<div className="flex items-center cursor-pointer" onClick={handleCopy}>
+															{
+																addressCopied 
+																? <CheckIcon className="w-4 h-4 text-green" />
+																: <DuplicateIcon className="w-4 h-4" />
+															}
+															{!!name && (
+																<span className="ml-2 text-sm">
+																	{`(${minimizeAddress(
+																		address ??
+																			otherPersonAccount
+																	)})`}
+																</span>
+															)}
+														</div>
+													</div>
+												</div>
+
+												<div>
+													{Object.entries(
+														memberBalance[
+															account?.toLowerCase()
+														] ?? {}
+													).map(([address, balance]) => {
+														const shouldSkip =
+															balance === 0 ||
+															address ===
+																account?.toLowerCase();
+														const shouldPay = balance > 0;
+
+														if (shouldSkip) return null;
+
+														return (
+															<div
+																key={address}
+																className="my-4 flex flex-col justify-between"
+															>
+																<div className="flex-1 mb-4 text-xs">
+																	{!shouldPay ? (
+																		<>
+																			You owe
+																			<span className="font-bold text-base mx-2">
+																				{
+																					userName
+																				}
+																			</span>
+																		</>
+																	) : (
+																		<>
+																			<span className="font-bold mr-2 text-base">
+																				{
+																					userName
+																				}
+																			</span>
+																			owes you
+																		</>
+																	)}
+																	<span
+																		className={`font-bold ml-2 text-base ${
+																			shouldSkip
+																				? ""
+																				: shouldPay
+																				? " text-green "
+																				: " text-orange"
+																		}`}
+																	>
+																		{balance === 0
+																			? ""
+																			: shouldPay
+																			? "+ "
+																			: ""}
+																		{balance.toPrecision(
+																			3
+																		)}{" "}
+																		ETH
+																	</span>
+																</div>
+																{shouldPay ? (
+																	<div
+																		onClick={
+																			handleRequest
+																		}
+																		className="border-2 text-center text-white bg-black px-6 py-3 rounded-xl cursor-pointer transition-all ease-in-out"
+																	>
+																		Request
+																	</div>
+																) : (
+																	<div
+																		onClick={() => {
+																			setSelectedSection(
+																				"pay"
+																			);
+																			setSettleAmount(
+																				balanceAmount
+																			);
+																		}}
+																		className="bg-black text-center text-white border-2 border-black px-6 py-3 rounded-xl cursor-pointer transition-all ease-in-out"
+																	>
+																		Settle
+																	</div>
+																)}
+															</div>
+														);
+													})}
+												</div>
+											</div>
+										</div>
+										<Menu as="div" className="absolute top-0 right-0 inline-block text-left">
+											<div>
+												<Menu.Button className="">
+													<DotsVerticalIcon className="h-6 w-6" />
+												</Menu.Button>
+											</div>
+
+											<Transition
+												as={Fragment}
+												enter="transition ease-out duration-100"
+												enterFrom="transform opacity-0 scale-95"
+												enterTo="transform opacity-100 scale-100"
+												leave="transition ease-in duration-75"
+												leaveFrom="transform opacity-100 scale-100"
+												leaveTo="transform opacity-0 scale-95"
+											>
+												<Menu.Items className="origin-top-right z-10 absolute right-0 mt-2 w-36 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 focus:outline-none">
+													<Menu.Item>
+														<div
+															onClick={() => setDeleteModalVisible(true)}
+															className={classNames(
+																"cursor-pointer flex items-center text-orange justify-between px-4 py-2 text-sm hover:text-white hover:bg-orange rounded-b-md"
+															)}
+														>
+															<TrashIcon className="w-4 h-4" />
+															Remove Fren
+														</div>
+													</Menu.Item>
+												</Menu.Items>
+											</Transition>
+										</Menu>
+									</div>
 									<div className="flex items-center justify-between">
+										<div
+											className={`px-4 py-2 pb-4 hidden xs:block relative text-center w-full cursor-pointer border-b-2 border-transparent text-sm ${
+												selectedSection === "transaction" &&
+												" active-bottom-border font-bold "
+											}`}
+											onClick={() =>
+												setSelectedSection("transaction")
+											}
+										>
+											Transactions
+										</div>
 										<div
 											className={`px-4 py-2 pb-4 relative text-center w-full cursor-pointer border-b-2 border-transparent text-sm ${
 												selectedSection === "pay" &&
@@ -437,6 +609,16 @@ const UserPage: React.FC<ProfileProps> = ({
 											Request
 										</div>
 									</div>
+									{
+										selectedSection === "transaction" && (
+											<Transactions
+												transactions={transactions}
+												account={account}
+												group={group}
+												friendAddress={otherAddress}
+											/>
+										)
+									}
 									{selectedSection === "pay" && (
 										<PaymentSection
 											propAmount={settleAmount}

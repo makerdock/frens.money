@@ -52,13 +52,13 @@ const Transactions = ({
 
 	return (
 		<section aria-labelledby="notes-title">
-			<h3 className="text-2xl font-bold flex items-center justify-between mb-6">
-				Transactions
+			<h3 className="text-2xl w-full font-bold flex items-center justify-between mb-6">
+				<span className="sm:hidden">Transactions</span>
 				{importing ? (
 					<Button
 						variant="secondary"
 						onClick={() => setImporting(false)}
-						className="bg-gradient-to-r from-purple to-pink"
+						className="bg-gradient-to-r from-purple to-pink w-full"
 					>
 						<div className="flex items-center text-white">
 							<CheckIcon className="h-4 w-4 mr-2" />
@@ -66,7 +66,7 @@ const Transactions = ({
 						</div>
 					</Button>
 				) : (
-					<div className="flex items-center space-x-2">
+					<div className="flex items-center space-x-2 sm:w-full">
 						{/* <Button
 							variant="secondary"
 							onClick={() => setAddNftTransactionModal(true)}
@@ -79,6 +79,7 @@ const Transactions = ({
 						<Button
 							variant="secondary"
 							onClick={() => setImporting(true)}
+							className='sm:w-full'
 						>
 							<div className="h-4 w-4 mr-2">
 								<PlusIcon />

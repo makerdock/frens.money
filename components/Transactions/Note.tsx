@@ -33,7 +33,7 @@ const Note = ({ txn }: { txn: Transaction }) => {
 	// }, [editingToggle]);
 
 	return (
-		<div className="rounded-md">
+		<div className="sm:ml-2 rounded-md">
 			<div className="flex items-center">
 				{!editingToggle && (
 					<PencilIcon className="w-5 h-5 mr-2" />

@@ -36,7 +36,7 @@ export default function NotificationMenu() {
           leaveFrom="transform opacity-100 scale-100"
           leaveTo="transform opacity-0 scale-95"
         >
-          <Menu.Items className="absolute z-10 overflow-y-auto max-h-154 right-0 w-96 mt-2 origin-top-right bg-white divide-y divide-gray-100 rounded-2xl shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
+          <Menu.Items className="absolute z-10 overflow-y-auto max-h-154 right-0 sm:hidden w-96 mt-2 origin-top-right bg-white divide-y divide-gray-100 rounded-2xl shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
             <div className='px-6 py-4'>
                 <h1 className='text-2xl font-bold'>Notifications</h1>
             </div>

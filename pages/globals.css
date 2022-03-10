@@ -91,5 +91,5 @@ div.embed-modal .ant-modal-header {
 
 .card {
 	box-shadow: -10px -10px 20px #d7d2d21a, 10px 10px 20px rgba(215, 210, 210, 0.1);
-	@apply p-8;
+	@apply p-8 sm:p-4;
 }
