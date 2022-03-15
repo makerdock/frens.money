@@ -62,8 +62,8 @@ const Mint: React.FC = () => {
     return (
         <div>
             <div>
-				<div className="max-w-7xl mt-14 mx-auto px-2 sm:px-4 lg:px-8 flex space-x-4 items-center justify-between font-urbanist">
-					<div className="flex-1 px-4 md:px-0">
+				<div className="max-w-7xl sm:pb-8 mt-14 mx-auto px-2 sm:px-4 lg:px-8 flex sm:space-x-0 sm:flex-col-reverse space-x-4 items-center justify-between font-urbanist">
+					<div className="flex-1 sm:mt-8 px-4 md:px-0">
 						<h1 className="text-5xl font-bold mb-14">
 							Mint your{" "}<br/>
 							<span className="bg-gradient-to-r from-purple to-pink text-transparent bg-clip-text">Frens.money pass</span>
@@ -74,7 +74,7 @@ const Mint: React.FC = () => {
                             <li>Early access to future features</li>
                         </ul>
 					</div>
-					<div className="md:block xs:hidden flex-1">
+					<div className="md:block flex-1">
                         <video className="w-full rounded-xl mx-auto" src="/access-pass.mp4" muted controls={false} autoPlay preload='auto' loop />
                         <button onClick={mintPass} disabled={access || isAccessLoading || isMinting} className='bg-gradient-to-r from-purple to-pink rounded-xl w-full mt-3 py-4 text-white text-2xl disabled:bg-gray-400 disabled:bg-none'>
                             {isMinting ? 'Minting...' : !isAuthenticated ? 'Connect Wallet' : isAccessLoading ? 'Loading...' : access ? "Already Minted" : "Mint for 10 $MATIC"}

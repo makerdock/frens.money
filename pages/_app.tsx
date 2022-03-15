@@ -90,7 +90,7 @@ function MyApp({ Component, pageProps: { session, ...pageProps } }) {
 									</Link>
 								</div>
 							</div>
-							<div className="flex space-x-6 xs:space-x-0 items-center">
+							<div className="flex space-x-6 sm:space-x-0 items-center">
 								<Notification />
 								{/* <Chains /> */}
 								<Account />

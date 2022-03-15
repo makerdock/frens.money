@@ -226,14 +226,14 @@ const UserPage: React.FC<ProfileProps> = ({
 			<div className="min-h-screen">
 				<div className="container rounded-xl py-12 ">
 					<button
-						className="p-2 shadow-md bg-white sm:text-sm flex items-center rounded-md mb-6 text-base"
+						className="p-2 sm:ml-6 xs:ml-0 bg-white w-max xs:text-sm flex items-center rounded-md mb-6 text-base"
 						onClick={() => router.back()}
 					>
 						<ArrowSmLeftIcon className='w-6 h-6 mr-2' />
 						Go Back
 					</button>
 					<div className="mx-auto grid gap-6 sm:px-6 xs:px-0 lg:max-w-7xl lg:grid-flow-col-dense lg:grid-cols-5">
-						<div className="space-y-6 card xs:p-4 sm:hidden rounded-3xl bg-white lg:col-start-1 lg:col-span-3">
+						<div className="space-y-6 border border-solid border-gray-100 card xs:p-4 xs:hidden rounded-3xl bg-white lg:col-start-1 lg:col-span-3">
 							<div className="flex justify-between relative items-center">
 								<div className="flex items-center space-x-5 w-full">
 									<div className="group w-full">
@@ -409,25 +409,25 @@ const UserPage: React.FC<ProfileProps> = ({
 							aria-labelledby="timeline-title"
 							className={`${
 								isOwner ? "grid grid-cols-1 gap-4" : ""
-							} lg:col-span-2 sm:row-span-full`}
+							} lg:col-span-2 xs:row-span-full`}
 						>
 							<div>
-								<div className="card space-y-4 bg-white rounded-3xl">
-									<div className="justify-between relative items-center hidden sm:flex">
+								<div className="card border border-solid border-gray-100 space-y-4 bg-white rounded-3xl">
+									<div className="justify-between relative items-center hidden xs:flex">
 										<div className="flex items-center space-x-5 w-full">
 											<div className="group w-full">
 												<div className="flex space-x-4 items-center">
 													{avatar?.length ? (
 														<img
 															src={avatar}
-															className="sm:w-10 sm:h-10 h-16 w-16 rounded-xl"
+															className="xs:w-10 xs:h-10 h-16 w-16 rounded-xl"
 														/>
 													) : (
 														<Blockies
 															seed={userName}
 															size={8}
 															scale={5}
-															className="sm:w-10 sm:h-10 h-16 w-16 rounded-xl"
+															className="xs:w-10 xs:h-10 h-16 w-16 rounded-xl"
 														/>
 													)}
 

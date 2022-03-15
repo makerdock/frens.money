@@ -156,7 +156,7 @@ const Dashboard: React.FC = () => {
 
 	return (
 		<div >
-			<div className="max-w-3xl bg-dark-gray rounded-t-3xl xs:mx-2 my-0 mx-auto pb-0">
+			<div className="max-w-3xl bg-dark-gray rounded-t-3xl sm:mx-2 xs:mx-2 my-0 mx-auto pb-0">
 				<div className="w-full rounded-t-3xl bg-dark-gray p-12 xs:p-6">
 					<div className="text-xl text-white xs:text-sm font-medium mb-2 xs:mb-6">
 						Overall, You are Owed{" "}

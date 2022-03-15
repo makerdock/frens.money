@@ -45,11 +45,11 @@ const TransactionLog = ({
 		<div key={txn.id} className="mb-4">
 			<div
 				key={txn.id}
-				className="relative hover:shadow-md rounded-lg transition-all sm:border-b-2 ease-in-out p-4 sm:mx-0 sm:p-2 -mx-4 group"
+				className="relative hover:shadow-md rounded-lg transition-all xs:border-b-2 ease-in-out p-4 xs:mx-0 xs:p-2 -mx-4 group"
 			>
 				<div className=" text-gray-400 text-xs flex items-center justify-between">
 					{moment(new Date(txn.createdAt)).format("DD MMM, YYYY")}
-					<div className="space-x-2 flex items-center justify-between opacity-0 group-hover:opacity-100 sm:opacity-100 transition-all ease-in-out">
+					<div className="space-x-2 flex items-center justify-between opacity-0 group-hover:opacity-100 xs:opacity-100 transition-all ease-in-out">
 						<a
 							target="_blank"
 							rel="noopener noreferrer"
@@ -142,13 +142,13 @@ const TransactionLog = ({
 					<Note txn={txn} />
 				</div>
 
-				<div onClick={() => setExpand(!expand)} className="absolute right-3 opacity-0 cursor-pointer group-hover:opacity-100 sm:opacity-100 bottom-4 bg-gray-200 px-2 py-1 rounded-md flex items-center justify-center transition-all ease-in-out">
+				<div onClick={() => setExpand(!expand)} className="absolute right-3 opacity-0 cursor-pointer group-hover:opacity-100 xs:opacity-100 bottom-4 bg-gray-200 px-2 py-1 rounded-md flex items-center justify-center transition-all ease-in-out">
 					<ChevronDownIcon className={`w-6 h-6 transition-all ease-in-out duration-200 ${expand ? 'rotate-180' : ''}`} />
 					<p className="transition-all ease-in-out">{expand ? "Collapse" : "Expand"}</p>
 				</div>
 
 			</div>
-			<div className={`flex justify-between transition-all duration-200 ease-in-out rounded-b-md bg-gray-100 -mx-4 sm:m-0 text-gray-400 ${expand ? "h-auto px-4 py-2" : "h-0 p-0"}`}>
+			<div className={`flex justify-between transition-all duration-200 ease-in-out rounded-b-md bg-gray-100 -mx-4 xs:m-0 text-gray-400 ${expand ? "h-auto px-4 py-2" : "h-0 p-0"}`}>
 				<p className={`flex items-center ${expand ? 'opacity-100' : 'opacity-0'}`}> <SwitchHorizontalIcon className="w-4 h-4 mr-1" /> Txn.Amount: <span className={`text-black`}>{txn.amount.toPrecision(3)} ETH</span></p>
 				<p className={`flex items-center ${expand ? 'opacity-100' : 'opacity-0'}`}>
 					<svg className="mr-1" width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
