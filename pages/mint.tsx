@@ -64,11 +64,11 @@ const Mint: React.FC = () => {
             <div>
 				<div className="max-w-7xl sm:pb-8 mt-14 mx-auto px-2 sm:px-4 lg:px-8 flex sm:space-x-0 sm:flex-col-reverse space-x-4 items-center justify-between font-urbanist">
 					<div className="flex-1 sm:mt-8 px-4 md:px-0">
-						<h1 className="text-5xl font-bold mb-14">
+						<h1 className="text-5xl xs:text-[40px] font-bold xs:mb-6 mb-14">
 							Mint your{" "}<br/>
 							<span className="bg-gradient-to-r from-purple to-pink text-transparent bg-clip-text">Frens.money pass</span>
 						</h1>
-                        <ul className='list-disc py-8 pl-16 bg-white bg-opacity-50 pr-8 text-2xl rounded-xl shadow-sm'>
+                        <ul className='list-disc py-8 pl-16 bg-white bg-opacity-50 pr-8 text-2xl xs:text-base rounded-xl shadow-sm'>
                             <li>Unlimited groups with your frens</li>
                             <li>Unlimited transaction records</li>
                             <li>Early access to future features</li>

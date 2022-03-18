@@ -21,7 +21,7 @@ export default function NotificationMenu() {
 
   return (
     <div>
-      <Menu as="div" className="relative inline-block text-left font-space">
+      <Menu as="div" className="min-xs:relative inline-block text-left font-space">
         <div>
           <Menu.Button className="inline-flex justify-center w-full px-4 py-2 text-sm font-medium text-white rounded-md focus:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-opacity-75">
             <BellIcon className="w-6 h-6" color="#7D8AFF" />
@@ -36,7 +36,7 @@ export default function NotificationMenu() {
           leaveFrom="transform opacity-100 scale-100"
           leaveTo="transform opacity-0 scale-95"
         >
-          <Menu.Items className="absolute z-10 overflow-y-auto max-h-154 right-0 sm:hidden w-96 mt-2 origin-top-right bg-white divide-y divide-gray-100 rounded-2xl shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
+          <Menu.Items className="absolute z-10 overflow-y-auto max-h-154 xs:w-[97%] xs:right-2 right-0 xs:shadow w-96 mt-2 origin-top-right bg-white divide-y divide-gray-100 rounded-2xl shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
             <div className='px-6 py-4'>
                 <h1 className='text-2xl font-bold'>Notifications</h1>
             </div>

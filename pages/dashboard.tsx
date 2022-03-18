@@ -180,7 +180,7 @@ const Dashboard: React.FC = () => {
 						</span>
 					</div>
 				</div>
-				<div className="w-full rounded-t-3xl bg-white p-12 xs:p-6 h-full">
+				<div className="w-full rounded-t-3xl border border-solid border-gray-200 bg-white p-12 xs:p-6 h-full">
 					{
 						dataLoading ? (
 							<div>

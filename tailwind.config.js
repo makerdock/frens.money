@@ -11,6 +11,7 @@ module.exports = {
 		extend: {
 			screens: {
 				xs: { max: "425px" },
+				"min-xs": { min: "430px" },
 				sm: { max: "768px" },
 				"max-lg": { max: "1024px" },
 			},
