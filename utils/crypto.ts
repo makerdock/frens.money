@@ -3,6 +3,8 @@ import CryptoWise from "../abis/CryptoWise.json";
 
 declare let window: any;
 
+const isDevelopment = process.env.NEXT_PUBLIC_ENV === 'testnet';
+
 export const getSignedNonce = async (nonce: string) => {
 	const { ethereum } = window;
 
@@ -192,7 +194,7 @@ export const nftContract = (walletAddress?: string, externalProvider?: ethers.pr
     const provider = new ethers.providers.Web3Provider(ethereum);
     const signer = (externalProvider ?? provider).getSigner(walletAddress);
     const contractReader = new ethers.Contract(
-      "0x022635A0A3f14Eab0A8B97ee6aB7Ed1D710EFfb0",
+      isDevelopment ? "0x022635A0A3f14Eab0A8B97ee6aB7Ed1D710EFfb0" : "0x76eD7bD7e512759e6C60CA3F1B214ded9AaECABC",
       CryptoWise,
       signer
     );

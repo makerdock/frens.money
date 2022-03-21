@@ -40,10 +40,18 @@ const Mint: React.FC = () => {
             if(!isOnDesiredChainId) {
 				await switchToDesiredChainId();
 			}
+            const mintPrice = isDevelopment ? 1 : 10;
+            const { ethereum } = window as any;
+            const provider = new ethers.providers.Web3Provider(ethereum)
+            const balance = await provider.getBalance(walletAddress);
+            if(balance.toNumber() <= mintPrice) {
+                toast.error('Insufficient funds');
+                return;
+            };
             const transaction = await nftContract().mintPass(
                 walletAddress,
                 {
-					value: ethers.utils.parseEther(String(1)),
+					value: ethers.utils.parseEther(String(mintPrice)),
 				}
             );
 

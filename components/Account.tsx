@@ -112,7 +112,10 @@ function Account() {
 							<Menu.Item>
 								{({ active }) => (
 									<button
-										onClick={logout}
+										onClick={() => {
+											logout()
+											router.push('/')
+										}}
 										type="submit"
 										className={`${
 											active
