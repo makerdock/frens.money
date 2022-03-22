@@ -151,6 +151,7 @@ const UserPage: React.FC<ProfileProps> = ({
 				group.id,
 				NotificationTypes.RequestToSettle,
 				balance,
+				account.toLowerCase(),
 				otherAddress?.toLowerCase(),
 				`${minimizeAddress(otherAddress?.toLowerCase())} has requested to settle with you`
 			);

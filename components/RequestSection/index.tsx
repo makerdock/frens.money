@@ -2,7 +2,7 @@ import { useRouter } from "next/router";
 import React, { ReactText, useEffect, useState } from "react";
 import { useChain, useNativeBalance } from "react-moralis";
 import { toast } from "react-toastify";
-import { Group, Notification, NotificationTypes } from "../../contracts";
+import { Group, NotificationTypes } from "../../contracts";
 import { useMoralisData } from "../../hooks/useMoralisData";
 import { createNotification } from "../../utils/firebaseQueries";
 import { tokenMetadata } from "../../utils/tokens";
@@ -73,6 +73,7 @@ const RequestSection = ({ group }: { group: Group }) => {
 				group.id,
 				NotificationTypes.Request,
 				price,
+				address,
 				(otherAddress ?? queryAddress)?.toLowerCase(),
 				message,
 				isChecked

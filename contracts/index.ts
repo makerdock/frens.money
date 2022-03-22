@@ -55,6 +55,7 @@ export class Notification {
 	closed: boolean = false;
 	groupId: string = "";
 	id: string = "";
+	from: string = "";
 	recipient: string = "";
 	timestamp: number = new Date().getTime();
 	message: string = "";

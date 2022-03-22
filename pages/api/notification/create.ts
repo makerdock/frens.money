@@ -12,9 +12,9 @@ export default async function updateTransaction(
 	try {
 		if (req.method !== "POST") throw new Error("Method not allowed");
 
-		const { amount, type, groupId, recipient, message } = req.body;
+		const { amount, type, groupId, from, recipient, message } = req.body;
 
-		await createNotification(groupId, type, amount, recipient, message);
+		await createNotification(groupId, type, amount, from, recipient, message);
 
 		res.status(200).json({});
 	} catch (error) {

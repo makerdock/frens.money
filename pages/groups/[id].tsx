@@ -139,6 +139,7 @@ const UserPage: React.FC<ProfileProps> = ({
 				group.id,
 				NotificationTypes.RequestToSettle,
 				balance,
+				account.toLowerCase(),
 				otherAddress?.toLowerCase(),
 				"Hey! Paisa lautau"
 			);

@@ -156,6 +156,7 @@ export const createNotification = async (
 	groupId: string,
 	type: NotificationTypes,
 	amount: number,
+	from: string,
 	recipient: string,
 	message: string,
 	skipTransaction?: boolean
@@ -165,6 +166,7 @@ export const createNotification = async (
 		amount,
 		type,
 		groupId,
+		from,
 		recipient,
 		message,
 		skipTransaction: !!skipTransaction,

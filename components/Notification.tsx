@@ -6,6 +6,7 @@ import { useCollectionData } from 'react-firebase-hooks/firestore';
 import { db, firestoreCollections } from '../utils/firebaseClient';
 import {Notification, NotificationTypes} from '../contracts'
 import human from 'human-time';
+import { minimizeAddress } from '../utils';
 
 export default function NotificationMenu() {
 
@@ -48,7 +49,7 @@ export default function NotificationMenu() {
                                     <p className={`font-medium text-base text-red`}>{notification.type === NotificationTypes.Request ? 'Request' : 'Request To settle'}</p>
                                     <p className='text-gray-400'>{human(new Date(notification.timestamp))}</p>
                                 </div>
-                                <p className='text-base font-medium'>{notification.message}</p>
+                                <p className='text-base font-medium'>{!!notification?.from?.length ? `${minimizeAddress(notification?.from)} requested ${notification.amount} ETH from you.` : notification.message}</p>
                             </div>
                         </Menu.Item>
                     ))
