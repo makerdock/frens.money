@@ -105,7 +105,7 @@ function MyApp({ Component, pageProps: { session, ...pageProps } }) {
 
 			<Component {...pageProps} />
 			<ToastContainer />
-			<ReactTooltip effect="solid" />
+			{/* <ReactTooltip effect="solid" /> */}
 		</MoralisProvider>
 	);
 }
