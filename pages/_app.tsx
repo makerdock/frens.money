@@ -16,7 +16,7 @@ import "./globals.css";
 
 const APP_ID = process.env.NEXT_PUBLIC_MORALIS_APPLICATION_ID;
 const SERVER_URL = process.env.NEXT_PUBLIC_MORALIS_SERVER_URL;
-const GTag = "G-4HENSLHDZS";
+const GTag = "G-C0TC75Y1ZQ";
 
 function MyApp({ Component, pageProps: { session, ...pageProps } }) {
 	const hideNavbar = pageProps.hideNavbar;
