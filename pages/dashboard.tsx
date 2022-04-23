@@ -153,6 +153,7 @@ const Dashboard: React.FC = () => {
 	};
 
 	const overallOwed = (owed - owes).toPrecision(3)
+	console.log(owed - owes)
 
 	return (
 		<div >
@@ -268,6 +269,7 @@ const GroupTab: React.FC<GroupTabProps> = ({ group, memberBalance }) => {
 	const { address, avatar, error, name } = useEnsAddress(otherAddress);
 
 	const balance = memberBalance?.[otherAddress]?.[selfAddress];
+	console.log(balance)
 
 	const handleAddressChange = async () => {
 		router.push(`/user/${otherAddress}`);
@@ -296,10 +298,10 @@ const GroupTab: React.FC<GroupTabProps> = ({ group, memberBalance }) => {
 				<div
 					className={classNames(
 						"text-base font-medium",
-						balance > 0 ? "text-green" : "text-orange"
+						balance > 0 ? "text-orange" : "text-green"
 					)}
 				>
-					{balance > 0 ? "+" : ""}{balance.toPrecision(3)} ETH
+					{balance > 0 ? "" : "+"}{balance > 0 ? balance.toPrecision(3) : Math.abs(balance).toPrecision(3)} ETH
 				</div>
 			)}
 		</div>
