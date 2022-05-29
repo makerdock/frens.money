@@ -29,14 +29,7 @@ const Dashboard: React.FC = () => {
 		try {
 			setLoading(true);
 			const options: AuthenticateOptions = {
-				signingMessage: `
-					Get your audience support with crypto!\n
-					With BuyMeACryptoCoffee your audience can support you with cryptocurrency.\n
-					How does it work?\n
-					- Supporter connects their Wallet on Crypto Coffee
-					- They enter their favorite creator’s wallet address and donate crypto.
-					- Creators can create their own crypto coffee page and share with their audience too
-				`,
+				signingMessage: `Crypto is easy. Settlements in friends are complex. Manage settlements with frens.money`,
 				chainId: process.env.NODE_ENV === "development" ? 4 : 1,
 			};
 

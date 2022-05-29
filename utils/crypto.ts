@@ -194,7 +194,7 @@ export const nftContract = (walletAddress?: string, externalProvider?: ethers.pr
     const provider = new ethers.providers.Web3Provider(ethereum);
     const signer = (externalProvider ?? provider).getSigner(walletAddress);
     const contractReader = new ethers.Contract(
-      isDevelopment ? "0x022635A0A3f14Eab0A8B97ee6aB7Ed1D710EFfb0" : "0x76eD7bD7e512759e6C60CA3F1B214ded9AaECABC",
+      isDevelopment ? "0x022635A0A3f14Eab0A8B97ee6aB7Ed1D710EFfb0" : "0xf1119C501Da005eA69619E4758c1f982f4182653",
       CryptoWise,
       signer
     );

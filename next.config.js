@@ -9,8 +9,8 @@ module.exports = {
 		FIREBASE_MEASUREMENT_ID: "G-9XKPK8598G",
 		ETHERSCAN_API_KEY: "TYRPF4RRHTHQY6BV5Q5D7B67U63U117S4Z",
 		NEXT_PUBLIC_MORALIS_APPLICATION_ID:
-			"vnRyepeptgawTuboLUzQbMWAWamhm8MhqR2B89PJ",
+			"TCbgdthGbcsdIwI1MtwlAFhnuSEnusftEwgk88nG",
 		NEXT_PUBLIC_MORALIS_SERVER_URL:
-			"https://jlshusshza6h.usemoralis.com:2053/server",
+			"https://adtfot6f3mz0.usemoralis.com:2053/server",
 	},
 };
