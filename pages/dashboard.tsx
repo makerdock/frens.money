@@ -23,6 +23,7 @@ import { useChainId } from "../utils/useChainId";
 import loadingAnimation from "../utils/lottie-loading.json";
 import SwitchChainModal from "../components/SwitchChainModal";
 import Lottie from "lottie-react";
+import Modal from "../components/Modal";
 
 // import { createGroup } from "../utils/moralis-db";
 
@@ -45,6 +46,7 @@ const Dashboard: React.FC = () => {
 	const [owed, setOwed] = useState(0)
 	const { access, isAccessLoading } = useWalletMembershipAccess();
 	const { chainId, switchToDesiredChainId, isOnDesiredChainId } = useChainId(false);
+	const [mintModal, setMintModal] = useState(false);
 
 	const groupIds = groups?.map(group => group.id) ?? [];
 
@@ -128,6 +130,11 @@ const Dashboard: React.FC = () => {
 			return;
 		}
 
+		if(!access && groups?.length >= 5) {
+			setMintModal(true);
+			return;
+		}
+
 		const currUserAddress = selfAddress.toLowerCase();
 		const memberAddress = address.toLowerCase();
 
@@ -153,7 +160,6 @@ const Dashboard: React.FC = () => {
 	};
 
 	const overallOwed = (owed - owes).toPrecision(3)
-	console.log(owed - owes)
 
 	return (
 		<div >
@@ -207,8 +213,7 @@ const Dashboard: React.FC = () => {
 										<Button
 											loading={loading}
 											onClick={handleCreateGroup}
-											disabled={!access && groups?.length >= 5}
-											className="space-x-2 flex disabled:cursor-pointer"
+											className="space-x-2 flex"
 										>
 											<div>Create group</div>
 											<ArrowRightIcon className="h-4 w-4 ml-2" />{" "}
@@ -234,6 +239,27 @@ const Dashboard: React.FC = () => {
 							</>
 						)
 					}
+					<Modal
+						showCTA={false}
+						open={mintModal}
+						onClose={() => {
+							setMintModal(false)
+						}}
+					>
+						<div className='text-left w-80 p-4'>
+							<img src='/access-pass.png' className='w-full mx-auto mb-4' />
+							<h3 className='text-2xl font-bold'>Frens limit exhausted!</h3>
+							<p className='my-2 mb-8'>To get full access of app, mint our Gen-1 NFT</p>
+							<div className="flex justify-between w-full">
+								<button onClick={() => setMintModal(false)} className='text-base rounded-xl bg-[#F2F3F7] py-2 px-4'>
+									Cancel
+								</button>
+								<button onClick={() => router.push('/mint')} className='bg-gradient-to-r from-purple to-pink rounded-xl py-2 px-4 text-white text-base'>
+									Mint now
+								</button>
+							</div>
+						</div>
+					</Modal>
 					{/* <SwitchChainModal 
 						visible={!isOnDesiredChainId}
 						onSwitch={switchToDesiredChainId}
