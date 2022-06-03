@@ -92,7 +92,7 @@ const Mint: React.FC = () => {
 			</div>
             <Modal
                 showCTA={false}
-                open={true}
+                open={minted}
                 onClose={() => {
                     setTxHash('')
                     setMinted(false)
