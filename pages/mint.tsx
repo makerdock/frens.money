@@ -27,10 +27,11 @@ const Mint: React.FC = () => {
     const [txHash, setTxHash] = React.useState('');
     const [isMinting, setIsMinting] = React.useState(false);
 
-    const {access, isAccessLoading} = useWalletMembershipAccess();
+    const {access, isAccessLoading, totalMinted} = useWalletMembershipAccess();
     const { chainId, switchToDesiredChainId, isOnDesiredChainId } = useChainId(true);
 
     const mintPass = async () => {
+        if(totalMinted === 100) return;
         if(!isAuthenticated) {
             toast.error('Please connect to your wallet');
             return;
@@ -84,9 +85,12 @@ const Mint: React.FC = () => {
 					</div>
 					<div className="md:block flex-1">
                         <video className="w-full rounded-xl mx-auto" src="/access-pass.mp4" muted controls={false} autoPlay preload='auto' loop />
-                        <button onClick={mintPass} disabled={access || isAccessLoading || isMinting} className='bg-gradient-to-r from-purple to-pink rounded-xl w-full mt-3 py-4 text-white text-2xl disabled:bg-gray-400 disabled:bg-none'>
+                        <button onClick={mintPass} disabled={access || isAccessLoading || isMinting || totalMinted === 100} className='bg-gradient-to-r from-purple to-pink rounded-xl w-full mt-3 py-4 text-white text-2xl disabled:bg-gray-400 disabled:bg-none'>
                             {isMinting ? 'Minting...' : !isAuthenticated ? 'Connect Wallet' : isAccessLoading ? 'Loading...' : access ? "Already Minted" : "Mint for 10 $MATIC"}
                         </button>
+                        <div className='text-center text-base bg-gradient-to-r from-purple to-pink bg-clip-text text-transparent font-bold mt-2'>
+                            <p>{`${totalMinted}/100`}</p>
+                        </div>
 					</div>
 				</div>
 			</div>

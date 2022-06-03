@@ -10,6 +10,7 @@ const polygonMainnetNode = "https://speedy-nodes-nyc.moralis.io/d3fb7f6ee224bc9e
 
 const useWalletMembershipAccess = () => {
     const [access, setAccess] = React.useState(false);
+    const [totalMinted, setTotalMinted] = React.useState(0);
     const [loading, setLoading] = React.useState(true);
     const isDevelopment = process.env.NEXT_PUBLIC_ENV === 'testnet';
 
@@ -31,6 +32,8 @@ const useWalletMembershipAccess = () => {
                 endpoint
             );
             const quantity = await nftContract(walletAddress, rpcProvider).balanceOf(walletAddress, 0);
+            const totalMinted = await nftContract().totalMinted();
+            setTotalMinted(totalMinted.toNumber());
             setAccess(!!quantity?.toNumber());
         } catch (error) {
             console.error(error)
@@ -46,6 +49,7 @@ const useWalletMembershipAccess = () => {
     return {
         access,
         isAccessLoading: loading,
+        totalMinted
     };
 }
 
