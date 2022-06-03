@@ -32,8 +32,6 @@ const useWalletMembershipAccess = () => {
                 endpoint
             );
             const quantity = await nftContract(walletAddress, rpcProvider).balanceOf(walletAddress, 0);
-            const totalMinted = await nftContract().totalMinted();
-            setTotalMinted(totalMinted.toNumber());
             setAccess(!!quantity?.toNumber());
         } catch (error) {
             console.error(error)
@@ -42,8 +40,18 @@ const useWalletMembershipAccess = () => {
         }
     }
 
+    const fetchTotalMinted = async () => {
+        try {
+            const totalMinted = await nftContract().totalMinted();
+            setTotalMinted(totalMinted.toNumber());
+        } catch (error) {
+            console.error(error)
+        }
+    }
+
     useEffect(() => {
         checkMembership();
+        fetchTotalMinted();
     }, [walletAddress, isAuthenticated])
 
     return {
