@@ -45,7 +45,7 @@ const Mint: React.FC = () => {
             const { ethereum } = window as any;
             const provider = new ethers.providers.Web3Provider(ethereum)
             const balance = await provider.getBalance(walletAddress);
-            if(balance.toNumber() <= mintPrice) {
+            if(balance.toBigInt() <= mintPrice) {
                 toast.error('Insufficient funds');
                 return;
             };
