@@ -10,7 +10,7 @@ import { useWalletMembershipAccess } from '../utils/useWalletMembershipAccess';
 import Lottie from 'lottie-react'
 import { useRouter } from 'next/router';
 import SwitchChainModal from '../components/SwitchChainModal';
-
+//
 const Mint: React.FC = () => {
 
     const router = useRouter()
